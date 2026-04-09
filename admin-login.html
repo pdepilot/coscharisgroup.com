@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f1028" />
+    <meta name="description" content="Coscharis Admin Console — secure sign-in" />
+    <title>Admin Console — Coscharis</title>
+    <link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg" />
+    <link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css" />
+    <style>
+      :root {
+        --admin-bg-deep: #070814;
+        --admin-bg-mid: #12152e;
+        --admin-accent: #e63035;
+        --admin-accent-soft: rgba(230, 48, 53, 0.35);
+        --admin-glass: rgba(255, 255, 255, 0.06);
+        --admin-border: rgba(255, 255, 255, 0.12);
+        --admin-text: #e8eaf4;
+        --admin-muted: #9aa3c2;
+        --admin-secondary: #3c3e90;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body.page-admin-login {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--admin-text);
+        background: var(--admin-bg-deep);
+        overflow-x: hidden;
+      }
+
+      .admin-login-page {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Ambient background */
+      .admin-login-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          radial-gradient(ellipse 120% 80% at 20% 10%, rgba(60, 62, 144, 0.45) 0%, transparent 55%),
+          radial-gradient(ellipse 90% 70% at 85% 75%, rgba(230, 48, 53, 0.18) 0%, transparent 50%),
+          linear-gradient(165deg, var(--admin-bg-deep) 0%, var(--admin-bg-mid) 48%, #0a0c1a 100%);
+      }
+
+      .admin-login-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 48px 48px;
+        opacity: 0.5;
+        mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 100%);
+      }
+
+      .admin-login-orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.55;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .admin-login-orb--1 {
+        width: 320px;
+        height: 320px;
+        background: var(--admin-secondary);
+        top: -80px;
+        right: -40px;
+        animation: adminFloat 18s ease-in-out infinite;
+      }
+
+      .admin-login-orb--2 {
+        width: 280px;
+        height: 280px;
+        background: var(--admin-accent);
+        bottom: 10%;
+        left: -60px;
+        opacity: 0.35;
+        animation: adminFloat 22s ease-in-out infinite reverse;
+      }
+
+      @keyframes adminFloat {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        50% {
+          transform: translate(20px, -24px) scale(1.05);
+        }
+      }
+
+      .admin-login-page > .container {
+        position: relative;
+        z-index: 1;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+      }
+
+      .admin-login-card {
+        border-radius: 24px;
+        overflow: hidden;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid var(--admin-border);
+        box-shadow:
+          0 32px 64px rgba(0, 0, 0, 0.45),
+          0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+          0 -20px 40px rgba(230, 48, 53, 0.08) inset;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+
+      .admin-login-aside {
+        background: linear-gradient(160deg, rgba(60, 62, 144, 0.55) 0%, rgba(15, 16, 40, 0.92) 100%);
+        padding: 2.75rem 2.25rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 100%;
+        position: relative;
+        border-right: 1px solid var(--admin-border);
+      }
+
+      @media (max-width: 991px) {
+        .admin-login-aside {
+          border-right: none;
+          border-bottom: 1px solid var(--admin-border);
+          padding: 2rem 1.5rem;
+        }
+      }
+
+      .admin-login-aside::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url("coscharis/assets/img/breadcrumb/01.jpg") center / cover no-repeat;
+        opacity: 0.12;
+        mix-blend-mode: luminosity;
+      }
+
+      .admin-login-aside > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .admin-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--admin-muted);
+        margin-bottom: 1.25rem;
+      }
+
+      .admin-badge span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--admin-accent);
+        box-shadow: 0 0 12px var(--admin-accent);
+        animation: adminPulse 2s ease-in-out infinite;
+      }
+
+      @keyframes adminPulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.45;
+        }
+      }
+
+      .admin-login-aside h1 {
+        font-size: clamp(1.65rem, 4vw, 2.15rem);
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+        color: #fff;
+      }
+
+      .admin-login-aside p.lead {
+        font-size: 0.95rem;
+        line-height: 1.65;
+        color: var(--admin-muted);
+        margin-bottom: 0;
+      }
+
+      .admin-stat-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+        margin-top: 2rem;
+      }
+
+      .admin-stat {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid var(--admin-border);
+        border-radius: 12px;
+        padding: 0.85rem 0.65rem;
+        text-align: center;
+      }
+
+      .admin-stat strong {
+        display: block;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1.2;
+      }
+
+      .admin-stat small {
+        font-size: 0.65rem;
+        color: var(--admin-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .admin-login-form-wrap {
+        padding: 2.75rem 2.5rem;
+        background: rgba(5, 6, 15, 0.35);
+      }
+
+      @media (max-width: 991px) {
+        .admin-login-form-wrap {
+          padding: 2rem 1.5rem;
+        }
+      }
+
+      .admin-form-header {
+        margin-bottom: 2rem;
+      }
+
+      .admin-form-header img {
+        height: 48px;
+        width: auto;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      }
+
+      .admin-form-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 0.35rem;
+        color: #fff;
+      }
+
+      .admin-form-header p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-login-form-wrap .form-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--admin-muted);
+        margin-bottom: 0.45rem;
+      }
+
+      .admin-login-form-wrap .form-control {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--admin-border);
+        border-radius: 12px;
+        color: #fff;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      }
+
+      .admin-login-form-wrap .form-control::placeholder {
+        color: rgba(154, 163, 194, 0.65);
+      }
+
+      .admin-login-form-wrap .form-control:focus {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(230, 48, 53, 0.55);
+        box-shadow: 0 0 0 3px var(--admin-accent-soft);
+        color: #fff;
+        outline: none;
+      }
+
+      .admin-btn-signin {
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        padding: 0.9rem 1.25rem;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #fff;
+        background: linear-gradient(135deg, var(--admin-accent) 0%, #c41e24 50%, var(--admin-secondary) 140%);
+        background-size: 200% 200%;
+        box-shadow: 0 12px 32px rgba(230, 48, 53, 0.35);
+        transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+      }
+
+      .admin-btn-signin:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 40px rgba(230, 48, 53, 0.45);
+        filter: brightness(1.05);
+        color: #fff;
+      }
+
+      .admin-btn-signin:active {
+        transform: translateY(0);
+      }
+
+      .admin-hint {
+        font-size: 0.75rem;
+        color: var(--admin-muted);
+        margin-top: 1.25rem;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px dashed rgba(255, 255, 255, 0.1);
+        line-height: 1.5;
+      }
+
+      .admin-hint code {
+        color: #c5cbe8;
+        font-size: 0.72rem;
+      }
+
+      .admin-back-link {
+        position: fixed;
+        bottom: 1.25rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+        font-size: 0.85rem;
+        color: var(--admin-muted);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--admin-border);
+        transition: color 0.2s, background 0.2s;
+      }
+
+      .admin-back-link:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .admin-msg {
+        display: none;
+        font-size: 0.85rem;
+        padding: 0.65rem 0.85rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+      }
+
+      .admin-msg--err {
+        display: block;
+        background: rgba(230, 48, 53, 0.15);
+        border: 1px solid rgba(230, 48, 53, 0.4);
+        color: #ffb4b7;
+      }
+
+      .form-check-input:checked {
+        background-color: var(--admin-accent);
+        border-color: var(--admin-accent);
+      }
+
+      .form-check-label {
+        color: var(--admin-muted);
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body class="page-admin-login">
+    <div class="admin-login-page">
+      <div class="admin-login-bg" aria-hidden="true"></div>
+      <div class="admin-login-orb admin-login-orb--1" aria-hidden="true"></div>
+      <div class="admin-login-orb admin-login-orb--2" aria-hidden="true"></div>
+
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12 col-xl-10 col-xxl-9">
+            <div class="admin-login-card">
+              <div class="row g-0">
+                <div class="col-lg-5 admin-login-aside">
+                  <div class="admin-badge"><span></span> Secure console</div>
+                  <h1>Coscharis Admin</h1>
+                  <p class="lead">
+                    Manage listings, orders, and customer tools from one refined workspace—protected
+                    sign-in, audit-ready access, and the same Coscharis standard you expect on the
+                    showroom floor.
+                  </p>
+                  <div class="admin-stat-row">
+                    <div class="admin-stat">
+                      <strong>24/7</strong>
+                      <small>Monitoring</small>
+                    </div>
+                    <div class="admin-stat">
+                      <strong>SSL</strong>
+                      <small>Session</small>
+                    </div>
+                    <div class="admin-stat">
+                      <strong>256</strong>
+                      <small>Bit ready</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-7 admin-login-form-wrap">
+                  <div class="admin-form-header">
+                    <img src="coscharis/assets/img/logo/cos-logo.jpeg" alt="Coscharis" />
+                    <h2>Sign in to continue</h2>
+                    <p>Use your administrator credentials. Customer accounts cannot access this area.</p>
+                  </div>
+
+                  <div id="admin-login-msg" class="admin-msg" role="alert"></div>
+
+                  <form id="admin-login-form" action="#" method="post" autocomplete="on">
+                    <div class="mb-3">
+                      <label class="form-label" for="admin-email">Work email</label>
+                      <input
+                        id="admin-email"
+                        name="email"
+                        type="email"
+                        class="form-control"
+                        placeholder="admin@yourcompany.com"
+                        required
+                        autocomplete="username"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label" for="admin-password">Password</label>
+                      <input
+                        id="admin-password"
+                        name="password"
+                        type="password"
+                        class="form-control"
+                        placeholder="Enter your password"
+                        required
+                        autocomplete="current-password"
+                      />
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                      <div class="form-check mb-0">
+                        <input class="form-check-input" type="checkbox" id="admin-remember" />
+                        <label class="form-check-label" for="admin-remember">Keep me signed in</label>
+                      </div>
+                    </div>
+                    <button type="submit" class="admin-btn-signin">
+                      <i class="fas fa-shield-halved me-2"></i> Sign in to admin
+                    </button>
+                  </form>
+
+                  <p class="admin-hint mb-0">
+                    <strong style="color: rgba(255, 255, 255, 0.75)">Demo access:</strong>
+                    <code>admin@coscharis.local</code> /
+                    <code>CoscharisAdmin2026!</code>
+                    <br />
+                    Replace with your API or SSO when the backend is connected.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a href="index.html" class="admin-back-link"><i class="far fa-arrow-left"></i> Back to website</a>
+    </div>
+
+    <script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="coscharis/assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+      (function () {
+        var ADMIN_KEY = "coscharis:admin:v1";
+        var DEMO_EMAIL = "admin@coscharis.local";
+        var DEMO_PASS = "CoscharisAdmin2026!";
+
+        function showErr(msg) {
+          var el = document.getElementById("admin-login-msg");
+          el.textContent = msg;
+          el.className = "admin-msg admin-msg--err";
+          el.style.display = "block";
+        }
+
+        function clearMsg() {
+          var el = document.getElementById("admin-login-msg");
+          el.textContent = "";
+          el.className = "admin-msg";
+          el.style.display = "none";
+        }
+
+        document.getElementById("admin-login-form").addEventListener("submit", function (e) {
+          e.preventDefault();
+          clearMsg();
+          var email = (document.getElementById("admin-email").value || "").trim().toLowerCase();
+          var password = (document.getElementById("admin-password").value || "").trim();
+
+          if (email === DEMO_EMAIL.toLowerCase() && password === DEMO_PASS) {
+            try {
+              localStorage.setItem(
+                ADMIN_KEY,
+                JSON.stringify({
+                  loggedIn: true,
+                  email: email,
+                  role: "admin",
+                  at: new Date().toISOString()
+                })
+              );
+            } catch (err) {}
+            window.location.href = "admin-dashboard.html";
+            return;
+          }
+
+          showErr("Invalid administrator email or password. Check the demo credentials below or contact IT.");
+        });
+      })();
+    </script>
+  </body>
+</html>

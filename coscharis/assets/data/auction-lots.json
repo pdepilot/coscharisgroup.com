@@ -1,0 +1,87 @@
+[
+  {
+    "id": "lot-001",
+    "carId": "car-001",
+    "title": "Mercedes Benz Car",
+    "image": "coscharis/assets/img/car/01.jpg",
+    "lotNo": "LOT-10001",
+    "location": "Lagos, Nigeria",
+    "currentBid": 68992000,
+    "minIncrement": 500000,
+    "endsAt": "2026-12-18T16:00:00.000Z",
+    "status": "live",
+    "seedBids": [
+      { "amount": 65000000, "bidder": "Bidder ••21", "at": "2026-04-02T11:20:00.000Z" },
+      { "amount": 68492000, "bidder": "Bidder ••88", "at": "2026-04-05T09:10:00.000Z" }
+    ]
+  },
+  {
+    "id": "lot-002",
+    "carId": "car-002",
+    "title": "Yellow Ferrari 458",
+    "image": "coscharis/assets/img/car/02.jpg",
+    "lotNo": "LOT-10002",
+    "location": "Abuja, Nigeria",
+    "currentBid": 132000000,
+    "minIncrement": 1000000,
+    "endsAt": "2026-12-20T18:30:00.000Z",
+    "status": "live",
+    "seedBids": [
+      { "amount": 128000000, "bidder": "Bidder ••03", "at": "2026-04-01T14:00:00.000Z" }
+    ]
+  },
+  {
+    "id": "lot-003",
+    "carId": "car-003",
+    "title": "Black Audi Q7",
+    "image": "coscharis/assets/img/car/03.jpg",
+    "lotNo": "LOT-10003",
+    "location": "Port Harcourt, Nigeria",
+    "currentBid": 65960000,
+    "minIncrement": 400000,
+    "endsAt": "2026-12-15T15:00:00.000Z",
+    "status": "live",
+    "seedBids": []
+  },
+  {
+    "id": "lot-004",
+    "carId": "car-004",
+    "title": "BMW Sports Car",
+    "image": "coscharis/assets/img/car/04.jpg",
+    "lotNo": "LOT-10004",
+    "location": "Lagos, Nigeria",
+    "currentBid": 118016000,
+    "minIncrement": 800000,
+    "endsAt": "2027-01-10T12:00:00.000Z",
+    "status": "live",
+    "seedBids": [
+      { "amount": 110000000, "bidder": "Bidder ••44", "at": "2026-04-06T08:45:00.000Z" }
+    ]
+  },
+  {
+    "id": "lot-005",
+    "carId": "car-005",
+    "title": "White Tesla Car",
+    "image": "coscharis/assets/img/car/05.jpg",
+    "lotNo": "LOT-10005",
+    "location": "Ibadan, Nigeria",
+    "currentBid": 95768000,
+    "minIncrement": 500000,
+    "endsAt": "2026-11-28T17:00:00.000Z",
+    "status": "live",
+    "seedBids": []
+  },
+  {
+    "id": "lot-006",
+    "carId": "car-006",
+    "title": "White Nissan Car",
+    "image": "coscharis/assets/img/car/06.jpg",
+    "lotNo": "LOT-10006",
+    "location": "Lagos, Nigeria",
+    "currentBid": 50264000,
+    "minIncrement": 250000,
+    "endsAt": "2026-12-22T10:00:00.000Z",
+    "status": "live",
+    "seedBids": []
+  }
+]

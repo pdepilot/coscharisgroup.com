@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f1028" />
+    <meta name="description" content="Coscharis Admin — cart oversight and controls" />
+    <title>Admin Cart — Coscharis</title>
+    <link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg" />
+    <link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css" />
+    <style>
+      :root {
+        --admin-bg-deep: #070814;
+        --admin-bg-mid: #12152e;
+        --admin-accent: #e63035;
+        --admin-accent-soft: rgba(230, 48, 53, 0.35);
+        --admin-glass: rgba(255, 255, 255, 0.06);
+        --admin-border: rgba(255, 255, 255, 0.1);
+        --admin-text: #e8eaf4;
+        --admin-muted: #9aa3c2;
+        --admin-secondary: #3c3e90;
+        --admin-success: #2ee59d;
+        --admin-warning: #ffc857;
+        --sidebar-w: 280px;
+        --header-h: 72px;
+        --radius: 16px;
+        --radius-sm: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body.page-admin-cart {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--admin-text);
+        background: var(--admin-bg-deep);
+        overflow-x: hidden;
+      }
+
+      .admin-dash-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          radial-gradient(ellipse 100% 80% at 15% 0%, rgba(60, 62, 144, 0.5) 0%, transparent 55%),
+          radial-gradient(ellipse 80% 60% at 90% 70%, rgba(230, 48, 53, 0.15) 0%, transparent 45%),
+          linear-gradient(168deg, var(--admin-bg-deep) 0%, var(--admin-bg-mid) 42%, #0a0c1a 100%);
+      }
+
+      .admin-dash-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+        background-size: 56px 56px;
+        opacity: 0.55;
+        mask-image: radial-gradient(ellipse 75% 55% at 50% 35%, black 15%, transparent 100%);
+      }
+
+      .admin-shell {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .admin-sidebar {
+        width: var(--sidebar-w);
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 1.25rem 1rem 1rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border-right: 1px solid var(--admin-border);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        transition: transform 0.28s ease, box-shadow 0.28s ease;
+      }
+
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0.75rem 1.25rem;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .admin-brand img {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1px solid var(--admin-border);
+      }
+
+      .admin-brand h1 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .admin-brand span {
+        display: block;
+        font-size: 0.72rem;
+        color: var(--admin-muted);
+        font-weight: 500;
+        margin-top: 2px;
+      }
+
+      .admin-nav-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--admin-muted);
+        padding: 0.75rem 0.75rem 0.35rem;
+        font-weight: 600;
+      }
+
+      .admin-nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: var(--radius-sm);
+        color: var(--admin-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+      }
+
+      .admin-nav a i {
+        width: 1.25rem;
+        text-align: center;
+        opacity: 0.85;
+      }
+
+      .admin-nav a:hover {
+        color: var(--admin-text);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .admin-nav a.is-active {
+        color: #fff;
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.35) 0%, rgba(60, 62, 144, 0.35) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+
+      .admin-sidebar-footer {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--admin-border);
+      }
+
+      .admin-sidebar-footer .btn-logout {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.15s ease;
+      }
+
+      .admin-sidebar-footer .btn-logout:hover {
+        background: rgba(230, 48, 53, 0.22);
+        color: #fff;
+      }
+
+      .admin-sidebar-footer .back-site {
+        display: block;
+        text-align: center;
+        margin-top: 0.75rem;
+        font-size: 0.82rem;
+        color: var(--admin-muted);
+        text-decoration: none;
+      }
+
+      .admin-sidebar-footer .back-site:hover {
+        color: var(--admin-text);
+      }
+
+      /* Main */
+      .admin-main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .admin-header {
+        min-height: var(--header-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--admin-border);
+        background: rgba(7, 8, 20, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+      }
+
+      .admin-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-width: 0;
+      }
+
+      .admin-menu-toggle {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: var(--admin-glass);
+        color: var(--admin-text);
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .admin-header-titles h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .admin-header-titles p {
+        margin: 0.15rem 0 0;
+        font-size: 0.85rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-header-search {
+        flex: 1;
+        max-width: 420px;
+        position: relative;
+      }
+
+      .admin-header-search input {
+        width: 100%;
+        padding: 0.65rem 1rem 0.65rem 2.65rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--admin-text);
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .admin-header-search input::placeholder {
+        color: rgba(154, 163, 194, 0.75);
+      }
+
+      .admin-header-search input:focus {
+        border-color: rgba(230, 48, 53, 0.5);
+        box-shadow: 0 0 0 3px rgba(230, 48, 53, 0.12);
+      }
+
+      .admin-header-search > i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--admin-muted);
+        font-size: 0.95rem;
+      }
+
+      .admin-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .admin-icon-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: var(--admin-glass);
+        color: var(--admin-text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: background 0.18s ease;
+      }
+
+      .admin-icon-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .admin-user-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.35rem 0.65rem 0.35rem 0.35rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        cursor: default;
+      }
+
+      .admin-user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--admin-secondary), var(--admin-accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .admin-user-meta {
+        line-height: 1.2;
+        padding-right: 0.25rem;
+      }
+
+      .admin-user-meta strong {
+        display: block;
+        font-size: 0.82rem;
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .admin-user-meta small {
+        font-size: 0.7rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-content {
+        padding: 1.5rem;
+        flex: 1;
+      }
+
+      @media (max-width: 1199px) {
+        .admin-header-search {
+          display: none;
+        }
+      }
+
+      @media (max-width: 991px) {
+        .admin-menu-toggle {
+          display: flex;
+        }
+
+        .admin-sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          z-index: 100;
+          box-shadow: 8px 0 40px rgba(0, 0, 0, 0.45);
+          transform: translateX(-102%);
+        }
+
+        .admin-sidebar.is-open {
+          transform: translateX(0);
+        }
+
+        .admin-sidebar-overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          z-index: 99;
+          background: rgba(0, 0, 0, 0.55);
+          backdrop-filter: blur(2px);
+        }
+
+        .admin-sidebar-overlay.is-visible {
+          display: block;
+        }
+      }
+
+      /* Panels */
+      .admin-panel {
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid var(--admin-border);
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .admin-panel-hd {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--admin-border);
+        gap: 0.75rem;
+      }
+
+      .admin-panel-hd h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .admin-panel-bd {
+        padding: 1rem 1.25rem 1.25rem;
+      }
+
+      .admin-table-wrap {
+        overflow-x: auto;
+        margin: 0 -1.25rem;
+        padding: 0 1.25rem;
+      }
+
+      .admin-table {
+        width: 100%;
+        font-size: 0.85rem;
+        border-collapse: collapse;
+        min-width: 720px;
+      }
+
+      .admin-table th {
+        text-align: left;
+        padding: 0.65rem 0.75rem;
+        color: var(--admin-muted);
+        font-weight: 600;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        border-bottom: 1px solid var(--admin-border);
+      }
+
+      .admin-table td {
+        padding: 0.75rem 0.75rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        vertical-align: middle;
+      }
+
+      .admin-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .admin-muted {
+        color: var(--admin-muted);
+      }
+
+      .admin-empty {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--admin-muted);
+        font-size: 0.9rem;
+      }
+
+      .admin-empty i {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        opacity: 0.5;
+        display: block;
+      }
+
+      .cart-thumb {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .cart-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .cart-title {
+        font-weight: 700;
+        color: #fff;
+        line-height: 1.2;
+      }
+
+      .cart-sub {
+        font-size: 0.78rem;
+        color: var(--admin-muted);
+        margin-top: 0.2rem;
+        word-break: break-all;
+      }
+
+      .qty-ctrl {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.35rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .qty-ctrl button {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        cursor: pointer;
+        transition: background 0.18s ease, transform 0.1s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .qty-ctrl button:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .qty-ctrl button:active {
+        transform: translateY(1px);
+      }
+
+      .qty-ctrl input {
+        width: 64px;
+        text-align: center;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      .btn-soft {
+        border-radius: 12px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-weight: 600;
+        padding: 0.6rem 0.85rem;
+        transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
+      }
+
+      .btn-soft:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(230, 48, 53, 0.25);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .btn-danger-soft {
+        border-radius: 12px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 700;
+        padding: 0.6rem 0.85rem;
+        transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
+      }
+
+      .btn-danger-soft:hover {
+        background: rgba(230, 48, 53, 0.2);
+        border-color: rgba(230, 48, 53, 0.6);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .btn-linkish {
+        border: none;
+        background: transparent;
+        color: #ffb4b7;
+        font-weight: 700;
+        padding: 0.25rem 0.35rem;
+        border-radius: 10px;
+      }
+
+      .btn-linkish:hover {
+        background: rgba(230, 48, 53, 0.12);
+        color: #fff;
+      }
+
+      .summary-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .summary-list li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.55rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        color: var(--admin-muted);
+        font-size: 0.9rem;
+      }
+
+      .summary-list li:last-child {
+        border-bottom: none;
+      }
+
+      .summary-list strong {
+        color: #fff;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--admin-muted);
+        font-size: 0.82rem;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body class="page-admin-cart">
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem("coscharis:admin:v1");
+          var s = raw ? JSON.parse(raw) : null;
+          if (!s || !s.loggedIn) {
+            window.location.replace("admin-login.html");
+          }
+        } catch (e) {
+          window.location.replace("admin-login.html");
+        }
+      })();
+    </script>
+
+    <div class="admin-dash-bg" aria-hidden="true"></div>
+    <div class="admin-sidebar-overlay" id="admin-sidebar-overlay" aria-hidden="true"></div>
+
+    <div class="admin-shell">
+      <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
+        <a class="admin-brand" href="admin-dashboard.html">
+          <img src="coscharis/assets/img/logo/cos-logo.jpeg" alt="" width="44" height="44" />
+          <div>
+            <h1>Coscharis</h1>
+            <span>Admin Console</span>
+          </div>
+        </a>
+
+        <div class="admin-nav-label">Overview</div>
+        <nav class="admin-nav" aria-label="Primary">
+          <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+          <a href="index.html"><i class="fas fa-globe"></i> Live site</a>
+        </nav>
+
+        <div class="admin-nav-label">Commerce</div>
+        <nav class="admin-nav">
+          <a class="is-active" href="admin-cart.html"><i class="fas fa-shopping-basket"></i> Cart (Admin)</a>
+          <a href="shop.html"><i class="fas fa-store"></i> Shop</a>
+          <a href="shop-cart.html"><i class="fas fa-cart-plus"></i> Cart (Public)</a>
+          <a href="shop-checkout.html"><i class="fas fa-credit-card"></i> Checkout</a>
+          <a href="inventory-grid.html"><i class="fas fa-warehouse"></i> Inventory</a>
+          <a href="add-listing.html"><i class="fas fa-plus-circle"></i> Add listing</a>
+        </nav>
+
+        <div class="admin-nav-label">Engagement</div>
+        <nav class="admin-nav">
+          <a href="auction.html"><i class="fas fa-gavel"></i> Auctions</a>
+          <a href="listing-grid.html"><i class="fas fa-th-large"></i> Listings</a>
+          <a href="blog-single.html"><i class="fas fa-newspaper"></i> Blog</a>
+        </nav>
+
+        <div class="admin-nav-label">People</div>
+        <nav class="admin-nav">
+          <a href="register.html"><i class="fas fa-user-plus"></i> Registration</a>
+          <a href="contact.html"><i class="fas fa-envelope"></i> Contact leads</a>
+        </nav>
+
+        <div class="admin-sidebar-footer">
+          <button type="button" class="btn-logout" id="admin-logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Sign out
+          </button>
+          <a class="back-site" href="index.html"><i class="fas fa-external-link-alt"></i> View public website</a>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-header">
+          <div class="admin-header-left">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Open menu">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="admin-header-titles">
+              <h2>Cart oversight</h2>
+              <p>Review and adjust the live cart stored on this device</p>
+            </div>
+          </div>
+
+          <div class="admin-header-search">
+            <i class="fas fa-search"></i>
+            <input type="search" id="admin-cart-filter" placeholder="Filter by product name or ID…" autocomplete="off" />
+          </div>
+
+          <div class="admin-header-actions">
+            <button type="button" class="admin-icon-btn" id="admin-export-json" title="Export cart JSON">
+              <i class="far fa-file-code"></i>
+            </button>
+            <div class="admin-user-chip" title="Signed-in administrator">
+              <div class="admin-user-avatar" id="admin-user-initials">A</div>
+              <div class="admin-user-meta">
+                <strong id="admin-user-email">admin@coscharis.local</strong>
+                <small>Administrator</small>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="admin-content">
+          <div class="row g-3 g-lg-4">
+            <div class="col-lg-8">
+              <div class="admin-panel">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-shopping-basket me-2 text-danger"></i> Cart items</h3>
+                  <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                    <span class="pill" id="admin-cart-meta">0 items</span>
+                    <button type="button" class="btn-soft" id="admin-seed-cart">
+                      <i class="fas fa-wand-magic-sparkles me-2"></i> Demo cart
+                    </button>
+                    <button type="button" class="btn-danger-soft" id="admin-clear-cart">
+                      <i class="fas fa-trash me-2"></i> Clear cart
+                    </button>
+                  </div>
+                </div>
+                <div class="admin-panel-bd pt-0">
+                  <div class="admin-table-wrap">
+                    <table class="admin-table" id="admin-cart-table">
+                      <thead>
+                        <tr>
+                          <th style="width: 84px">Item</th>
+                          <th>Product</th>
+                          <th style="width: 140px">Price</th>
+                          <th style="width: 220px">Quantity</th>
+                          <th style="width: 160px">Line total</th>
+                          <th style="width: 110px">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody id="admin-cart-tbody"></tbody>
+                    </table>
+                  </div>
+                  <div class="admin-empty d-none" id="admin-cart-empty">
+                    <i class="far fa-folder-open"></i>
+                    No items in cart yet. Add products from the shop to see them here.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="admin-panel">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-calculator me-2 text-danger"></i> Summary</h3>
+                  <span class="pill" id="admin-cart-updated">Updated: —</span>
+                </div>
+                <div class="admin-panel-bd">
+                  <ul class="summary-list">
+                    <li><span>Total quantity</span> <strong id="admin-sum-qty">0</strong></li>
+                    <li><span>Subtotal</span> <strong id="admin-sum-sub">₦0</strong></li>
+                    <li><span>Estimated total</span> <strong id="admin-sum-total">₦0</strong></li>
+                  </ul>
+
+                  <div class="mt-3 d-grid gap-2">
+                    <a class="btn-soft text-center text-decoration-none" href="shop-cart.html">
+                      <i class="fas fa-cart-plus me-2"></i> View public cart page
+                    </a>
+                    <a class="btn-soft text-center text-decoration-none" href="shop-checkout.html">
+                      <i class="fas fa-credit-card me-2"></i> Continue to checkout
+                    </a>
+                  </div>
+
+                  <p class="small mt-3 mb-0 admin-muted">
+                    This admin page reads the same cart data as the public cart: <code style="color: #c5cbe8">coscharis:cart:v1</code>.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-center mt-4 mb-0 small" style="color: var(--admin-muted)">
+            Coscharis Admin · Cart tools · Stored locally on this device
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="coscharis/assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+      (function () {
+        var ADMIN_KEY = "coscharis:admin:v1";
+        var CART_KEY = "coscharis:cart:v1";
+        var PLACEHOLDER_IMG = "coscharis/assets/img/shop/01.jpg";
+
+        function safeParse(json) {
+          try {
+            return JSON.parse(json);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function escapeHtml(s) {
+          if (s == null) return "";
+          var d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+
+        function escapeAttr(s) {
+          return String(s || "")
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        function parsePrice(s) {
+          if (!s) return 0;
+          var cleaned = String(s).replace(/[^\d]/g, "");
+          if (!cleaned) return 0;
+          return parseInt(cleaned, 10) || 0;
+        }
+
+        function formatNaira(n) {
+          var num = Number(n);
+          if (isNaN(num)) return "—";
+          try {
+            return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(
+              num
+            );
+          } catch (e) {
+            return "₦" + num.toLocaleString("en-NG");
+          }
+        }
+
+        function loadCart() {
+          var raw = localStorage.getItem(CART_KEY);
+          var parsed = safeParse(raw);
+          if (!parsed || !Array.isArray(parsed.items)) return { items: [] };
+          return parsed;
+        }
+
+        function saveCart(cart) {
+          localStorage.setItem(CART_KEY, JSON.stringify(cart));
+          try {
+            window.dispatchEvent(new CustomEvent("coscharis-cart-updated", { detail: cart }));
+          } catch (e) {}
+        }
+
+        function getTotalQty(cart) {
+          var c = cart || loadCart();
+          var n = 0;
+          if (!c.items || !c.items.length) return 0;
+          for (var i = 0; i < c.items.length; i++) {
+            var q = parseInt(c.items[i].qty, 10);
+            n += isNaN(q) || q < 1 ? 0 : q;
+          }
+          return n;
+        }
+
+        function cartLineTotal(line) {
+          var unit = parsePrice(line.price);
+          var q = parseInt(line.qty, 10) || 1;
+          return unit * q;
+        }
+
+        function cartGrandTotal(cart) {
+          var c = cart || loadCart();
+          var sum = 0;
+          if (!c.items) return 0;
+          for (var i = 0; i < c.items.length; i++) sum += cartLineTotal(c.items[i]);
+          return sum;
+        }
+
+        function setUpdatedNow() {
+          var el = document.getElementById("admin-cart-updated");
+          if (!el) return;
+          el.textContent = "Updated: " + new Date().toLocaleString();
+        }
+
+        function setQtyForId(id, qty) {
+          var q = parseInt(qty, 10);
+          if (isNaN(q) || q < 1) q = 1;
+          var cart = loadCart();
+          for (var i = 0; i < cart.items.length; i++) {
+            if (cart.items[i].id === id) {
+              cart.items[i].qty = q;
+              break;
+            }
+          }
+          saveCart(cart);
+        }
+
+        function removeItemById(id) {
+          if (!id) return;
+          var cart = loadCart();
+          cart.items = cart.items.filter(function (it) {
+            return it.id !== id;
+          });
+          saveCart(cart);
+        }
+
+        function clearCart() {
+          saveCart({ items: [] });
+        }
+
+        function seedCart() {
+          var demo = {
+            items: [
+              {
+                id: "shop|engine oil 5w-30|₦25,000|coscharis/assets/img/shop/01.jpg",
+                title: "Engine Oil 5W-30",
+                price: "₦25,000",
+                image: "coscharis/assets/img/shop/01.jpg",
+                qty: 2
+              },
+              {
+                id: "shop|brake pads set|₦45,000|coscharis/assets/img/shop/02.jpg",
+                title: "Brake Pads Set",
+                price: "₦45,000",
+                image: "coscharis/assets/img/shop/02.jpg",
+                qty: 1
+              },
+              {
+                id: "shop|air filter|₦12,500|coscharis/assets/img/shop/03.jpg",
+                title: "Air Filter",
+                price: "₦12,500",
+                image: "coscharis/assets/img/shop/03.jpg",
+                qty: 3
+              }
+            ]
+          };
+          saveCart(demo);
+        }
+
+        function render(filter) {
+          var q = (filter || "").trim().toLowerCase();
+          var cart = loadCart();
+          var items = Array.isArray(cart.items) ? cart.items.slice() : [];
+
+          if (q) {
+            items = items.filter(function (it) {
+              var t = String(it.title || "").toLowerCase();
+              var id = String(it.id || "").toLowerCase();
+              return t.indexOf(q) !== -1 || id.indexOf(q) !== -1;
+            });
+          }
+
+          var tbody = document.getElementById("admin-cart-tbody");
+          var empty = document.getElementById("admin-cart-empty");
+          var table = document.getElementById("admin-cart-table");
+          tbody.innerHTML = "";
+
+          if (!items.length) {
+            table.classList.add("d-none");
+            empty.classList.remove("d-none");
+          } else {
+            table.classList.remove("d-none");
+            empty.classList.add("d-none");
+          }
+
+          for (var i = 0; i < items.length; i++) {
+            var it = items[i];
+            var unit = parsePrice(it.price);
+            var qty = parseInt(it.qty, 10) || 1;
+            if (qty < 1) qty = 1;
+            var imgSrc = (it.image || "").trim() || PLACEHOLDER_IMG;
+            var line = unit * qty;
+
+            var tr = document.createElement("tr");
+            tr.setAttribute("data-id", encodeURIComponent(it.id || ""));
+            tr.innerHTML =
+              "<td><div class='cart-thumb'><img src='" +
+              escapeAttr(imgSrc) +
+              "' alt=''></div></td>" +
+              "<td><div class='cart-title'>" +
+              escapeHtml(it.title || "Item") +
+              "</div><div class='cart-sub'>ID: " +
+              escapeHtml(it.id || "—") +
+              "</div></td>" +
+              "<td><strong>" +
+              escapeHtml(it.price && String(it.price).trim() ? it.price : formatNaira(unit)) +
+              "</strong></td>" +
+              "<td>" +
+              "<div class='qty-ctrl'>" +
+              "<button type='button' class='admin-qty-minus' aria-label='Decrease'><i class='fas fa-minus'></i></button>" +
+              "<input class='admin-qty-input' type='number' min='1' step='1' value='" +
+              qty +
+              "' aria-label='Quantity' />" +
+              "<button type='button' class='admin-qty-plus' aria-label='Increase'><i class='fas fa-plus'></i></button>" +
+              "</div>" +
+              "</td>" +
+              "<td><strong>" +
+              escapeHtml(formatNaira(line)) +
+              "</strong></td>" +
+              "<td><button type='button' class='btn-linkish admin-remove'><i class='far fa-trash-can me-1'></i>Remove</button></td>";
+
+            tbody.appendChild(tr);
+          }
+
+          var qtySum = getTotalQty(cart);
+          var grand = cartGrandTotal(cart);
+          document.getElementById("admin-sum-qty").textContent = String(qtySum);
+          document.getElementById("admin-sum-sub").textContent = formatNaira(grand);
+          document.getElementById("admin-sum-total").textContent = formatNaira(grand);
+          document.getElementById("admin-cart-meta").textContent =
+            (cart.items && cart.items.length ? cart.items.length : 0) + " items · " + qtySum + " qty";
+        }
+
+        // Session chip
+        var session = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
+        var email = (session.email || "admin@coscharis.local").trim();
+        document.getElementById("admin-user-email").textContent = email;
+        document.getElementById("admin-user-initials").textContent = email.charAt(0).toUpperCase() || "A";
+
+        // Menu toggle (mobile)
+        var sidebar = document.getElementById("admin-sidebar");
+        var overlay = document.getElementById("admin-sidebar-overlay");
+        function closeMenu() {
+          sidebar.classList.remove("is-open");
+          overlay.classList.remove("is-visible");
+        }
+        function openMenu() {
+          sidebar.classList.add("is-open");
+          overlay.classList.add("is-visible");
+        }
+        document.getElementById("admin-menu-toggle").addEventListener("click", function () {
+          if (sidebar.classList.contains("is-open")) closeMenu();
+          else openMenu();
+        });
+        overlay.addEventListener("click", closeMenu);
+
+        // Actions
+        document.getElementById("admin-logout-btn").addEventListener("click", function () {
+          try {
+            localStorage.removeItem(ADMIN_KEY);
+          } catch (e) {}
+          window.location.href = "admin-login.html";
+        });
+
+        document.getElementById("admin-clear-cart").addEventListener("click", function () {
+          if (!confirm("Clear all cart items?")) return;
+          clearCart();
+          setUpdatedNow();
+          render(document.getElementById("admin-cart-filter").value);
+        });
+
+        document.getElementById("admin-seed-cart").addEventListener("click", function () {
+          seedCart();
+          setUpdatedNow();
+          render(document.getElementById("admin-cart-filter").value);
+        });
+
+        document.getElementById("admin-export-json").addEventListener("click", function () {
+          var cart = loadCart();
+          var text = JSON.stringify(cart, null, 2);
+          try {
+            navigator.clipboard.writeText(text);
+            alert("Cart JSON copied to clipboard.");
+          } catch (e) {
+            alert(text);
+          }
+        });
+
+        document.getElementById("admin-cart-filter").addEventListener("input", function () {
+          render(this.value);
+        });
+
+        document.getElementById("admin-cart-tbody").addEventListener("click", function (e) {
+          var target = e.target;
+          var btn = target && target.closest ? target.closest("button") : null;
+          if (!btn) return;
+          var tr = btn.closest("tr");
+          if (!tr) return;
+          var raw = tr.getAttribute("data-id");
+          if (!raw) return;
+          var id;
+          try {
+            id = decodeURIComponent(raw);
+          } catch (err) {
+            return;
+          }
+
+          if (btn.classList.contains("admin-remove")) {
+            removeItemById(id);
+            setUpdatedNow();
+            render(document.getElementById("admin-cart-filter").value);
+            return;
+          }
+
+          if (btn.classList.contains("admin-qty-plus") || btn.classList.contains("admin-qty-minus")) {
+            var inp = tr.querySelector(".admin-qty-input");
+            var qty = parseInt(inp && inp.value, 10) || 1;
+            if (btn.classList.contains("admin-qty-plus")) qty += 1;
+            else qty -= 1;
+            if (qty < 1) qty = 1;
+            setQtyForId(id, qty);
+            setUpdatedNow();
+            render(document.getElementById("admin-cart-filter").value);
+          }
+        });
+
+        document.getElementById("admin-cart-tbody").addEventListener("change", function (e) {
+          var inp = e.target;
+          if (!inp || !inp.classList || !inp.classList.contains("admin-qty-input")) return;
+          var tr = inp.closest("tr");
+          if (!tr) return;
+          var raw = tr.getAttribute("data-id");
+          if (!raw) return;
+          var id;
+          try {
+            id = decodeURIComponent(raw);
+          } catch (err) {
+            return;
+          }
+          var qty = parseInt(inp.value, 10) || 1;
+          if (qty < 1) qty = 1;
+          setQtyForId(id, qty);
+          setUpdatedNow();
+          render(document.getElementById("admin-cart-filter").value);
+        });
+
+        // Sync when cart changes elsewhere
+        function sync() {
+          render(document.getElementById("admin-cart-filter").value);
+        }
+        window.addEventListener("storage", function (ev) {
+          if (ev && ev.key === CART_KEY) sync();
+        });
+        window.addEventListener("coscharis-cart-updated", sync);
+
+        setUpdatedNow();
+        render("");
+      })();
+    </script>
+  </body>
+</html>

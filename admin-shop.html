@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f1028" />
+    <meta name="description" content="Coscharis Admin — shop catalog and cart actions" />
+    <title>Admin Shop — Coscharis</title>
+    <link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg" />
+    <link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css" />
+    <style>
+      :root {
+        --admin-bg-deep: #070814;
+        --admin-bg-mid: #12152e;
+        --admin-accent: #e63035;
+        --admin-accent-soft: rgba(230, 48, 53, 0.35);
+        --admin-glass: rgba(255, 255, 255, 0.06);
+        --admin-border: rgba(255, 255, 255, 0.1);
+        --admin-text: #e8eaf4;
+        --admin-muted: #9aa3c2;
+        --admin-secondary: #3c3e90;
+        --admin-success: #2ee59d;
+        --sidebar-w: 280px;
+        --header-h: 72px;
+        --radius: 16px;
+        --radius-sm: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body.page-admin-shop {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--admin-text);
+        background: var(--admin-bg-deep);
+        overflow-x: hidden;
+      }
+
+      .admin-dash-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          radial-gradient(ellipse 100% 80% at 15% 0%, rgba(60, 62, 144, 0.5) 0%, transparent 55%),
+          radial-gradient(ellipse 80% 60% at 90% 70%, rgba(230, 48, 53, 0.15) 0%, transparent 45%),
+          linear-gradient(168deg, var(--admin-bg-deep) 0%, var(--admin-bg-mid) 42%, #0a0c1a 100%);
+      }
+
+      .admin-dash-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+        background-size: 56px 56px;
+        opacity: 0.55;
+        mask-image: radial-gradient(ellipse 75% 55% at 50% 35%, black 15%, transparent 100%);
+      }
+
+      .admin-shell {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .admin-sidebar {
+        width: var(--sidebar-w);
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 1.25rem 1rem 1rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border-right: 1px solid var(--admin-border);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        transition: transform 0.28s ease, box-shadow 0.28s ease;
+      }
+
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0.75rem 1.25rem;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .admin-brand img {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1px solid var(--admin-border);
+      }
+
+      .admin-brand h1 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .admin-brand span {
+        display: block;
+        font-size: 0.72rem;
+        color: var(--admin-muted);
+        font-weight: 500;
+        margin-top: 2px;
+      }
+
+      .admin-nav-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--admin-muted);
+        padding: 0.75rem 0.75rem 0.35rem;
+        font-weight: 600;
+      }
+
+      .admin-nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: var(--radius-sm);
+        color: var(--admin-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background 0.18s ease, color 0.18s ease;
+      }
+
+      .admin-nav a i {
+        width: 1.25rem;
+        text-align: center;
+        opacity: 0.85;
+      }
+
+      .admin-nav a:hover {
+        color: var(--admin-text);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .admin-nav a.is-active {
+        color: #fff;
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.35) 0%, rgba(60, 62, 144, 0.35) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+
+      .admin-sidebar-footer {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--admin-border);
+      }
+
+      .admin-sidebar-footer .btn-logout {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .admin-sidebar-footer .btn-logout:hover {
+        background: rgba(230, 48, 53, 0.22);
+        color: #fff;
+      }
+
+      .admin-sidebar-footer .back-site {
+        display: block;
+        text-align: center;
+        margin-top: 0.75rem;
+        font-size: 0.82rem;
+        color: var(--admin-muted);
+        text-decoration: none;
+      }
+
+      .admin-sidebar-footer .back-site:hover {
+        color: var(--admin-text);
+      }
+
+      /* Main */
+      .admin-main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .admin-header {
+        min-height: var(--header-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--admin-border);
+        background: rgba(7, 8, 20, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+      }
+
+      .admin-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-width: 0;
+      }
+
+      .admin-menu-toggle {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: var(--admin-glass);
+        color: var(--admin-text);
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .admin-header-titles h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .admin-header-titles p {
+        margin: 0.15rem 0 0;
+        font-size: 0.85rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-header-search {
+        flex: 1;
+        max-width: 420px;
+        position: relative;
+      }
+
+      .admin-header-search input,
+      .admin-header-search select {
+        width: 100%;
+        padding: 0.65rem 1rem 0.65rem 2.65rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--admin-text);
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .admin-header-search input::placeholder {
+        color: rgba(154, 163, 194, 0.75);
+      }
+
+      .admin-header-search input:focus {
+        border-color: rgba(230, 48, 53, 0.5);
+        box-shadow: 0 0 0 3px rgba(230, 48, 53, 0.12);
+      }
+
+      .admin-header-search > i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--admin-muted);
+        font-size: 0.95rem;
+      }
+
+      .admin-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .admin-icon-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: var(--admin-glass);
+        color: var(--admin-text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: background 0.18s ease;
+      }
+
+      .admin-icon-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .admin-icon-btn .badge-dot {
+        position: absolute;
+        top: 9px;
+        right: 9px;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        background: rgba(230, 48, 53, 0.95);
+        color: #fff;
+        font-size: 0.7rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 6px;
+        border: 2px solid rgba(7, 8, 20, 0.9);
+      }
+
+      .admin-user-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.35rem 0.65rem 0.35rem 0.35rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        cursor: default;
+      }
+
+      .admin-user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--admin-secondary), var(--admin-accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .admin-user-meta strong {
+        display: block;
+        font-size: 0.82rem;
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .admin-user-meta small {
+        font-size: 0.7rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-content {
+        padding: 1.5rem;
+        flex: 1;
+      }
+
+      @media (max-width: 1199px) {
+        .admin-header-search {
+          display: none;
+        }
+      }
+
+      @media (max-width: 991px) {
+        .admin-menu-toggle {
+          display: flex;
+        }
+
+        .admin-sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          z-index: 100;
+          box-shadow: 8px 0 40px rgba(0, 0, 0, 0.45);
+          transform: translateX(-102%);
+        }
+
+        .admin-sidebar.is-open {
+          transform: translateX(0);
+        }
+
+        .admin-sidebar-overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          z-index: 99;
+          background: rgba(0, 0, 0, 0.55);
+          backdrop-filter: blur(2px);
+        }
+
+        .admin-sidebar-overlay.is-visible {
+          display: block;
+        }
+      }
+
+      /* Panels + cards */
+      .admin-panel {
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid var(--admin-border);
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .admin-panel-hd {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--admin-border);
+        gap: 0.75rem;
+      }
+
+      .admin-panel-hd h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .admin-panel-bd {
+        padding: 1rem 1.25rem 1.25rem;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--admin-muted);
+        font-size: 0.82rem;
+        white-space: nowrap;
+      }
+
+      .btn-soft {
+        border-radius: 12px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-weight: 700;
+        padding: 0.6rem 0.85rem;
+        transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
+      }
+
+      .btn-soft:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(230, 48, 53, 0.25);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .btn-primary-soft {
+        border-radius: 12px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.18) 0%, rgba(60, 62, 144, 0.18) 100%);
+        color: #fff;
+        font-weight: 800;
+        padding: 0.6rem 0.85rem;
+        transition: transform 0.12s ease, filter 0.2s ease;
+      }
+
+      .btn-primary-soft:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+        color: #fff;
+      }
+
+      .catalog-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      @media (max-width: 1199px) {
+        .catalog-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 575px) {
+        .catalog-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .prod-card {
+        border-radius: var(--radius);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.04);
+        overflow: hidden;
+        transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .prod-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(230, 48, 53, 0.25);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .prod-img {
+        height: 170px;
+        background: rgba(0, 0, 0, 0.25);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        position: relative;
+      }
+
+      .prod-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .prod-tag {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        padding: 0.3rem 0.55rem;
+        border-radius: 999px;
+        background: rgba(230, 48, 53, 0.18);
+        border: 1px solid rgba(230, 48, 53, 0.35);
+        color: #ffb4b7;
+        text-transform: uppercase;
+      }
+
+      .prod-body {
+        padding: 0.95rem 1rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .prod-title {
+        font-weight: 800;
+        color: #fff;
+        margin: 0;
+        line-height: 1.2;
+        font-size: 1.02rem;
+      }
+
+      .prod-meta {
+        font-size: 0.82rem;
+        color: var(--admin-muted);
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .prod-price {
+        font-weight: 900;
+        letter-spacing: -0.01em;
+        font-size: 1.02rem;
+      }
+
+      .prod-actions {
+        margin-top: auto;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .admin-muted {
+        color: var(--admin-muted);
+      }
+
+      .admin-empty {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--admin-muted);
+        font-size: 0.9rem;
+      }
+
+      .admin-empty i {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        opacity: 0.5;
+        display: block;
+      }
+
+      code {
+        color: #c5cbe8;
+      }
+    </style>
+  </head>
+  <body class="page-admin-shop">
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem("coscharis:admin:v1");
+          var s = raw ? JSON.parse(raw) : null;
+          if (!s || !s.loggedIn) window.location.replace("admin-login.html");
+        } catch (e) {
+          window.location.replace("admin-login.html");
+        }
+      })();
+    </script>
+
+    <div class="admin-dash-bg" aria-hidden="true"></div>
+    <div class="admin-sidebar-overlay" id="admin-sidebar-overlay" aria-hidden="true"></div>
+
+    <div class="admin-shell">
+      <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
+        <a class="admin-brand" href="admin-dashboard.html">
+          <img src="coscharis/assets/img/logo/cos-logo.jpeg" alt="" width="44" height="44" />
+          <div>
+            <h1>Coscharis</h1>
+            <span>Admin Console</span>
+          </div>
+        </a>
+
+        <div class="admin-nav-label">Overview</div>
+        <nav class="admin-nav" aria-label="Primary">
+          <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+          <a href="index.html"><i class="fas fa-globe"></i> Live site</a>
+        </nav>
+
+        <div class="admin-nav-label">Commerce</div>
+        <nav class="admin-nav">
+          <a class="is-active" href="admin-shop.html"><i class="fas fa-store"></i> Shop (Admin)</a>
+          <a href="admin-cart.html"><i class="fas fa-shopping-basket"></i> Cart (Admin)</a>
+          <a href="shop.html"><i class="fas fa-tags"></i> Shop (Public)</a>
+          <a href="shop-cart.html"><i class="fas fa-cart-plus"></i> Cart (Public)</a>
+          <a href="shop-checkout.html"><i class="fas fa-credit-card"></i> Checkout</a>
+        </nav>
+
+        <div class="admin-nav-label">Engagement</div>
+        <nav class="admin-nav">
+          <a href="auction.html"><i class="fas fa-gavel"></i> Auctions</a>
+          <a href="listing-grid.html"><i class="fas fa-th-large"></i> Listings</a>
+          <a href="blog-single.html"><i class="fas fa-newspaper"></i> Blog</a>
+        </nav>
+
+        <div class="admin-nav-label">People</div>
+        <nav class="admin-nav">
+          <a href="register.html"><i class="fas fa-user-plus"></i> Registration</a>
+          <a href="contact.html"><i class="fas fa-envelope"></i> Contact leads</a>
+        </nav>
+
+        <div class="admin-sidebar-footer">
+          <button type="button" class="btn-logout" id="admin-logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Sign out
+          </button>
+          <a class="back-site" href="index.html"><i class="fas fa-external-link-alt"></i> View public website</a>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-header">
+          <div class="admin-header-left">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Open menu">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="admin-header-titles">
+              <h2>Shop catalog</h2>
+              <p>Search items and add them to the shared cart storage</p>
+            </div>
+          </div>
+
+          <div class="admin-header-search">
+            <i class="fas fa-search"></i>
+            <input type="search" id="admin-shop-filter" placeholder="Search products…" autocomplete="off" />
+          </div>
+
+          <div class="admin-header-actions">
+            <button type="button" class="admin-icon-btn" id="admin-open-cart" title="Open admin cart">
+              <i class="far fa-shopping-basket"></i>
+              <span class="badge-dot" id="admin-cart-badge">0</span>
+            </button>
+            <div class="admin-user-chip" title="Signed-in administrator">
+              <div class="admin-user-avatar" id="admin-user-initials">A</div>
+              <div class="admin-user-meta">
+                <strong id="admin-user-email">admin@coscharis.local</strong>
+                <small>Administrator</small>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="admin-content">
+          <div class="row g-3 g-lg-4 mb-3">
+            <div class="col-lg-12">
+              <div class="admin-panel">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-store me-2 text-danger"></i> Products</h3>
+                  <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                    <span class="pill" id="admin-shop-meta">0 products</span>
+                    <select
+                      id="admin-shop-sort"
+                      class="form-select form-select-sm"
+                      style="max-width: 220px; background: rgba(255, 255, 255, 0.05); color: var(--admin-text); border: 1px solid var(--admin-border); border-radius: 12px"
+                      aria-label="Sort products"
+                    >
+                      <option value="default" selected>Sort: Default</option>
+                      <option value="priceAsc">Sort: Low → High</option>
+                      <option value="priceDesc">Sort: High → Low</option>
+                      <option value="titleAsc">Sort: A → Z</option>
+                    </select>
+                    <button type="button" class="btn-soft" id="admin-seed-cart">
+                      <i class="fas fa-wand-magic-sparkles me-2"></i> Demo cart
+                    </button>
+                    <a class="btn-primary-soft text-decoration-none" href="admin-cart.html">
+                      <i class="fas fa-arrow-right-long me-2"></i> Go to admin cart
+                    </a>
+                  </div>
+                </div>
+                <div class="admin-panel-bd">
+                  <div class="catalog-grid" id="admin-catalog-grid"></div>
+                  <div class="admin-empty d-none" id="admin-catalog-empty">
+                    <i class="far fa-folder-open"></i>
+                    No products match your search.
+                  </div>
+                  <p class="small mt-3 mb-0 admin-muted">
+                    This page uses the same cart store as the public shop:
+                    <code>coscharis:cart:v1</code>.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-center mt-4 mb-0 small" style="color: var(--admin-muted)">
+            Coscharis Admin · Shop tools · Stored locally on this device
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="coscharis/assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+      (function () {
+        var ADMIN_KEY = "coscharis:admin:v1";
+        var CART_KEY = "coscharis:cart:v1";
+
+        function safeParse(json) {
+          try {
+            return JSON.parse(json);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function escapeHtml(s) {
+          if (s == null) return "";
+          var d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+
+        function escapeAttr(s) {
+          return String(s || "")
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        function buildLineId(parts) {
+          return parts.filter(Boolean).join("|").toLowerCase();
+        }
+
+        function parsePrice(s) {
+          if (!s) return 0;
+          var cleaned = String(s).replace(/[^\d]/g, "");
+          if (!cleaned) return 0;
+          return parseInt(cleaned, 10) || 0;
+        }
+
+        function formatNaira(n) {
+          var num = Number(n);
+          if (isNaN(num)) return "—";
+          try {
+            return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(
+              num
+            );
+          } catch (e) {
+            return "₦" + (Number(n) || 0).toLocaleString("en-NG");
+          }
+        }
+
+        function loadCart() {
+          var raw = localStorage.getItem(CART_KEY);
+          var parsed = safeParse(raw);
+          if (!parsed || !Array.isArray(parsed.items)) return { items: [] };
+          return parsed;
+        }
+
+        function saveCart(cart) {
+          localStorage.setItem(CART_KEY, JSON.stringify(cart));
+          try {
+            window.dispatchEvent(new CustomEvent("coscharis-cart-updated", { detail: cart }));
+          } catch (e) {}
+        }
+
+        function addLine(line) {
+          if (!line || !line.id) return;
+          var qty = parseInt(line.qty, 10);
+          if (isNaN(qty) || qty < 1) qty = 1;
+
+          var cart = loadCart();
+          var found = -1;
+          for (var i = 0; i < cart.items.length; i++) {
+            if (cart.items[i].id === line.id) {
+              found = i;
+              break;
+            }
+          }
+          if (found === -1) {
+            cart.items.push({
+              id: line.id,
+              title: line.title || "Item",
+              price: line.price || "",
+              image: line.image || "",
+              qty: qty
+            });
+          } else {
+            cart.items[found].qty = (parseInt(cart.items[found].qty, 10) || 0) + qty;
+          }
+          saveCart(cart);
+        }
+
+        function getTotalQty(cart) {
+          var c = cart || loadCart();
+          var n = 0;
+          if (!c.items || !c.items.length) return 0;
+          for (var i = 0; i < c.items.length; i++) {
+            var q = parseInt(c.items[i].qty, 10);
+            n += isNaN(q) || q < 1 ? 0 : q;
+          }
+          return n;
+        }
+
+        function updateCartBadge() {
+          var total = getTotalQty();
+          document.getElementById("admin-cart-badge").textContent = total > 99 ? "99+" : String(total);
+        }
+
+        // Session chip
+        var session = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
+        var email = (session.email || "admin@coscharis.local").trim();
+        document.getElementById("admin-user-email").textContent = email;
+        document.getElementById("admin-user-initials").textContent = email.charAt(0).toUpperCase() || "A";
+
+        // Menu toggle (mobile)
+        var sidebar = document.getElementById("admin-sidebar");
+        var overlay = document.getElementById("admin-sidebar-overlay");
+        function closeMenu() {
+          sidebar.classList.remove("is-open");
+          overlay.classList.remove("is-visible");
+        }
+        function openMenu() {
+          sidebar.classList.add("is-open");
+          overlay.classList.add("is-visible");
+        }
+        document.getElementById("admin-menu-toggle").addEventListener("click", function () {
+          if (sidebar.classList.contains("is-open")) closeMenu();
+          else openMenu();
+        });
+        overlay.addEventListener("click", closeMenu);
+
+        document.getElementById("admin-logout-btn").addEventListener("click", function () {
+          try {
+            localStorage.removeItem(ADMIN_KEY);
+          } catch (e) {}
+          window.location.href = "admin-login.html";
+        });
+
+        document.getElementById("admin-open-cart").addEventListener("click", function () {
+          window.location.href = "admin-cart.html";
+        });
+
+        // Catalog data (based on the existing public shop imagery)
+        var products = [
+          { title: "Car Engine Parts", price: "₦624,000", oldPrice: "₦720,000", tag: "Sale", image: "coscharis/assets/img/shop/01.jpg" },
+          { title: "Car Engine Parts", price: "₦1,024,000", image: "coscharis/assets/img/shop/02.jpg" },
+          { title: "Car Engine Parts", price: "₦1,136,000", image: "coscharis/assets/img/shop/03.jpg" },
+          { title: "Car Engine Parts", price: "₦464,000", oldPrice: "₦512,000", tag: "Sale", image: "coscharis/assets/img/shop/04.jpg" },
+          { title: "Car Engine Parts", price: "₦1,072,000", image: "coscharis/assets/img/shop/05.jpg" },
+          { title: "Car Engine Parts", price: "₦400,000", image: "coscharis/assets/img/shop/06.jpg" },
+          { title: "Car Engine Parts", price: "₦672,000", image: "coscharis/assets/img/shop/07.jpg" },
+          { title: "Car Engine Parts", price: "₦880,000", image: "coscharis/assets/img/shop/08.jpg" },
+          { title: "Car Engine Parts", price: "₦1,112,000", image: "coscharis/assets/img/shop/09.jpg" }
+        ];
+
+        function getIdForProduct(p) {
+          return buildLineId(["adminShop", p.title, p.price, p.image]);
+        }
+
+        function render() {
+          var q = (document.getElementById("admin-shop-filter").value || "").trim().toLowerCase();
+          var sort = document.getElementById("admin-shop-sort").value;
+
+          var list = products.slice();
+          if (q) {
+            list = list.filter(function (p) {
+              var t = String(p.title || "").toLowerCase();
+              var id = String(getIdForProduct(p) || "").toLowerCase();
+              return t.indexOf(q) !== -1 || id.indexOf(q) !== -1;
+            });
+          }
+
+          if (sort === "priceAsc") {
+            list.sort(function (a, b) {
+              return parsePrice(a.price) - parsePrice(b.price);
+            });
+          } else if (sort === "priceDesc") {
+            list.sort(function (a, b) {
+              return parsePrice(b.price) - parsePrice(a.price);
+            });
+          } else if (sort === "titleAsc") {
+            list.sort(function (a, b) {
+              return String(a.title || "").localeCompare(String(b.title || ""));
+            });
+          }
+
+          var grid = document.getElementById("admin-catalog-grid");
+          var empty = document.getElementById("admin-catalog-empty");
+          grid.innerHTML = "";
+
+          document.getElementById("admin-shop-meta").textContent = list.length + " products";
+
+          if (!list.length) {
+            empty.classList.remove("d-none");
+            return;
+          }
+          empty.classList.add("d-none");
+
+          for (var i = 0; i < list.length; i++) {
+            var p = list[i];
+            var unit = parsePrice(p.price);
+            var id = getIdForProduct(p);
+            var card = document.createElement("div");
+            card.className = "prod-card";
+            card.setAttribute("data-id", encodeURIComponent(id));
+
+            card.innerHTML =
+              "<div class='prod-img'>" +
+              (p.tag ? "<span class='prod-tag'>" + escapeHtml(p.tag) + "</span>" : "") +
+              "<img src='" +
+              escapeAttr(p.image) +
+              "' alt=''>" +
+              "</div>" +
+              "<div class='prod-body'>" +
+              "<h4 class='prod-title'>" +
+              escapeHtml(p.title || "Product") +
+              "</h4>" +
+              "<div class='prod-meta'>" +
+              "<div class='prod-price'>" +
+              (p.oldPrice ? "<small class='admin-muted' style='text-decoration:line-through;margin-right:8px'>" + escapeHtml(p.oldPrice) + "</small>" : "") +
+              "<span>" +
+              escapeHtml(p.price && String(p.price).trim() ? p.price : formatNaira(unit)) +
+              "</span>" +
+              "</div>" +
+              "<span class='pill'><i class='fas fa-tag'></i> Parts</span>" +
+              "</div>" +
+              "<div class='prod-actions'>" +
+              "<button type='button' class='btn-primary-soft admin-add' data-qty='1'><i class='fas fa-cart-plus me-2'></i>Add</button>" +
+              "<button type='button' class='btn-soft admin-add' data-qty='3'><i class='fas fa-plus me-2'></i>Add x3</button>" +
+              "</div>" +
+              "<div class='small admin-muted' style='margin-top: 0.35rem'>ID: <code>" +
+              escapeHtml(id) +
+              "</code></div>" +
+              "</div>";
+
+            grid.appendChild(card);
+          }
+        }
+
+        document.getElementById("admin-shop-filter").addEventListener("input", render);
+        document.getElementById("admin-shop-sort").addEventListener("change", render);
+
+        document.getElementById("admin-catalog-grid").addEventListener("click", function (e) {
+          var btn = e.target && e.target.closest ? e.target.closest("button") : null;
+          if (!btn || !btn.classList.contains("admin-add")) return;
+          var card = btn.closest("[data-id]");
+          if (!card) return;
+
+          var raw = card.getAttribute("data-id");
+          var id;
+          try {
+            id = decodeURIComponent(raw);
+          } catch (err) {
+            return;
+          }
+
+          var qty = parseInt(btn.getAttribute("data-qty"), 10) || 1;
+          var p = null;
+          for (var i = 0; i < products.length; i++) {
+            if (getIdForProduct(products[i]) === id) {
+              p = products[i];
+              break;
+            }
+          }
+          if (!p) return;
+
+          addLine({
+            id: id,
+            title: p.title,
+            price: p.price,
+            image: p.image,
+            qty: qty
+          });
+          updateCartBadge();
+
+          btn.blur();
+          btn.textContent = "Added";
+          setTimeout(function () {
+            btn.innerHTML = "<i class='fas fa-cart-plus me-2'></i>Add" + (qty === 3 ? " x3" : "");
+          }, 650);
+        });
+
+        document.getElementById("admin-seed-cart").addEventListener("click", function () {
+          // seed cart with 3 items
+          var demo = { items: [] };
+          demo.items.push({ id: getIdForProduct(products[0]), title: products[0].title, price: products[0].price, image: products[0].image, qty: 2 });
+          demo.items.push({ id: getIdForProduct(products[4]), title: products[4].title, price: products[4].price, image: products[4].image, qty: 1 });
+          demo.items.push({ id: getIdForProduct(products[8]), title: products[8].title, price: products[8].price, image: products[8].image, qty: 3 });
+          saveCart(demo);
+          updateCartBadge();
+          alert("Demo cart created. Open Admin Cart to review.");
+        });
+
+        // Keep in sync
+        window.addEventListener("storage", function (ev) {
+          if (ev && ev.key === CART_KEY) updateCartBadge();
+        });
+        window.addEventListener("coscharis-cart-updated", updateCartBadge);
+
+        updateCartBadge();
+        render();
+      })();
+    </script>
+  </body>
+</html>

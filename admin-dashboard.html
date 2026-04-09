@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f1028" />
+    <meta name="description" content="Coscharis Admin — command center for your dealership platform" />
+    <title>Admin Dashboard — Coscharis</title>
+    <link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg" />
+    <link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css" />
+    <style>
+      :root {
+        --admin-bg-deep: #070814;
+        --admin-bg-mid: #12152e;
+        --admin-accent: #e63035;
+        --admin-accent-soft: rgba(230, 48, 53, 0.35);
+        --admin-glass: rgba(255, 255, 255, 0.06);
+        --admin-border: rgba(255, 255, 255, 0.1);
+        --admin-text: #e8eaf4;
+        --admin-muted: #9aa3c2;
+        --admin-secondary: #3c3e90;
+        --admin-success: #2ee59d;
+        --admin-warning: #ffc857;
+        --sidebar-w: 280px;
+        --header-h: 72px;
+        --radius: 16px;
+        --radius-sm: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body.page-admin-dash {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--admin-text);
+        background: var(--admin-bg-deep);
+        overflow-x: hidden;
+      }
+
+      .admin-dash-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          radial-gradient(ellipse 100% 80% at 15% 0%, rgba(60, 62, 144, 0.5) 0%, transparent 55%),
+          radial-gradient(ellipse 80% 60% at 90% 70%, rgba(230, 48, 53, 0.15) 0%, transparent 45%),
+          linear-gradient(168deg, var(--admin-bg-deep) 0%, var(--admin-bg-mid) 42%, #0a0c1a 100%);
+      }
+
+      .admin-dash-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+        background-size: 56px 56px;
+        opacity: 0.55;
+        mask-image: radial-gradient(ellipse 75% 55% at 50% 35%, black 15%, transparent 100%);
+      }
+
+      .admin-shell {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .admin-sidebar {
+        width: var(--sidebar-w);
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 1.25rem 1rem 1rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border-right: 1px solid var(--admin-border);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        transition: transform 0.28s ease, box-shadow 0.28s ease;
+      }
+
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0.75rem 1.25rem;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .admin-brand img {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1px solid var(--admin-border);
+      }
+
+      .admin-brand h1 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .admin-brand span {
+        display: block;
+        font-size: 0.72rem;
+        color: var(--admin-muted);
+        font-weight: 500;
+        margin-top: 2px;
+      }
+
+      .admin-nav-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--admin-muted);
+        padding: 0.75rem 0.75rem 0.35rem;
+        font-weight: 600;
+      }
+
+      .admin-nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: var(--radius-sm);
+        color: var(--admin-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+      }
+
+      .admin-nav a i {
+        width: 1.25rem;
+        text-align: center;
+        opacity: 0.85;
+      }
+
+      .admin-nav a:hover {
+        color: var(--admin-text);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .admin-nav a.is-active {
+        color: #fff;
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.35) 0%, rgba(60, 62, 144, 0.35) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+
+      .admin-sidebar-footer {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--admin-border);
+      }
+
+      .admin-sidebar-footer .btn-logout {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.15s ease;
+      }
+
+      .admin-sidebar-footer .btn-logout:hover {
+        background: rgba(230, 48, 53, 0.22);
+        color: #fff;
+      }
+
+      .admin-sidebar-footer .back-site {
+        display: block;
+        text-align: center;
+        margin-top: 0.75rem;
+        font-size: 0.82rem;
+        color: var(--admin-muted);
+        text-decoration: none;
+      }
+
+      .admin-sidebar-footer .back-site:hover {
+        color: var(--admin-text);
+      }
+
+      /* Main */
+      .admin-main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .admin-header {
+        min-height: var(--header-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--admin-border);
+        background: rgba(7, 8, 20, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+      }
+
+      .admin-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-width: 0;
+      }
+
+      .admin-menu-toggle {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: var(--admin-glass);
+        color: var(--admin-text);
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .admin-header-titles h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .admin-header-titles p {
+        margin: 0.15rem 0 0;
+        font-size: 0.85rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-header-search {
+        flex: 1;
+        max-width: 420px;
+        position: relative;
+      }
+
+      .admin-header-search input {
+        width: 100%;
+        padding: 0.65rem 1rem 0.65rem 2.65rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--admin-text);
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .admin-header-search input::placeholder {
+        color: rgba(154, 163, 194, 0.75);
+      }
+
+      .admin-header-search input:focus {
+        border-color: rgba(230, 48, 53, 0.5);
+        box-shadow: 0 0 0 3px rgba(230, 48, 53, 0.12);
+      }
+
+      .admin-header-search > i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--admin-muted);
+        font-size: 0.95rem;
+      }
+
+      .admin-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .admin-icon-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: var(--admin-glass);
+        color: var(--admin-text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: background 0.18s ease;
+      }
+
+      .admin-icon-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .admin-icon-btn .dot {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--admin-accent);
+        box-shadow: 0 0 0 2px rgba(7, 8, 20, 0.9);
+      }
+
+      .admin-user-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.35rem 0.65rem 0.35rem 0.35rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        cursor: default;
+      }
+
+      .admin-user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--admin-secondary), var(--admin-accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .admin-user-meta {
+        line-height: 1.2;
+        padding-right: 0.25rem;
+      }
+
+      .admin-user-meta strong {
+        display: block;
+        font-size: 0.82rem;
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .admin-user-meta small {
+        font-size: 0.7rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-content {
+        padding: 1.5rem;
+        flex: 1;
+      }
+
+      @media (max-width: 1199px) {
+        .admin-header-search {
+          display: none;
+        }
+      }
+
+      @media (max-width: 991px) {
+        .admin-menu-toggle {
+          display: flex;
+        }
+
+        .admin-sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          z-index: 100;
+          box-shadow: 8px 0 40px rgba(0, 0, 0, 0.45);
+          transform: translateX(-102%);
+        }
+
+        .admin-sidebar.is-open {
+          transform: translateX(0);
+        }
+
+        .admin-sidebar-overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          z-index: 99;
+          background: rgba(0, 0, 0, 0.55);
+          backdrop-filter: blur(2px);
+        }
+
+        .admin-sidebar-overlay.is-visible {
+          display: block;
+        }
+      }
+
+      /* KPI cards */
+      .admin-kpi {
+        border-radius: var(--radius);
+        padding: 1.25rem 1.35rem;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.03) 100%);
+        border: 1px solid var(--admin-border);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        animation: adminKpiIn 0.55s ease backwards;
+      }
+
+      .admin-kpi:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .admin-kpi:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .admin-kpi:nth-child(3) {
+        animation-delay: 0.15s;
+      }
+      .admin-kpi:nth-child(4) {
+        animation-delay: 0.2s;
+      }
+
+      @keyframes adminKpiIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .admin-kpi::before {
+        content: "";
+        position: absolute;
+        top: -40%;
+        right: -20%;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(230, 48, 53, 0.2) 0%, transparent 70%);
+        pointer-events: none;
+      }
+
+      .admin-kpi-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        margin-bottom: 0.85rem;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .admin-kpi-icon--users {
+        color: #8ab4ff;
+      }
+      .admin-kpi-icon--orders {
+        color: var(--admin-success);
+      }
+      .admin-kpi-icon--rev {
+        color: #ffc857;
+      }
+      .admin-kpi-icon--fav {
+        color: #ff8fab;
+      }
+
+      .admin-kpi h3 {
+        margin: 0;
+        font-size: 1.65rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+      }
+
+      .admin-kpi p {
+        margin: 0.25rem 0 0;
+        font-size: 0.8rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-kpi-trend {
+        margin-top: 0.75rem;
+        font-size: 0.78rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .admin-kpi-trend--up {
+        color: var(--admin-success);
+      }
+      .admin-kpi-trend--neutral {
+        color: var(--admin-muted);
+      }
+
+      /* Panels */
+      .admin-panel {
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid var(--admin-border);
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .admin-panel-hd {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--admin-border);
+        gap: 0.75rem;
+      }
+
+      .admin-panel-hd h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .admin-panel-hd a {
+        font-size: 0.82rem;
+        color: var(--admin-accent);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .admin-panel-hd a:hover {
+        text-decoration: underline;
+      }
+
+      .admin-panel-bd {
+        padding: 1rem 1.25rem 1.25rem;
+      }
+
+      /* Chart bars */
+      .admin-chart-bars {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 0.35rem;
+        height: 180px;
+        padding-top: 0.5rem;
+      }
+
+      .admin-chart-bar-wrap {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 0;
+      }
+
+      .admin-chart-bar {
+        width: 100%;
+        max-width: 48px;
+        border-radius: 8px 8px 4px 4px;
+        background: linear-gradient(180deg, rgba(230, 48, 53, 0.85) 0%, rgba(60, 62, 144, 0.5) 100%);
+        min-height: 4px;
+        transition: transform 0.25s ease;
+        position: relative;
+      }
+
+      .admin-chart-bar:hover {
+        transform: scaleY(1.04);
+        filter: brightness(1.08);
+      }
+
+      .admin-chart-bar-wrap small {
+        font-size: 0.65rem;
+        color: var(--admin-muted);
+        white-space: nowrap;
+      }
+
+      .admin-donut-wrap {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .admin-donut {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--admin-success) 0% var(--p1, 100%),
+          rgba(230, 48, 53, 0.65) var(--p1, 100%) 100%
+        );
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .admin-donut::after {
+        content: "";
+        position: absolute;
+        inset: 22px;
+        border-radius: 50%;
+        background: var(--admin-bg-mid);
+        border: 1px solid var(--admin-border);
+      }
+
+      .admin-donut-center {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .admin-donut-center strong {
+        font-size: 1.35rem;
+        font-weight: 800;
+      }
+
+      .admin-donut-center span {
+        font-size: 0.7rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-legend {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 0.85rem;
+      }
+
+      .admin-legend li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-legend i {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        display: inline-block;
+      }
+
+      /* Tables */
+      .admin-table-wrap {
+        overflow-x: auto;
+        margin: 0 -1.25rem;
+        padding: 0 1.25rem;
+      }
+
+      .admin-table {
+        width: 100%;
+        font-size: 0.85rem;
+        border-collapse: collapse;
+      }
+
+      .admin-table th {
+        text-align: left;
+        padding: 0.65rem 0.75rem;
+        color: var(--admin-muted);
+        font-weight: 600;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        border-bottom: 1px solid var(--admin-border);
+      }
+
+      .admin-table td {
+        padding: 0.75rem 0.75rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        vertical-align: middle;
+      }
+
+      .admin-table tbody tr {
+        transition: background 0.15s ease;
+      }
+
+      .admin-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .admin-badge {
+        display: inline-block;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 600;
+      }
+
+      .admin-badge--ok {
+        background: rgba(46, 229, 157, 0.15);
+        color: var(--admin-success);
+      }
+
+      .admin-badge--muted {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--admin-muted);
+      }
+
+      /* Activity */
+      .admin-feed {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .admin-feed-item {
+        display: flex;
+        gap: 0.85rem;
+        padding: 0.85rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .admin-feed-item:last-child {
+        border-bottom: none;
+      }
+
+      .admin-feed-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--admin-accent);
+        flex-shrink: 0;
+      }
+
+      .admin-feed-item p {
+        margin: 0;
+        font-size: 0.88rem;
+        line-height: 1.45;
+      }
+
+      .admin-feed-item time {
+        display: block;
+        font-size: 0.72rem;
+        color: var(--admin-muted);
+        margin-top: 0.25rem;
+      }
+
+      /* Quick links */
+      .admin-quick-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.65rem;
+      }
+
+      .admin-quick-link {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.75rem 0.85rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--admin-text);
+        text-decoration: none;
+        font-size: 0.86rem;
+        font-weight: 600;
+        transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+      }
+
+      .admin-quick-link:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(230, 48, 53, 0.35);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .admin-quick-link i {
+        color: var(--admin-accent);
+        width: 1.1rem;
+        text-align: center;
+      }
+
+      .admin-empty {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--admin-muted);
+        font-size: 0.9rem;
+      }
+
+      .admin-empty i {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        opacity: 0.5;
+        display: block;
+      }
+
+      /* Top products */
+      .admin-mini-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .admin-mini-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.55rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        font-size: 0.88rem;
+      }
+
+      .admin-mini-list li:last-child {
+        border-bottom: none;
+      }
+
+      .admin-mini-list span:last-child {
+        color: var(--admin-muted);
+        font-size: 0.8rem;
+      }
+    </style>
+  </head>
+  <body class="page-admin-dash">
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem("coscharis:admin:v1");
+          var s = raw ? JSON.parse(raw) : null;
+          if (!s || !s.loggedIn) {
+            window.location.replace("admin-login.html");
+          }
+        } catch (e) {
+          window.location.replace("admin-login.html");
+        }
+      })();
+    </script>
+
+    <div class="admin-dash-bg" aria-hidden="true"></div>
+    <div class="admin-sidebar-overlay" id="admin-sidebar-overlay" aria-hidden="true"></div>
+
+    <div class="admin-shell">
+      <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
+        <a class="admin-brand" href="admin-dashboard.html">
+          <img src="coscharis/assets/img/logo/cos-logo.jpeg" alt="" width="44" height="44" />
+          <div>
+            <h1>Coscharis</h1>
+            <span>Admin Console</span>
+          </div>
+        </a>
+
+        <div class="admin-nav-label">Overview</div>
+        <nav class="admin-nav" aria-label="Primary">
+          <a class="is-active" href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+          <a href="index.html"><i class="fas fa-globe"></i> Live site</a>
+        </nav>
+
+        <div class="admin-nav-label">Commerce</div>
+        <nav class="admin-nav">
+          <a href="shop.html"><i class="fas fa-store"></i> Shop</a>
+          <a href="shop-cart.html"><i class="fas fa-shopping-basket"></i> Cart</a>
+          <a href="shop-checkout.html"><i class="fas fa-credit-card"></i> Checkout</a>
+          <a href="inventory-grid.html"><i class="fas fa-warehouse"></i> Inventory</a>
+          <a href="add-listing.html"><i class="fas fa-plus-circle"></i> Add listing</a>
+        </nav>
+
+        <div class="admin-nav-label">Engagement</div>
+        <nav class="admin-nav">
+          <a href="auction.html"><i class="fas fa-gavel"></i> Auctions</a>
+          <a href="listing-grid.html"><i class="fas fa-th-large"></i> Listings</a>
+          <a href="blog-single.html"><i class="fas fa-newspaper"></i> Blog</a>
+        </nav>
+
+        <div class="admin-nav-label">People</div>
+        <nav class="admin-nav">
+          <a href="register.html"><i class="fas fa-user-plus"></i> Registration</a>
+          <a href="contact.html"><i class="fas fa-envelope"></i> Contact leads</a>
+        </nav>
+
+        <div class="admin-sidebar-footer">
+          <button type="button" class="btn-logout" id="admin-logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Sign out
+          </button>
+          <a class="back-site" href="index.html"><i class="fas fa-external-link-alt"></i> View public website</a>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-header">
+          <div class="admin-header-left">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Open menu">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="admin-header-titles">
+              <h2>Command center</h2>
+              <p>Revenue, orders, and customers at a glance</p>
+            </div>
+          </div>
+
+          <div class="admin-header-search">
+            <i class="fas fa-search"></i>
+            <input type="search" id="admin-order-filter" placeholder="Filter recent orders by ID or email…" autocomplete="off" />
+          </div>
+
+          <div class="admin-header-actions">
+            <button type="button" class="admin-icon-btn" id="admin-notify-demo" title="Notifications (demo)">
+              <i class="far fa-bell"></i>
+              <span class="dot" aria-hidden="true"></span>
+            </button>
+            <div class="admin-user-chip" title="Signed-in administrator">
+              <div class="admin-user-avatar" id="admin-user-initials">A</div>
+              <div class="admin-user-meta">
+                <strong id="admin-user-email">admin@coscharis.local</strong>
+                <small>Administrator</small>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="admin-content">
+          <div class="row g-3 g-lg-4 mb-4">
+            <div class="col-6 col-xl-3">
+              <div class="admin-kpi">
+                <div class="admin-kpi-icon admin-kpi-icon--users"><i class="fas fa-users"></i></div>
+                <h3 id="kpi-users">0</h3>
+                <p>Registered customers</p>
+                <div class="admin-kpi-trend admin-kpi-trend--neutral" id="kpi-users-note">
+                  <i class="fas fa-database"></i> From site registration
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-xl-3">
+              <div class="admin-kpi">
+                <div class="admin-kpi-icon admin-kpi-icon--orders"><i class="fas fa-receipt"></i></div>
+                <h3 id="kpi-orders">0</h3>
+                <p>Total orders</p>
+                <div class="admin-kpi-trend admin-kpi-trend--up" id="kpi-orders-note">
+                  <i class="fas fa-shopping-cart"></i> Checkout completions
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-xl-3">
+              <div class="admin-kpi">
+                <div class="admin-kpi-icon admin-kpi-icon--rev"><i class="fas fa-coins"></i></div>
+                <h3 id="kpi-revenue">₦0</h3>
+                <p>Lifetime revenue</p>
+                <div class="admin-kpi-trend admin-kpi-trend--neutral" id="kpi-revenue-note">
+                  <i class="fas fa-chart-line"></i> Sum of order totals
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-xl-3">
+              <div class="admin-kpi">
+                <div class="admin-kpi-icon admin-kpi-icon--fav"><i class="fas fa-heart"></i></div>
+                <h3 id="kpi-favorites">0</h3>
+                <p>Saved vehicles</p>
+                <div class="admin-kpi-trend admin-kpi-trend--neutral" id="kpi-fav-note">
+                  <i class="fas fa-eye"></i> Customer interest signals
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 g-lg-4 mb-4">
+            <div class="col-lg-8">
+              <div class="admin-panel">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-chart-area me-2 text-danger"></i> Revenue (last 7 days)</h3>
+                  <a href="shop-checkout.html">Open checkout</a>
+                </div>
+                <div class="admin-panel-bd">
+                  <div class="admin-chart-bars" id="admin-chart-bars" aria-label="Revenue by day"></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="admin-panel">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-pie-chart me-2 text-danger"></i> Order mix</h3>
+                </div>
+                <div class="admin-panel-bd">
+                  <div class="admin-donut-wrap">
+                    <div class="admin-donut" id="admin-donut" style="--p1: 100%">
+                      <div class="admin-donut-center">
+                        <strong id="donut-pct">100%</strong>
+                        <span>Paid</span>
+                      </div>
+                    </div>
+                    <ul class="admin-legend">
+                      <li><i style="background: var(--admin-success)"></i> <span id="legend-paid">Paid orders</span></li>
+                      <li><i style="background: rgba(230, 48, 53, 0.65)"></i> <span id="legend-other">Awaiting / demo</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 g-lg-4 mb-4">
+            <div class="col-lg-7">
+              <div class="admin-panel">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-list me-2 text-danger"></i> Recent orders</h3>
+                  <a href="shop.html">Browse shop</a>
+                </div>
+                <div class="admin-panel-bd pt-0">
+                  <div class="admin-table-wrap">
+                    <table class="admin-table" id="admin-orders-table">
+                      <thead>
+                        <tr>
+                          <th>Order</th>
+                          <th>Customer</th>
+                          <th>Total</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody id="admin-orders-tbody"></tbody>
+                    </table>
+                  </div>
+                  <div class="admin-empty d-none" id="admin-orders-empty">
+                    <i class="far fa-folder-open"></i>
+                    No orders yet. Complete a checkout on the site to see data here.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-5">
+              <div class="admin-panel">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-stream me-2 text-danger"></i> Activity</h3>
+                </div>
+                <div class="admin-panel-bd" id="admin-activity-feed"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 g-lg-4">
+            <div class="col-lg-5">
+              <div class="admin-panel">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-trophy me-2 text-danger"></i> Top products</h3>
+                </div>
+                <div class="admin-panel-bd">
+                  <ul class="admin-mini-list" id="admin-top-products"></ul>
+                  <div class="admin-empty d-none" id="admin-top-empty">
+                    <i class="fas fa-box-open"></i>
+                    No product data until orders include line items.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-7">
+              <div class="admin-panel">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-bolt me-2 text-danger"></i> Quick actions</h3>
+                </div>
+                <div class="admin-panel-bd">
+                  <div class="admin-quick-grid">
+                    <a class="admin-quick-link" href="add-listing.html"><i class="fas fa-car"></i> New vehicle listing</a>
+                    <a class="admin-quick-link" href="inventory-grid.html"><i class="fas fa-th"></i> Inventory grid</a>
+                    <a class="admin-quick-link" href="auction.html"><i class="fas fa-gavel"></i> Manage auctions</a>
+                    <a class="admin-quick-link" href="shop.html"><i class="fas fa-tags"></i> Parts &amp; shop</a>
+                    <a class="admin-quick-link" href="register.html"><i class="fas fa-user-check"></i> User registration</a>
+                    <a class="admin-quick-link" href="contact.html"><i class="fas fa-headset"></i> Contact &amp; support</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-center mt-4 mb-0 small" style="color: var(--admin-muted)">
+            Coscharis Admin · Frontend demo · Connect your API to unlock live sync
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="coscharis/assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+      (function () {
+        var ADMIN_KEY = "coscharis:admin:v1";
+        var USERS_KEY = "coscharis:users:v1";
+        var ORDERS_KEY = "coscharis:orders:v1";
+        var FAV_KEY = "coscharis:favorites:v1";
+
+        function safeParse(json) {
+          try {
+            return JSON.parse(json);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function escapeHtml(s) {
+          if (s == null) return "";
+          var d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+
+        function formatNaira(n) {
+          var num = Number(n);
+          if (isNaN(num)) return "—";
+          try {
+            return new Intl.NumberFormat("en-NG", {
+              style: "currency",
+              currency: "NGN",
+              maximumFractionDigits: 0
+            }).format(num);
+          } catch (e) {
+            return "₦" + num.toLocaleString("en-NG");
+          }
+        }
+
+        function loadUsers() {
+          var u = safeParse(localStorage.getItem(USERS_KEY));
+          return Array.isArray(u) ? u : [];
+        }
+
+        function loadOrders() {
+          var o = safeParse(localStorage.getItem(ORDERS_KEY));
+          return Array.isArray(o) ? o : [];
+        }
+
+        function loadFavorites() {
+          var f = safeParse(localStorage.getItem(FAV_KEY));
+          return Array.isArray(f) ? f : [];
+        }
+
+        function sumOrderRevenue(orders) {
+          var t = 0;
+          for (var i = 0; i < orders.length; i++) {
+            t += Number(orders[i].total) || 0;
+          }
+          return t;
+        }
+
+        function aggregateTopProducts(orders) {
+          var map = {};
+          for (var i = 0; i < orders.length; i++) {
+            var items = orders[i].items;
+            if (!items || !items.length) continue;
+            for (var j = 0; j < items.length; j++) {
+              var it = items[j];
+              var title = (it.title || "Item").trim() || "Item";
+              var qty = parseInt(it.qty, 10) || 1;
+              map[title] = (map[title] || 0) + qty;
+            }
+          }
+          return Object.keys(map)
+            .map(function (k) {
+              return { title: k, qty: map[k] };
+            })
+            .sort(function (a, b) {
+              return b.qty - a.qty;
+            })
+            .slice(0, 6);
+        }
+
+        function buildLast7DaysBuckets() {
+          var byDay = {};
+          var labels = [];
+          var now = new Date();
+          for (var i = 6; i >= 0; i--) {
+            var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+            var key = d.toISOString().slice(0, 10);
+            byDay[key] = 0;
+            labels.push({ key: key, date: d });
+          }
+          return { byDay: byDay, labels: labels };
+        }
+
+        function fillRevenueByDay(orders, byDay) {
+          for (var i = 0; i < orders.length; i++) {
+            var o = orders[i];
+            if (!o.createdAt) continue;
+            var k = o.createdAt.slice(0, 10);
+            if (byDay[k] !== undefined) {
+              byDay[k] += Number(o.total) || 0;
+            }
+          }
+        }
+
+        function renderChart(labels, byDay) {
+          var el = document.getElementById("admin-chart-bars");
+          el.innerHTML = "";
+          var vals = labels.map(function (L) {
+            return byDay[L.key] || 0;
+          });
+          var max = Math.max.apply(null, vals.concat([1]));
+          labels.forEach(function (L) {
+            var v = byDay[L.key] || 0;
+            var pct = Math.round((v / max) * 100);
+            var wrap = document.createElement("div");
+            wrap.className = "admin-chart-bar-wrap";
+            var bar = document.createElement("div");
+            bar.className = "admin-chart-bar";
+            bar.style.height = Math.max(8, pct) + "%";
+            bar.title = formatNaira(v);
+            var lbl = document.createElement("small");
+            lbl.textContent = L.date.toLocaleDateString(undefined, { weekday: "short" });
+            wrap.appendChild(bar);
+            wrap.appendChild(lbl);
+            el.appendChild(wrap);
+          });
+        }
+
+        var session = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
+        var email = (session.email || "admin@coscharis.local").trim();
+        document.getElementById("admin-user-email").textContent = email;
+        var ini = email.charAt(0).toUpperCase();
+        document.getElementById("admin-user-initials").textContent = ini;
+
+        var users = loadUsers();
+        var orders = loadOrders();
+        var favorites = loadFavorites();
+
+        document.getElementById("kpi-users").textContent = String(users.length);
+        document.getElementById("kpi-orders").textContent = String(orders.length);
+        document.getElementById("kpi-revenue").textContent = formatNaira(sumOrderRevenue(orders));
+        document.getElementById("kpi-favorites").textContent = String(favorites.length);
+
+        var bucket = buildLast7DaysBuckets();
+        fillRevenueByDay(orders, bucket.byDay);
+        renderChart(bucket.labels, bucket.byDay);
+
+        var paidCount = orders.length;
+        var otherCount = 0;
+        var totalMix = paidCount + otherCount || 1;
+        var paidPct = Math.round((paidCount / totalMix) * 100);
+        document.getElementById("admin-donut").style.setProperty("--p1", paidPct + "%");
+        document.getElementById("donut-pct").textContent = paidPct + "%";
+
+        function renderOrdersTable(filter) {
+          var q = (filter || "").trim().toLowerCase();
+          var tbody = document.getElementById("admin-orders-tbody");
+          var empty = document.getElementById("admin-orders-empty");
+          var table = document.getElementById("admin-orders-table");
+          tbody.innerHTML = "";
+          var list;
+          if (q) {
+            list = orders.filter(function (o) {
+              var id = (o.id || "").toLowerCase();
+              var em = ((o.billing && o.billing.email) || "").toLowerCase();
+              return id.indexOf(q) !== -1 || em.indexOf(q) !== -1;
+            });
+          } else {
+            list = orders.slice(0, 12);
+          }
+          if (!list.length) {
+            table.classList.add("d-none");
+            empty.classList.remove("d-none");
+            return;
+          }
+          table.classList.remove("d-none");
+          empty.classList.add("d-none");
+          list.forEach(function (o) {
+            var tr = document.createElement("tr");
+            var cust = o.billing
+              ? (o.billing.first || "") + " " + (o.billing.last || "") + " · " + (o.billing.email || "")
+              : "—";
+            tr.innerHTML =
+              "<td><strong>" +
+              escapeHtml(o.id || "—") +
+              "</strong><br/><small class='text-muted' style='color:var(--admin-muted)!important'>" +
+              escapeHtml(
+                o.createdAt
+                  ? new Date(o.createdAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })
+                  : ""
+              ) +
+              "</small></td>" +
+              "<td>" +
+              escapeHtml(cust.trim()) +
+              "</td>" +
+              "<td>" +
+              escapeHtml(formatNaira(o.total)) +
+              "</td>" +
+              "<td><span class='admin-badge admin-badge--ok'>Paid</span></td>";
+            tbody.appendChild(tr);
+          });
+        }
+
+        renderOrdersTable("");
+
+        document.getElementById("admin-order-filter").addEventListener("input", function () {
+          renderOrdersTable(this.value);
+        });
+
+        var top = aggregateTopProducts(orders);
+        var topEl = document.getElementById("admin-top-products");
+        var topEmpty = document.getElementById("admin-top-empty");
+        if (!top.length) {
+          topEmpty.classList.remove("d-none");
+        } else {
+          top.forEach(function (row) {
+            var li = document.createElement("li");
+            li.innerHTML = "<span>" + escapeHtml(row.title) + "</span><span>" + row.qty + " sold</span>";
+            topEl.appendChild(li);
+          });
+        }
+
+        var feed = document.getElementById("admin-activity-feed");
+        var activities = [];
+        orders.slice(0, 8).forEach(function (o) {
+          activities.push({
+            icon: "fa-receipt",
+            text: "Order <strong>" + escapeHtml(o.id || "") + "</strong> completed for " + escapeHtml(formatNaira(o.total)) + ".",
+            time: o.createdAt ? new Date(o.createdAt).toLocaleString() : ""
+          });
+        });
+        users.slice(-5).forEach(function (u) {
+          activities.push({
+            icon: "fa-user-plus",
+            text: "Customer registered: <strong>" + escapeHtml(u.email || "") + "</strong>.",
+            time: "Stored locally"
+          });
+        });
+        if (!activities.length) {
+          feed.innerHTML =
+            '<div class="admin-empty"><i class="fas fa-satellite-dish"></i>No activity yet. Interactions on the site will appear here.</div>';
+        } else {
+          feed.innerHTML = activities
+            .slice(0, 10)
+            .map(function (a) {
+              return (
+                '<div class="admin-feed-item"><div class="admin-feed-icon"><i class="fas ' +
+                a.icon +
+                '"></i></div><div><p>' +
+                a.text +
+                "</p><time>" +
+                escapeHtml(a.time) +
+                "</time></div></div>"
+              );
+            })
+            .join("");
+        }
+
+        document.getElementById("admin-logout-btn").addEventListener("click", function () {
+          try {
+            localStorage.removeItem(ADMIN_KEY);
+          } catch (e) {}
+          window.location.href = "admin-login.html";
+        });
+
+        var sidebar = document.getElementById("admin-sidebar");
+        var overlay = document.getElementById("admin-sidebar-overlay");
+        function closeMenu() {
+          sidebar.classList.remove("is-open");
+          overlay.classList.remove("is-visible");
+        }
+        function openMenu() {
+          sidebar.classList.add("is-open");
+          overlay.classList.add("is-visible");
+        }
+        document.getElementById("admin-menu-toggle").addEventListener("click", function () {
+          if (sidebar.classList.contains("is-open")) closeMenu();
+          else openMenu();
+        });
+        overlay.addEventListener("click", closeMenu);
+
+        document.getElementById("admin-notify-demo").addEventListener("click", function () {
+          alert("Notifications will connect to your backend. This is a demo console.");
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,196 @@
+/* Coscharis inner pages — load after style.css; use with <body class="page-coscharis"> */
+
+body.page-coscharis {
+  background: linear-gradient(180deg, #f6f7fc 0%, #ffffff 28%);
+}
+
+body.page-coscharis .site-breadcrumb {
+  position: relative;
+  overflow: hidden;
+}
+
+body.page-coscharis .site-breadcrumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    125deg,
+    rgba(var(--brand-primary-rgb), 0.32) 0%,
+    rgba(1, 6, 15, 0.55) 42%,
+    rgba(var(--brand-secondary-rgb), 0.28) 100%
+  );
+  mix-blend-mode: multiply;
+}
+
+body.page-coscharis .site-breadcrumb .container {
+  position: relative;
+  z-index: 1;
+}
+
+body.page-coscharis .site-breadcrumb .breadcrumb-title {
+  letter-spacing: -0.02em;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+body.page-coscharis .site-breadcrumb .breadcrumb-menu {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 10px 22px;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+body.page-coscharis .car-sidebar .car-widget {
+  border-radius: 14px;
+  transition: var(--transition2);
+  box-shadow: var(--box-shadow);
+  border: 1px solid var(--border-info-color2);
+}
+
+body.page-coscharis .car-sidebar .car-widget:hover {
+  box-shadow: var(--box-shadow2);
+}
+
+body.page-coscharis .car-area .car-item {
+  border-radius: 14px;
+  overflow: hidden;
+  transition: var(--transition2);
+  box-shadow: var(--box-shadow);
+}
+
+body.page-coscharis .car-area .car-item:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--box-shadow2);
+}
+
+body.page-coscharis .car-area.list .car-item {
+  border: 1px solid var(--border-info-color2);
+}
+
+body.page-coscharis .car-sort,
+body.page-coscharis .car-sort-box {
+  border-radius: 12px;
+  border: 1px solid var(--border-info-color2);
+  box-shadow: var(--box-shadow);
+}
+
+body.page-coscharis .team-item,
+body.page-coscharis .dealer-item {
+  border-radius: 14px;
+  overflow: hidden;
+  transition: var(--transition2);
+  box-shadow: var(--box-shadow);
+}
+
+body.page-coscharis .team-item:hover,
+body.page-coscharis .dealer-item:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--box-shadow2);
+}
+
+body.page-coscharis .blog-item,
+body.page-coscharis .blog-item-wrap {
+  border-radius: 14px;
+  transition: var(--transition2);
+}
+
+body.page-coscharis .blog-item:hover {
+  box-shadow: var(--box-shadow2);
+}
+
+body.page-coscharis .brand-item {
+  border-radius: 12px;
+  transition: var(--transition2);
+}
+
+body.page-coscharis .brand-item:hover {
+  background: rgba(var(--brand-primary-rgb), 0.05);
+}
+
+body.page-coscharis .shop-item,
+body.page-coscharis .shop-item-single {
+  border-radius: 14px;
+  transition: var(--transition2);
+}
+
+body.page-coscharis .shop-item:hover {
+  box-shadow: var(--box-shadow2);
+}
+
+body.page-coscharis .pricing-item {
+  border-radius: 14px;
+  transition: var(--transition2);
+}
+
+body.page-coscharis .faq-area .accordion-item {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+body.page-coscharis .login-area .login-form,
+body.page-coscharis .register-area .register-form {
+  border-radius: 16px;
+  box-shadow: var(--box-shadow), 0 24px 48px rgba(17, 17, 17, 0.06);
+  border: 1px solid var(--border-info-color2);
+}
+
+body.page-coscharis .contact-area .contact-content,
+body.page-coscharis .contact-map .contact-map-content {
+  border-radius: 14px;
+  transition: var(--transition2);
+}
+
+body.page-coscharis .service-item {
+  border-radius: 14px;
+  transition: var(--transition2);
+}
+
+body.page-coscharis .service-item:hover {
+  box-shadow: var(--box-shadow2);
+}
+
+body.page-coscharis .pagination .page-link {
+  transition: var(--transition2);
+}
+
+body.page-coscharis .pagination .page-link:hover {
+  transform: translateY(-2px);
+}
+
+body.page-coscharis .car-item-single .car-single-widget,
+body.page-coscharis .car-key-item {
+  border-radius: 12px;
+  transition: var(--transition2);
+}
+
+body.page-coscharis .car-key-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--box-shadow);
+}
+
+body.page-coscharis .compare-table table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+body.page-coscharis .dashboard-content .dashboard-widget {
+  border-radius: 14px;
+  transition: var(--transition2);
+}
+
+body.page-coscharis .add-listing-form .form-group .form-control,
+body.page-coscharis .profile-form .form-control {
+  border-radius: 10px;
+}
+
+@media (max-width: 991px) {
+  body.page-coscharis .site-breadcrumb .breadcrumb-menu {
+    border-radius: 12px;
+  }
+}

@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#e63035" />
+<meta name="msapplication-TileColor" content="#3c3e90" />
+<meta name="description" content>
+<meta name="keywords" content>
+
+<title>Inventory List — Coscharis | Car Dealer & Automotive</title>
+
+<link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg">
+
+<link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css">
+<link rel="stylesheet" href="coscharis/assets/css/flaticon.css">
+<link rel="stylesheet" href="coscharis/assets/css/animate.min.css">
+<link rel="stylesheet" href="coscharis/assets/css/magnific-popup.min.css">
+<link rel="stylesheet" href="coscharis/assets/css/owl.carousel.min.css">
+<link rel="stylesheet" href="coscharis/assets/css/jquery-ui.min.css">
+<link rel="stylesheet" href="coscharis/assets/css/nice-select.min.css">
+<link rel="stylesheet" href="coscharis/assets/css/style.css">
+<style>
+  body.page-inventory-list {
+    background: linear-gradient(180deg, #fafbfc 0%, #ffffff 24%);
+  }
+
+  body.page-inventory-list .site-breadcrumb {
+    position: relative;
+    overflow: hidden;
+  }
+
+  body.page-inventory-list .site-breadcrumb::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      125deg,
+      rgba(230, 48, 53, 0.32) 0%,
+      rgba(1, 6, 15, 0.55) 42%,
+      rgba(60, 62, 144, 0.2) 100%
+    );
+    mix-blend-mode: multiply;
+  }
+
+  body.page-inventory-list .site-breadcrumb .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  body.page-inventory-list .site-breadcrumb .breadcrumb-title {
+    letter-spacing: -0.02em;
+    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  body.page-inventory-list .site-breadcrumb .breadcrumb-menu {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    padding: 10px 22px;
+    display: inline-flex;
+    align-items: center;
+    margin-top: 8px;
+  }
+
+  body.page-inventory-list .car-sidebar .car-widget {
+    border-radius: 14px;
+    transition: var(--transition2);
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--border-info-color2);
+  }
+
+  body.page-inventory-list .car-sidebar .car-widget:hover {
+    box-shadow: var(--box-shadow2);
+  }
+
+  body.page-inventory-list .car-area.list .car-item {
+    border-radius: 14px;
+    overflow: hidden;
+    transition: var(--transition2);
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--border-info-color2);
+  }
+
+  body.page-inventory-list .car-area.list .car-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--box-shadow2);
+  }
+
+  body.page-inventory-list .car-area.list .car-list li {
+    transition: var(--transition2);
+  }
+
+  body.page-inventory-list .car-sort,
+  body.page-inventory-list .car-sort-box {
+    border-radius: 12px;
+    border: 1px solid var(--border-info-color2);
+    box-shadow: var(--box-shadow);
+  }
+
+  body.page-inventory-list .pagination .page-link {
+    transition: var(--transition2);
+  }
+
+  body.page-inventory-list .pagination .page-link:hover {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 991px) {
+    body.page-inventory-list .site-breadcrumb .breadcrumb-menu {
+      border-radius: 12px;
+    }
+  }
+</style>
+</head>
+<body class="page-inventory-list">
+
+<header class="header">
+
+<div class="header-top">
+<div class="container">
+<div class="header-top-wrapper">
+<div class="header-top-left">
+<div class="header-top-contact">
+<ul>
+<li><a href="/cdn-cgi/l/email-protection#b1d8dfd7def1d4c9d0dcc1ddd49fd2dedc"><i class="far fa-envelopes"></i>
+<span class="__cf_email__" data-cfemail="274e49414867425f464a574b420944484a">[email&#160;protected]</span></a></li>
+<li><a href="tel:+21236547898"><i class="far fa-phone-volume"></i> +2 123 654 7898</a>
+</li>
+<li><a href="#" class="coscharis-live-datetime"><i class="far fa-alarm-clock"></i> <span class="coscharis-live-datetime-text">—</span></a></li>
+</ul>
+</div>
+</div>
+<div class="header-top-right">
+<div class="header-top-link">
+<a href="#"><i class="far fa-arrow-right-to-arc"></i> Login</a>
+<a href="#"><i class="far fa-user-vneck"></i> Register</a>
+</div>
+<div class="header-top-social">
+<span>Follow Us: </span>
+<a href="#"><i class="fab fa-facebook"></i></a>
+<a href="#"><i class="fab fa-x-twitter"></i></a>
+<a href="#"><i class="fab fa-instagram"></i></a>
+<a href="#"><i class="fab fa-linkedin"></i></a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="main-navigation">
+<nav class="navbar navbar-expand-lg">
+<div class="container position-relative">
+<a class="navbar-brand" href="index.html">
+<img src="coscharis/assets/img/logo/cos-logo.jpeg" alt="logo">
+</a>
+<div class="mobile-menu-right">
+<div class="search-btn">
+<button type="button" class="nav-right-link"><i class="far fa-search"></i></button>
+</div>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav" aria-expanded="false" aria-label="Toggle navigation">
+<span class="navbar-toggler-mobile-icon"><i class="far fa-bars"></i></span>
+</button>
+</div>
+<div class="collapse navbar-collapse" id="main_nav">
+<ul class="navbar-nav">
+<li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+<li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">Inventory</a>
+<ul class="dropdown-menu fade-down">
+<li><a class="dropdown-item" href="inventory-grid.html">Inventory Grid</a></li>
+<li><a class="dropdown-item active" href="inventory-list.html">Inventory List</a></li>
+<li><a class="dropdown-item" href="inventory-single.html">Inventory Single</a></li>
+</ul>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Pages</a>
+<ul class="dropdown-menu fade-down">
+<li><a class="dropdown-item" href="about.html">About Us</a></li>
+<li class="dropdown-submenu">
+<a class="dropdown-item dropdown-toggle" href="#">Car Listing</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="listing-grid.html">Listing Grid</a></li>
+<li><a class="dropdown-item" href="listing-list.html">Listing List</a></li>
+<li><a class="dropdown-item" href="listing-single.html">Listing Single</a>
+<li><a class="dropdown-item" href="compare.html">Compare</a></li>
+</ul>
+</li>
+<li class="dropdown-submenu">
+<a class="dropdown-item dropdown-toggle" href="#">My Account</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="dashboard.html">Dashboard</a></li>
+<li><a class="dropdown-item" href="profile.html">My Profile</a></li>
+<li><a class="dropdown-item" href="profile-listing.html">My Listing</a></li>
+<li><a class="dropdown-item" href="add-listing.html">Add Listing</a></li>
+<li><a class="dropdown-item" href="profile-favorite.html">My Favorites</a>
+</li>
+<li><a class="dropdown-item" href="profile-message.html">Messages</a></li>
+<li><a class="dropdown-item" href="profile-setting.html">Settings</a></li>
+</ul>
+</li>
+<li class="dropdown-submenu">
+<a class="dropdown-item dropdown-toggle" href="#">Authentication</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="login.html">Login</a></li>
+<li><a class="dropdown-item" href="register.html">Register</a></li>
+<li><a class="dropdown-item" href="forgot-password.html">Forgot Password</a>
+</li>
+</ul>
+</li>
+<li class="dropdown-submenu">
+<a class="dropdown-item dropdown-toggle" href="#">Services</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="service.html">Services</a></li>
+<li><a class="dropdown-item" href="service-single.html">Service Single</a>
+</li>
+</ul>
+</li>
+<li class="dropdown-submenu">
+<a class="dropdown-item dropdown-toggle" href="#">Dealer</a>
+<ul class="dropdown-menu">
+<li><a class="dropdown-item" href="dealer.html">Dealer</a></li>
+<li><a class="dropdown-item" href="dealer-single.html">Dealer Single</a>
+</li>
+</ul>
+</li>
+<li><a class="dropdown-item" href="team.html">Our Team</a></li>
+<li><a class="dropdown-item" href="faq.html">Faq</a></li>
+</ul>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Shop</a>
+<ul class="dropdown-menu fade-down">
+<li><a class="dropdown-item" href="shop.html">Shop</a></li>
+<li><a class="dropdown-item" href="shop-cart.html">Shop Cart</a></li>
+<li><a class="dropdown-item" href="shop-checkout.html">Shop Checkout</a></li>
+<li><a class="dropdown-item" href="shop-single.html">Shop Single</a></li>
+</ul>
+</li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Blog</a>
+<ul class="dropdown-menu fade-down">
+<li><a class="dropdown-item" href="blog-single.html">Blog Single</a></li>
+</ul>
+</li>
+<li class="nav-item"><a class="nav-link" href="auction.html"><span class="far fa-gavel"></span> Live Auctions</a></li>
+<li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+</ul>
+<div class="nav-right">
+<div class="search-btn">
+<button type="button" class="nav-right-link"><i class="far fa-search"></i></button>
+</div>
+<div class="cart-btn">
+<a href="#" class="nav-right-link"><i class="far fa-cart-plus"></i><span>0</span></a>
+</div>
+<div class="nav-right-btn mt-2">
+<a href="#" class="theme-btn"><span class="far fa-plus-circle"></span>Add Listing</a>
+</div>
+<div class="sidebar-btn">
+<button type="button" class="nav-right-link"><i class="far fa-bars-sort"></i></button>
+</div>
+</div>
+</div>
+
+<div class="search-area">
+<form action="#">
+<div class="form-group">
+<input type="text" class="form-control" placeholder="Type Keyword...">
+<button type="submit" class="search-icon-btn"><i class="far fa-search"></i></button>
+</div>
+</form>
+</div>
+
+</div>
+</nav>
+</div>
+</header>
+
+
+<div class="sidebar-popup">
+<div class="sidebar-wrapper">
+<div class="sidebar-content">
+<button type="button" class="close-sidebar-popup"><i class="far fa-xmark"></i></button>
+<div class="sidebar-logo">
+<img src="coscharis/assets/img/logo/cos-logo.jpeg" alt>
+</div>
+<div class="sidebar-about">
+<h4>About Us</h4>
+<p>There are many variations of passages available sure there majority have suffered alteration in
+some form by injected humour or randomised words which don't look even slightly believable.</p>
+</div>
+<div class="sidebar-contact">
+<h4>Contact Info</h4>
+<ul>
+<li>
+<h6>Email</h6>
+<a href="/cdn-cgi/l/email-protection#90f9fef6ffd0f5e8f1fde0fcf5bef3fffd"><i class="far fa-envelope"></i><span class="__cf_email__" data-cfemail="325b5c545d72574a535f425e571c515d5f">[email&#160;protected]</span></a>
+</li>
+<li>
+<h6>Phone</h6>
+<a href="tel:+21236547898"><i class="far fa-phone"></i>+2 123 654 7898</a>
+</li>
+<li>
+<h6>Address</h6>
+<a href="#"><i class="far fa-location-dot"></i>25/B Milford Road, New York</a>
+</li>
+</ul>
+</div>
+<div class="sidebar-social">
+<h4>Follow Us</h4>
+<a href="#"><i class="fab fa-facebook"></i></a>
+<a href="#"><i class="fab fa-x-twitter"></i></a>
+<a href="#"><i class="fab fa-instagram"></i></a>
+<a href="#"><i class="fab fa-linkedin"></i></a>
+</div>
+</div>
+</div>
+</div>
+
+<main class="main">
+
+<div class="site-breadcrumb" style="background: url(coscharis/assets/img/breadcrumb/01.jpg)">
+<div class="container">
+<h2 class="breadcrumb-title">Inventory List</h2>
+<ul class="breadcrumb-menu">
+<li><a href="index.html">Home</a></li>
+<li class="active">Inventory List</li>
+</ul>
+</div>
+</div>
+
+
+<div class="car-area list bg py-120">
+<div class="container">
+<div class="row">
+<div class="col-lg-3">
+<div class="car-sidebar">
+<div class="car-widget">
+<div class="car-search-form">
+<h4 class="car-widget-title">Search</h4>
+<form action="#">
+<div class="form-group">
+<input type="text" class="form-control" placeholder="Search">
+<button type="search"><i class="far fa-search"></i></button>
+</div>
+</form>
+</div>
+</div>
+<div class="car-widget">
+<h4 class="car-widget-title">Brands</h4>
+<ul>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="brand">
+<label class="form-check-label" for="brand"> All Brands</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="brand1">
+<label class="form-check-label" for="brand1"> BMW</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" checked type="checkbox" id="brand2">
+<label class="form-check-label" for="brand2"> Toyota</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="brand3">
+<label class="form-check-label" for="brand3"> Ferrari</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" checked type="checkbox" id="brand4">
+<label class="form-check-label" for="brand4"> Audi</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="brand5">
+<label class="form-check-label" for="brand5"> Tesla</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="brand6">
+<label class="form-check-label" for="brand6"> Mercedes</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="brand7">
+<label class="form-check-label" for="brand7"> Hyundai</label>
+</div>
+</li>
+</ul>
+</div>
+<div class="car-widget">
+<h4 class="car-widget-title">Price Range</h4>
+<div class="price-range-box">
+<div class="price-range-input">
+<input type="text" id="price-amount" readonly>
+</div>
+<div class="price-range"></div>
+</div>
+</div>
+<div class="car-widget">
+<h4 class="car-widget-title">Transmission</h4>
+<ul>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="tran1">
+<label class="form-check-label" for="tran1"> Automatic</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" checked type="checkbox" id="tran2">
+<label class="form-check-label" for="tran2"> Manual</label>
+</div>
+</li>
+</ul>
+</div>
+<div class="car-widget">
+<h4 class="car-widget-title">Fuel Type</h4>
+<ul>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="fuel1">
+<label class="form-check-label" for="fuel1"> Gas</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" checked type="checkbox" id="fuel2">
+<label class="form-check-label" for="fuel2"> Hybrid</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="fuel3">
+<label class="form-check-label" for="fuel3"> Diesel</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="fuel4">
+<label class="form-check-label" for="fuel4"> Eletric</label>
+</div>
+</li>
+</ul>
+</div>
+<div class="car-widget">
+<h4 class="car-widget-title">Features</h4>
+<ul>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="feature1">
+<label class="form-check-label" for="feature1"> Airbag - Driver</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" checked type="checkbox" id="feature2">
+<label class="form-check-label" for="feature2"> Airbag - Passenger</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="feature3">
+<label class="form-check-label" for="feature3"> Alloy Wheels</label>
+</div>
+</li>
+<li>
+<div class="form-check">
+<input class="form-check-input" type="checkbox" id="feature4">
+<label class="form-check-label" for="feature4"> Anti-lock Braking System</label>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-lg-9">
+<div class="col-md-12">
+<div class="car-sort">
+<h6>Showing 1-10 of 50 Results</h6>
+<div class="car-sort-list-grid">
+<a class="car-sort-grid" href="listing-grid.html"><i class="far fa-grid-2"></i></a>
+<a class="car-sort-list active" href="listing-list.html"><i class="far fa-list-ul"></i></a>
+</div>
+<div class="col-md-3 car-sort-box">
+<select class="select">
+<option value="1">Sort By Default</option>
+<option value="5">Sort By Featured</option>
+<option value="2">Sort By Latest</option>
+<option value="3">Sort By Low Price</option>
+<option value="4">Sort By High Price</option>
+</select>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-md-6 col-lg-12">
+<div class="car-item">
+<div class="car-img">
+<span class="car-status status-1">Used</span>
+<img src="coscharis/assets/img/car/01.jpg" alt>
+<div class="car-btns">
+<a href="#"><i class="far fa-heart"></i></a>
+<a href="#"><i class="far fa-arrows-repeat"></i></a>
+</div>
+</div>
+<div class="car-content">
+<div class="car-top">
+<h4><a href="#">Mercedes Benz Car</a></h4>
+<div class="car-rate">
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<span>5.0 (58.5k Review)</span>
+</div>
+</div>
+<ul class="car-list">
+<li><i class="far fa-steering-wheel"></i>Automatic</li>
+<li><i class="far fa-road"></i>10.15km / 1-litre</li>
+<li><i class="far fa-car"></i>Model: 2024</li>
+<li><i class="far fa-gas-pump"></i>Hybrid</li>
+</ul>
+<p>
+There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.
+</p>
+<div class="car-footer">
+<span class="car-price">₦72,992,000</span>
+<a href="#" class="theme-btn"><span class="far fa-eye"></span>Details</a>
+</div>
+</div>
+</div>
+</div>
+<div class="col-md-6 col-lg-12">
+<div class="car-item">
+<div class="car-img">
+<img src="coscharis/assets/img/car/02.jpg" alt>
+<div class="car-btns">
+<a href="#"><i class="far fa-heart"></i></a>
+<a href="#"><i class="far fa-arrows-repeat"></i></a>
+</div>
+</div>
+<div class="car-content">
+<div class="car-top">
+<h4><a href="#">Yellow Ferrari 458</a></h4>
+<div class="car-rate">
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<span>5.0 (58.5k Review)</span>
+</div>
+</div>
+<ul class="car-list">
+<li><i class="far fa-steering-wheel"></i>Automatic</li>
+<li><i class="far fa-road"></i>10.15km / 1-litre</li>
+<li><i class="far fa-car"></i>Model: 2024</li>
+<li><i class="far fa-gas-pump"></i>Hybrid</li>
+</ul>
+<p>
+There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.
+</p>
+<div class="car-footer">
+<span class="car-price">₦144,400,000</span>
+<a href="#" class="theme-btn"><span class="far fa-eye"></span>Details</a>
+</div>
+</div>
+</div>
+</div>
+<div class="col-md-6 col-lg-12">
+<div class="car-item">
+<div class="car-img">
+<img src="coscharis/assets/img/car/03.jpg" alt>
+<div class="car-btns">
+<a href="#"><i class="far fa-heart"></i></a>
+<a href="#"><i class="far fa-arrows-repeat"></i></a>
+</div>
+</div>
+<div class="car-content">
+<div class="car-top">
+<h4><a href="#">Black Audi Q7</a></h4>
+<div class="car-rate">
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<span>5.0 (58.5k Review)</span>
+</div>
+</div>
+<ul class="car-list">
+<li><i class="far fa-steering-wheel"></i>Automatic</li>
+<li><i class="far fa-road"></i>10.15km / 1-litre</li>
+<li><i class="far fa-car"></i>Model: 2024</li>
+<li><i class="far fa-gas-pump"></i>Hybrid</li>
+</ul>
+<p>
+There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.
+</p>
+<div class="car-footer">
+<span class="car-price">₦70,960,000</span>
+<a href="#" class="theme-btn"><span class="far fa-eye"></span>Details</a>
+</div>
+</div>
+</div>
+</div>
+<div class="col-md-6 col-lg-12">
+<div class="car-item">
+<div class="car-img">
+<span class="car-status status-2">New</span>
+<img src="coscharis/assets/img/car/04.jpg" alt>
+<div class="car-btns">
+<a href="#"><i class="far fa-heart"></i></a>
+<a href="#"><i class="far fa-arrows-repeat"></i></a>
+</div>
+</div>
+<div class="car-content">
+<div class="car-top">
+<h4><a href="#">BMW Sports Car</a></h4>
+<div class="car-rate">
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<span>5.0 (58.5k Review)</span>
+</div>
+</div>
+<ul class="car-list">
+<li><i class="far fa-steering-wheel"></i>Automatic</li>
+<li><i class="far fa-road"></i>10.15km / 1-litre</li>
+<li><i class="far fa-car"></i>Model: 2024</li>
+<li><i class="far fa-gas-pump"></i>Hybrid</li>
+</ul>
+<p>
+There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.
+</p>
+<div class="car-footer">
+<span class="car-price">₦126,016,000</span>
+<a href="#" class="theme-btn"><span class="far fa-eye"></span>Details</a>
+</div>
+</div>
+</div>
+</div>
+<div class="col-md-6 col-lg-12">
+<div class="car-item">
+<div class="car-img">
+<span class="car-status status-1">Used</span>
+<img src="coscharis/assets/img/car/05.jpg" alt>
+<div class="car-btns">
+<a href="#"><i class="far fa-heart"></i></a>
+<a href="#"><i class="far fa-arrows-repeat"></i></a>
+</div>
+</div>
+<div class="car-content">
+<div class="car-top">
+<h4><a href="#">White Tesla Car</a></h4>
+<div class="car-rate">
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<span>5.0 (58.5k Review)</span>
+</div>
+</div>
+<ul class="car-list">
+<li><i class="far fa-steering-wheel"></i>Automatic</li>
+<li><i class="far fa-road"></i>10.15km / 1-litre</li>
+<li><i class="far fa-car"></i>Model: 2024</li>
+<li><i class="far fa-gas-pump"></i>Hybrid</li>
+</ul>
+<p>
+There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.
+</p>
+<div class="car-footer">
+<span class="car-price">₦102,768,000</span>
+<a href="#" class="theme-btn"><span class="far fa-eye"></span>Details</a>
+</div>
+</div>
+</div>
+</div>
+<div class="col-md-6 col-lg-12">
+<div class="car-item">
+<div class="car-img">
+<span class="car-status status-2">New</span>
+<img src="coscharis/assets/img/car/06.jpg" alt>
+<div class="car-btns">
+<a href="#"><i class="far fa-heart"></i></a>
+<a href="#"><i class="far fa-arrows-repeat"></i></a>
+</div>
+</div>
+<div class="car-content">
+<div class="car-top">
+<h4><a href="#">White Nissan Car</a></h4>
+<div class="car-rate">
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<span>5.0 (58.5k Review)</span>
+</div>
+</div>
+<ul class="car-list">
+<li><i class="far fa-steering-wheel"></i>Automatic</li>
+<li><i class="far fa-road"></i>10.15km / 1-litre</li>
+<li><i class="far fa-car"></i>Model: 2024</li>
+<li><i class="far fa-gas-pump"></i>Hybrid</li>
+</ul>
+<p>
+There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.
+</p>
+<div class="car-footer">
+<span class="car-price">₦55,264,000</span>
+<a href="#" class="theme-btn"><span class="far fa-eye"></span>Details</a>
+</div>
+</div>
+</div>
+</div>
+<div class="col-md-6 col-lg-12">
+<div class="car-item">
+<div class="car-img">
+<img src="coscharis/assets/img/car/07.jpg" alt>
+<div class="car-btns">
+<a href="#"><i class="far fa-heart"></i></a>
+<a href="#"><i class="far fa-arrows-repeat"></i></a>
+</div>
+</div>
+<div class="car-content">
+<div class="car-top">
+<h4><a href="#">Mercedes Benz Suv</a></h4>
+<div class="car-rate">
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<span>5.0 (58.5k Review)</span>
+</div>
+</div>
+<ul class="car-list">
+<li><i class="far fa-steering-wheel"></i>Automatic</li>
+<li><i class="far fa-road"></i>10.15km / 1-litre</li>
+<li><i class="far fa-car"></i>Model: 2024</li>
+<li><i class="far fa-gas-pump"></i>Hybrid</li>
+</ul>
+<p>
+There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.
+</p>
+<div class="car-footer">
+<span class="car-price">₦121,312,000</span>
+<a href="#" class="theme-btn"><span class="far fa-eye"></span>Details</a>
+</div>
+</div>
+</div>
+</div>
+<div class="col-md-6 col-lg-12">
+<div class="car-item">
+<div class="car-img">
+<img src="coscharis/assets/img/car/08.jpg" alt>
+<div class="car-btns">
+<a href="#"><i class="far fa-heart"></i></a>
+<a href="#"><i class="far fa-arrows-repeat"></i></a>
+</div>
+</div>
+<div class="car-content">
+<div class="car-top">
+<h4><a href="#">Red Hyundai Car</a></h4>
+<div class="car-rate">
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<span>5.0 (58.5k Review)</span>
+</div>
+</div>
+<ul class="car-list">
+<li><i class="far fa-steering-wheel"></i>Automatic</li>
+<li><i class="far fa-road"></i>10.15km / 1-litre</li>
+<li><i class="far fa-car"></i>Model: 2024</li>
+<li><i class="far fa-gas-pump"></i>Hybrid</li>
+</ul>
+<p>
+There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.
+</p>
+<div class="car-footer">
+<span class="car-price">₦40,992,000</span>
+<a href="#" class="theme-btn"><span class="far fa-eye"></span>Details</a>
+</div>
+</div>
+</div>
+</div>
+<div class="col-md-6 col-lg-12">
+<div class="car-item">
+<div class="car-img">
+<img src="coscharis/assets/img/car/09.jpg" alt>
+<div class="car-btns">
+<a href="#"><i class="far fa-heart"></i></a>
+<a href="#"><i class="far fa-arrows-repeat"></i></a>
+</div>
+</div>
+<div class="car-content">
+<div class="car-top">
+<h4><a href="#">White BMW Car</a></h4>
+<div class="car-rate">
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<span>5.0 (58.5k Review)</span>
+</div>
+</div>
+<ul class="car-list">
+<li><i class="far fa-steering-wheel"></i>Automatic</li>
+<li><i class="far fa-road"></i>10.15km / 1-litre</li>
+<li><i class="far fa-car"></i>Model: 2024</li>
+<li><i class="far fa-gas-pump"></i>Hybrid</li>
+</ul>
+<p>
+There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.
+</p>
+<div class="car-footer">
+<span class="car-price">₦36,192,000</span>
+<a href="#" class="theme-btn"><span class="far fa-eye"></span>Details</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagination-area">
+<div aria-label="Page navigation example">
+<ul class="pagination">
+<li class="page-item">
+<a class="page-link" href="#" aria-label="Previous">
+<span aria-hidden="true"><i class="far fa-arrow-left"></i></span>
+</a>
+</li>
+<li class="page-item active"><a class="page-link" href="#">1</a></li>
+<li class="page-item"><a class="page-link" href="#">2</a></li>
+<li class="page-item"><a class="page-link" href="#">3</a></li>
+<li class="page-item">
+<a class="page-link" href="#" aria-label="Next">
+<span aria-hidden="true"><i class="far fa-arrow-right"></i></span>
+</a>
+</li>
+</ul>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</main>
+
+<footer class="footer-area">
+<div class="footer-widget">
+<div class="container">
+<div class="row footer-widget-wrapper pt-100 pb-70">
+<div class="col-md-6 col-lg-4">
+<div class="footer-widget-box about-us">
+<a href="#" class="footer-logo">
+<img src="coscharis/assets/img/logo/cos-logo.jpeg" alt>
+</a>
+<p class="mb-3">
+We are many variations of passages available but the majority have suffered alteration
+in some form by injected humour words believable.
+</p>
+<ul class="footer-contact">
+<li><a href="tel:+21236547898"><i class="far fa-phone"></i>+2 123 654 7898</a></li>
+<li><i class="far fa-map-marker-alt"></i>25/B Milford Road, New York</li>
+<li><a href="/cdn-cgi/l/email-protection#9ef7f0f8f1defbe6fff3eef2fbb0fdf1f3"><i class="far fa-envelope"></i><span class="__cf_email__" data-cfemail="fd94939b92bd98859c908d9198d39e9290">[email&#160;protected]</span></a></li>
+</ul>
+</div>
+</div>
+<div class="col-md-6 col-lg-2">
+<div class="footer-widget-box list">
+<h4 class="footer-widget-title">Quick Links</h4>
+<ul class="footer-list">
+<li><a href="#"><i class="fas fa-caret-right"></i> About Us</a></li>
+<li><a href="auction.html"><i class="fas fa-caret-right"></i> Live Auctions</a></li>
+<li><a href="#"><i class="fas fa-caret-right"></i> Update News</a></li>
+<li><a href="#"><i class="fas fa-caret-right"></i> Testimonials</a></li>
+<li><a href="terms.html"><i class="fas fa-caret-right"></i> Terms Of Service</a></li>
+<li><a href="privacy.html"><i class="fas fa-caret-right"></i> Privacy policy</a></li>
+<li><a href="#"><i class="fas fa-caret-right"></i> Our Dealers</a></li>
+</ul>
+</div>
+</div>
+<div class="col-md-6 col-lg-3">
+<div class="footer-widget-box list">
+<h4 class="footer-widget-title">Support Center</h4>
+<ul class="footer-list">
+<li><a href="#"><i class="fas fa-caret-right"></i> FAQ's</a></li>
+<li><a href="#"><i class="fas fa-caret-right"></i> Affiliates</a></li>
+<li><a href="#"><i class="fas fa-caret-right"></i> Booking Tips</a></li>
+<li><a href="#"><i class="fas fa-caret-right"></i> Sell Vehicles</a></li>
+<li><a href="#"><i class="fas fa-caret-right"></i> Contact Us</a></li>
+<li><a href="#"><i class="fas fa-caret-right"></i> Sitemap</a></li>
+</ul>
+</div>
+</div>
+<div class="col-md-6 col-lg-3">
+<div class="footer-widget-box list">
+<h4 class="footer-widget-title">Newsletter</h4>
+<div class="footer-newsletter">
+<p>Subscribe Our Newsletter To Get Latest Update And News</p>
+<div class="subscribe-form">
+<form action="#">
+<input type="email" class="form-control" placeholder="Your Email">
+<button class="theme-btn" type="submit">
+Subscribe Now <i class="far fa-paper-plane"></i>
+</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="copyright">
+<div class="container">
+<div class="row">
+<div class="col-md-6 align-self-center">
+<p class="copyright-text">
+&copy; Copyright <span id="date"></span> <a href="#"> Coscharis </a> All Rights Reserved.
+</p>
+</div>
+<div class="col-md-6 align-self-center">
+<ul class="footer-social">
+<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+<li><a href="#"><i class="fab fa-x-twitter"></i></a></li>
+<li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+<li><a href="#"><i class="fab fa-youtube"></i></a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</footer>
+
+
+<a href="#" id="scroll-top"><i class="far fa-arrow-up"></i></a>
+
+
+<script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
+<script src="coscharis/assets/js/modernizr.min.js"></script>
+<script src="coscharis/assets/js/bootstrap.bundle.min.js"></script>
+<script src="coscharis/assets/js/imagesloaded.pkgd.min.js"></script>
+<script src="coscharis/assets/js/jquery.magnific-popup.min.js"></script>
+<script src="coscharis/assets/js/isotope.pkgd.min.js"></script>
+<script src="coscharis/assets/js/jquery.appear.min.js"></script>
+<script src="coscharis/assets/js/jquery.easing.min.js"></script>
+<script src="coscharis/assets/js/owl.carousel.min.js"></script>
+<script src="coscharis/assets/js/counter-up.js"></script>
+<script src="coscharis/assets/js/jquery-ui.min.js"></script>
+<script src="coscharis/assets/js/jquery.nice-select.min.js"></script>
+<script src="coscharis/assets/js/wow.min.js"></script>
+<script src="coscharis/assets/js/main.js"></script>
+<script>
+  if (typeof WOW !== "undefined") {
+    new WOW().init();
+  }
+</script>
+</body>
+</html>
