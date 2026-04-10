@@ -759,9 +759,9 @@
             <button type="button" class="btn-dash-soft" id="userdash-reload-preview" title="Reload embedded preview">
               <i class="fas fa-rotate me-1"></i> Reload preview
             </button>
-            <button type="button" class="dash-icon-btn" id="dash-open-cart" title="Open admin cart">
-              <i class="far fa-shopping-basket"></i>
-              <span class="badge-dot" id="admin-cart-badge">0</span>
+            <button type="button" class="dash-icon-btn" id="dash-open-notifications" title="Notifications" aria-label="Notifications">
+              <i class="far fa-bell"></i>
+              <span class="badge-dot" id="admin-notifications-badge">0</span>
             </button>
             <div class="dash-user" title="Signed-in administrator">
               <div class="dash-user-av" id="admin-user-initials">A</div>
@@ -850,7 +850,6 @@
     <script>
       (function () {
         var ADMIN_KEY = "coscharis:admin:v1";
-        var CART_KEY = "coscharis:cart:v1";
 
         function safeParse(json) {
           try {
@@ -858,20 +857,6 @@
           } catch (e) {
             return null;
           }
-        }
-
-        function loadCart() {
-          var raw = localStorage.getItem(CART_KEY);
-          var parsed = safeParse(raw);
-          if (!parsed || !Array.isArray(parsed.items)) return { items: [] };
-          return parsed;
-        }
-
-        function updateCartBadge() {
-          var cart = loadCart();
-          var lines = cart.items ? cart.items.length : 0;
-          var el = document.getElementById("admin-cart-badge");
-          if (el) el.textContent = String(lines);
         }
 
         function reloadPreview() {
@@ -889,19 +874,12 @@
         document.getElementById("admin-user-email").textContent = email;
         document.getElementById("admin-user-initials").textContent = email.charAt(0).toUpperCase() || "A";
 
-        document.getElementById("dash-open-cart").addEventListener("click", function () {
-          window.location.href = "admin-cart.html";
+        document.getElementById("dash-open-notifications").addEventListener("click", function () {
+          window.location.href = "admin-contact.html";
         });
 
         document.getElementById("userdash-reload-preview").addEventListener("click", reloadPreview);
         document.getElementById("userdash-reload-preview-2").addEventListener("click", reloadPreview);
-
-        window.addEventListener("storage", function (ev) {
-          if (ev && ev.key === CART_KEY) updateCartBadge();
-        });
-        window.addEventListener("coscharis-cart-updated", updateCartBadge);
-
-        updateCartBadge();
       })();
     </script>
   </body>

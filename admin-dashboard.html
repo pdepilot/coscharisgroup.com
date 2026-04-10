@@ -725,9 +725,9 @@
             <button type="button" class="btn-dash-soft" id="dash-refresh" title="Recalculate metrics">
               <i class="fas fa-rotate me-1"></i> Refresh
             </button>
-            <button type="button" class="dash-icon-btn" id="dash-open-cart" title="Open admin cart">
-              <i class="far fa-shopping-basket"></i>
-              <span class="badge-dot" id="admin-cart-badge">0</span>
+            <button type="button" class="dash-icon-btn" id="dash-open-notifications" title="Notifications" aria-label="Notifications">
+              <i class="far fa-bell"></i>
+              <span class="badge-dot" id="admin-notifications-badge">0</span>
             </button>
             <div class="dash-user" title="Signed-in administrator">
               <div class="dash-user-av" id="admin-user-initials">A</div>
@@ -1008,7 +1008,7 @@
           var lines = cart.items ? cart.items.length : 0;
           document.getElementById("stat-cart").textContent = formatNaira(grand);
           document.getElementById("stat-cart-detail").textContent = lines + " line" + (lines === 1 ? "" : "s") + " · " + qty + " qty";
-          document.getElementById("admin-cart-badge").textContent = String(lines);
+          document.getElementById("admin-notifications-badge").textContent = "0";
 
           var rev = 0;
           for (var i = 0; i < orders.length; i++) {
@@ -1068,8 +1068,8 @@
         document.getElementById("admin-user-email").textContent = email;
         document.getElementById("admin-user-initials").textContent = email.charAt(0).toUpperCase() || "A";
 
-        document.getElementById("dash-open-cart").addEventListener("click", function () {
-          window.location.href = "admin-cart.html";
+        document.getElementById("dash-open-notifications").addEventListener("click", function () {
+          window.location.href = "admin-contact.html";
         });
 
         document.getElementById("dash-refresh").addEventListener("click", render);

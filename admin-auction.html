@@ -203,9 +203,10 @@
       .admin-header {
         min-height: var(--header-h);
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        gap: 1rem;
+        gap: 0.75rem 1rem;
         padding: 0.75rem 1.5rem;
         border-bottom: 1px solid var(--admin-border);
         background: rgba(7, 8, 20, 0.65);
@@ -286,9 +287,50 @@
 
       .admin-header-actions {
         display: flex;
-        align-items: center;
-        gap: 0.5rem;
         flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.55rem 0.65rem;
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+
+      .admin-header-actions-inner {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.45rem 0.55rem;
+        min-width: 0;
+        flex: 1 1 240px;
+      }
+
+      .admin-header-actions-group {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .admin-header-actions-group--danger {
+        padding-left: 0.55rem;
+        margin-left: 0.15rem;
+        border-left: 1px solid rgba(255, 255, 255, 0.14);
+      }
+
+      .admin-header .admin-header-actions .btn-soft,
+      .admin-header .admin-header-actions .btn-danger-soft {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.45rem 0.65rem;
+        font-size: 0.8125rem;
+        font-weight: 700;
+        line-height: 1.25;
+      }
+
+      .admin-header-actions .admin-user-chip {
+        flex-shrink: 0;
       }
 
       .admin-user-chip {
@@ -336,6 +378,62 @@
       @media (max-width: 1199px) {
         .admin-header-search {
           display: none;
+        }
+      }
+
+      /* When the header is tight, move the whole toolbar to its own row so search + title stay readable */
+      @media (max-width: 1399.98px) {
+        .admin-header-actions {
+          flex-basis: 100%;
+          justify-content: space-between;
+          padding-top: 0.4rem;
+          margin-top: 0.15rem;
+          border-top: 1px solid var(--admin-border);
+        }
+
+        .admin-header-actions-inner {
+          justify-content: flex-start;
+          flex: 1 1 auto;
+          min-width: 0;
+        }
+      }
+
+      @media (max-width: 575.98px) {
+        .admin-header-actions {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0.65rem;
+        }
+
+        .admin-header-actions-inner {
+          flex-direction: column;
+          align-items: stretch;
+          width: 100%;
+        }
+
+        .admin-header-actions-group {
+          width: 100%;
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .admin-header-actions-group--danger {
+          border-left: none;
+          padding-left: 0;
+          margin-left: 0;
+          padding-top: 0.35rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .admin-header .admin-header-actions .btn-soft,
+        .admin-header .admin-header-actions .btn-danger-soft {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .admin-header-actions .admin-user-chip {
+          width: 100%;
+          justify-content: center;
         }
       }
 
@@ -617,7 +715,6 @@
             </button>
             <div class="admin-header-titles">
               <h2>Live auctions</h2>
-              
             </div>
           </div>
 
@@ -627,21 +724,28 @@
           </div>
 
           <div class="admin-header-actions">
-            <button type="button" class="btn-soft" id="admin-auction-refresh" title="Reload data">
-              <i class="fas fa-rotate me-1"></i> Refresh
-            </button>
-            <button type="button" class="btn-soft" id="admin-auction-export-json" title="Download catalog JSON">
-              <i class="far fa-file-code me-2"></i> Export JSON
-            </button>
-            <button type="button" class="btn-danger-soft" id="admin-auction-reset-catalog" title="Discard browser catalog and load bundled JSON again">
-              <i class="fas fa-rotate-left me-2"></i> Reset to bundled
-            </button>
-            <button type="button" class="btn-danger-soft" id="admin-auction-clear-session" title="Clear simulated bids in this tab session">
-              <i class="fas fa-broom me-2"></i> Clear session bids
-            </button>
-            <button type="button" class="btn-danger-soft" id="admin-auction-clear-user-bids" title="Clear stored user bid history (demo)">
-              <i class="fas fa-user-slash me-2"></i> Clear user bids
-            </button>
+            <div class="admin-header-actions-inner">
+              <div class="admin-header-actions-group admin-header-actions-group--primary">
+                <button type="button" class="btn-soft" id="admin-auction-refresh" title="Reload data">
+                  <i class="fas fa-rotate me-1"></i> Refresh
+                </button>
+              </div>
+              <div
+                class="admin-header-actions-group admin-header-actions-group--danger"
+                role="group"
+                aria-label="Reset catalog and clear bids"
+              >
+                <button type="button" class="btn-danger-soft" id="admin-auction-reset-catalog" title="Discard browser catalog and load bundled JSON again">
+                  <i class="fas fa-rotate-left me-1"></i> Reset to bundled
+                </button>
+                <button type="button" class="btn-danger-soft" id="admin-auction-clear-session" title="Clear simulated bids in this tab session">
+                  <i class="fas fa-broom me-1"></i> Clear session bids
+                </button>
+                <button type="button" class="btn-danger-soft" id="admin-auction-clear-user-bids" title="Clear stored user bid history (demo)">
+                  <i class="fas fa-user-slash me-1"></i> Clear user bids
+                </button>
+              </div>
+            </div>
             <div class="admin-user-chip" title="Signed-in administrator">
               <div class="admin-user-avatar" id="admin-admin-initials">A</div>
               <div class="admin-user-meta">

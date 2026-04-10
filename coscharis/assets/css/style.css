@@ -1087,14 +1087,16 @@ label {
       padding: 0
   }
 
-  .nav-right .cart-btn .nav-right-link {
+  .nav-right .cart-btn .nav-right-link,
+  .nav-right .notification-btn .nav-right-link {
       position: relative;
       font-size: 20px;
       padding: 0;
       margin-right: 15px
   }
 
-  .nav-right .cart-btn span {
+  .nav-right .cart-btn span,
+  .nav-right .notification-btn span {
       position: absolute;
       right: -9px;
       top: -2px;
