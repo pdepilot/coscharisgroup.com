@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#070814" />
-    <meta name="description" content="Coscharis Admin — site-wide overview and controls" />
-    <title>Admin Dashboard — Coscharis</title>
+    <meta name="description" content="Coscharis Admin — preview the public website from the console" />
+    <title>Live site — Coscharis Admin</title>
     <link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg" />
     <link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css" />
@@ -34,13 +34,47 @@
 
       /* Scroll lock applied via JS (body position:fixed) when mobile drawer opens */
 
-      body.page-admin-dashboard {
+      body.page-admin-live-site {
         margin: 0;
         min-height: 100vh;
         font-family: var(--font);
         color: var(--dash-text);
         background: var(--dash-bg0);
         overflow-x: hidden;
+      }
+
+      .live-preview-shell {
+        border-radius: var(--dash-radius);
+        border: 1px solid var(--dash-border);
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.25);
+      }
+
+      .live-preview-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
+        border-bottom: 1px solid var(--dash-border);
+        background: rgba(0, 0, 0, 0.28);
+      }
+
+      .live-preview-frame {
+        width: 100%;
+        min-height: min(72vh, 820px);
+        height: 72vh;
+        border: 0;
+        display: block;
+        background: #fff;
+      }
+
+      .live-preview-note {
+        font-size: 0.82rem;
+        color: var(--dash-muted);
+        padding: 0.75rem 1rem;
+        border-top: 1px solid var(--dash-border);
+        background: rgba(0, 0, 0, 0.2);
       }
 
       /* Ambient background */
@@ -645,7 +679,7 @@
 
     </style>
   </head>
-  <body class="page-admin-dashboard admin-app-layout">
+  <body class="page-admin-live-site admin-app-layout">
     <script>
       (function () {
         try {
@@ -673,8 +707,8 @@
 
           <div class="dash-nav-label">Overview</div>
           <nav class="dash-nav" aria-label="Primary">
-            <a class="is-active" href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
-            <a href="admin-live-site.html"><i class="fas fa-globe"></i> Live site</a>
+            <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <a class="is-active" href="admin-live-site.html"><i class="fas fa-globe"></i> Live site</a>
           </nav>
 
           <div class="dash-nav-label">System</div>
@@ -716,14 +750,14 @@
               <i class="fas fa-bars"></i>
             </button>
             <div class="dash-topbar-titles">
-              <h2>Command center</h2>
-              <p>Monitor commerce, people, and engagement — data stored on this browser for the demo.</p>
+              <h2>Live site preview</h2>
+              <p>Embedded view of the public homepage. Use Reload if the preview does not update (some browsers block local file iframes).</p>
             </div>
           </div>
 
           <div class="dash-topbar-actions">
-            <button type="button" class="btn-dash-soft" id="dash-refresh" title="Recalculate metrics">
-              <i class="fas fa-rotate me-1"></i> Refresh
+            <button type="button" class="btn-dash-soft" id="live-reload-preview" title="Reload embedded preview">
+              <i class="fas fa-rotate me-1"></i> Reload preview
             </button>
             <button type="button" class="dash-icon-btn" id="dash-open-cart" title="Open admin cart">
               <i class="far fa-shopping-basket"></i>
@@ -740,127 +774,34 @@
         </header>
 
         <div class="dash-page">
-          <section class="dash-hero" aria-labelledby="dash-hero-title">
-            <h3 id="dash-hero-title">Welcome back</h3>
+          <section class="dash-hero" aria-labelledby="live-hero-title">
+            <h3 id="live-hero-title">Public website</h3>
             <p>
-              This dashboard summarizes local demo state: users, cart, orders, and engagement signals. Connect a backend to replace
-              <code>localStorage</code> when you go live.
+              Preview <code>index.html</code> below. Serve the folder over HTTP for the most reliable iframe behavior.
             </p>
           </section>
 
-          <div class="dash-kpi-grid" id="dash-stat-grid" aria-live="polite">
-            <article class="dash-kpi">
-              <div class="dash-kpi-icon"><i class="fas fa-users"></i></div>
-              <div class="dash-kpi-label">Accounts</div>
-              <div class="dash-kpi-value" id="stat-users">0</div>
-              <p class="dash-kpi-note mb-0">Registered users · <code>coscharis:users:v1</code></p>
-            </article>
-            <article class="dash-kpi">
-              <div class="dash-kpi-icon"><i class="fas fa-basket-shopping"></i></div>
-              <div class="dash-kpi-label">Shared cart</div>
-              <div class="dash-kpi-value" id="stat-cart">₦0</div>
-              <p class="dash-kpi-note mb-0"><span id="stat-cart-detail">0 lines · 0 qty</span></p>
-            </article>
-            <article class="dash-kpi">
-              <div class="dash-kpi-icon"><i class="fas fa-receipt"></i></div>
-              <div class="dash-kpi-label">Orders</div>
-              <div class="dash-kpi-value" id="stat-orders">0</div>
-              <p class="dash-kpi-note mb-0">Revenue <strong id="stat-revenue" style="color: #fff">₦0</strong></p>
-            </article>
-            <article class="dash-kpi">
-              <div class="dash-kpi-icon"><i class="fas fa-bolt"></i></div>
-              <div class="dash-kpi-label">Engagement</div>
-              <div class="dash-kpi-value" id="stat-engage">0</div>
-              <p class="dash-kpi-note mb-0">Favorites + auction bid rows</p>
-            </article>
+          <div class="live-preview-shell mb-4">
+            <div class="live-preview-toolbar">
+              <span class="pill-dash mb-0"><i class="fas fa-eye"></i> Embedded preview</span>
+              <button type="button" class="btn-dash-soft btn-sm py-1" id="live-reload-preview-2">
+                <i class="fas fa-rotate me-1"></i> Reload
+              </button>
+            </div>
+            <iframe
+              id="live-site-frame"
+              class="live-preview-frame"
+              title="Public homepage preview"
+              src="index.html"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+              loading="lazy"
+            ></iframe>
+            <p class="live-preview-note mb-0">
+              If you see a blank area, try Reload or serve the site over HTTP. Nested pages may not display in the iframe when opened as raw files on disk.
+            </p>
           </div>
 
-          <div class="dash-panel mb-4">
-            <div class="dash-panel-hd">
-              <h3><i class="fas fa-compass me-2" style="color: var(--dash-accent)"></i> Jump to tools</h3>
-              <span class="pill-dash"><i class="fas fa-database"></i> Client-side demo</span>
-            </div>
-            <div class="dash-panel-bd">
-              <div class="bento">
-                <a href="admin-shop.html"><i class="fas fa-store"></i> Admin shop</a>
-                <a href="admin-cart.html"><i class="fas fa-shopping-basket"></i> Admin cart</a>
-                <a href="admin-checkout.html"><i class="fas fa-credit-card"></i> Admin checkout</a>
-                <a href="admin-registration.html"><i class="fas fa-users-cog"></i> Users & profiles</a>
-                <a href="admin-contact.html"><i class="fas fa-envelope"></i> Contact</a>
-                <a href="admin-settings.html"><i class="fas fa-sliders"></i> Site settings</a>
-                <a href="admin-auction.html"><i class="fas fa-gavel"></i> Admin auction</a>
-                <a href="admin-listings.html"><i class="fas fa-car-side"></i> Listings (Admin)</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="row g-3 g-lg-4 mb-4">
-            <div class="col-lg-7">
-              <div class="dash-panel h-100">
-                <div class="dash-panel-hd">
-                  <h3><i class="fas fa-clock-rotate-left me-2" style="color: var(--dash-accent)"></i> Recent orders</h3>
-                  <a class="btn-dash-primary" href="admin-checkout.html">New order</a>
-                </div>
-                <div class="dash-panel-bd pt-0">
-                  <div class="dash-table-wrap">
-                    <table class="dash-table" id="dash-orders-table">
-                      <thead>
-                        <tr>
-                          <th>Order</th>
-                          <th>When</th>
-                          <th class="text-end">Total</th>
-                        </tr>
-                      </thead>
-                      <tbody id="dash-orders-body"></tbody>
-                    </table>
-                  </div>
-                  <p class="small mt-3 mb-0 dash-muted">Stored in <code>coscharis:orders:v1</code> (newest first).</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-5">
-              <div class="dash-panel h-100">
-                <div class="dash-panel-hd">
-                  <h3><i class="fas fa-user-group me-2" style="color: var(--dash-accent)"></i> Registered accounts</h3>
-                  <span class="pill-dash" id="dash-users-pill">0</span>
-                </div>
-                <div class="dash-panel-bd pt-0">
-                  <div class="dash-table-wrap">
-                    <table class="dash-table">
-                      <thead>
-                        <tr>
-                          <th>Email</th>
-                          <th>Name</th>
-                        </tr>
-                      </thead>
-                      <tbody id="dash-users-body"></tbody>
-                    </table>
-                  </div>
-                  <p class="small mt-3 mb-0 dash-muted">Same store as public login.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="dash-panel mb-2">
-            <div class="dash-panel-hd">
-              <h3><i class="fas fa-sliders me-2" style="color: var(--dash-accent)"></i> Data &amp; session</h3>
-              <span class="pill-dash">Danger zone</span>
-            </div>
-            <div class="dash-panel-bd">
-              <p class="dash-muted small mb-3">
-                Carts, orders, favorites, bids, and users live in <strong>localStorage</strong>. Auction mock state may use
-                <strong>sessionStorage</strong>.
-              </p>
-              <div class="d-flex flex-wrap gap-2">
-                <button type="button" class="btn-dash-soft" id="dash-export"><i class="fas fa-download me-2"></i> Export snapshot (JSON)</button>
-                <button type="button" class="btn-dash-soft" id="dash-clear-cart"><i class="fas fa-trash-can me-2"></i> Clear shared cart</button>
-                <button type="button" class="btn-dash-danger" id="dash-clear-orders"><i class="fas fa-file-circle-xmark me-2"></i> Clear all orders</button>
-              </div>
-            </div>
-          </div>
-
-          <p class="text-center mt-4 mb-0 small dash-muted">Coscharis Admin · Command center · Replace browser storage with APIs for production</p>
+          <p class="text-center mt-4 mb-0 small dash-muted">Coscharis Admin · Live site preview</p>
         </div>
       </main>
     </div>
@@ -893,34 +834,12 @@
       (function () {
         var ADMIN_KEY = "coscharis:admin:v1";
         var CART_KEY = "coscharis:cart:v1";
-        var ORDERS_KEY = "coscharis:orders:v1";
-        var USERS_KEY = "coscharis:users:v1";
-        var FAVORITES_KEY = "coscharis:favorites:v1";
-        var AUCTION_BIDS_KEY = "coscharis:auction:userBids:v1";
-        var AUTH_KEY = "coscharis:auth:v1";
 
         function safeParse(json) {
           try {
             return JSON.parse(json);
           } catch (e) {
             return null;
-          }
-        }
-
-        function parsePrice(s) {
-          if (!s) return 0;
-          var cleaned = String(s).replace(/[^\d]/g, "");
-          if (!cleaned) return 0;
-          return parseInt(cleaned, 10) || 0;
-        }
-
-        function formatNaira(n) {
-          var num = Number(n);
-          if (isNaN(num)) return "—";
-          try {
-            return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(num);
-          } catch (e) {
-            return "₦" + (Number(n) || 0).toLocaleString("en-NG");
           }
         }
 
@@ -931,135 +850,20 @@
           return parsed;
         }
 
-        function cartLineTotal(line) {
-          var unit = parsePrice(line.price);
-          var q = parseInt(line.qty, 10) || 1;
-          return unit * q;
-        }
-
-        function cartGrandTotal(cart) {
-          var sum = 0;
-          if (!cart.items) return 0;
-          for (var i = 0; i < cart.items.length; i++) sum += cartLineTotal(cart.items[i]);
-          return sum;
-        }
-
-        function getTotalQty(cart) {
-          var n = 0;
-          if (!cart.items || !cart.items.length) return 0;
-          for (var i = 0; i < cart.items.length; i++) {
-            var q = parseInt(cart.items[i].qty, 10);
-            n += isNaN(q) || q < 1 ? 0 : q;
-          }
-          return n;
-        }
-
-        function loadOrders() {
-          var raw = localStorage.getItem(ORDERS_KEY);
-          var parsed = safeParse(raw);
-          if (!parsed || !Array.isArray(parsed)) return [];
-          return parsed;
-        }
-
-        function loadUsers() {
-          var raw = localStorage.getItem(USERS_KEY);
-          var parsed = safeParse(raw);
-          if (!parsed || !Array.isArray(parsed)) return [];
-          return parsed;
-        }
-
-        function loadFavorites() {
-          var raw = localStorage.getItem(FAVORITES_KEY);
-          var parsed = safeParse(raw);
-          if (!parsed || !Array.isArray(parsed)) return [];
-          return parsed;
-        }
-
-        function countAuctionBidRecords() {
-          var raw = localStorage.getItem(AUCTION_BIDS_KEY);
-          var map = safeParse(raw);
-          if (!map || typeof map !== "object") return 0;
-          var n = 0;
-          for (var k in map) {
-            if (Object.prototype.hasOwnProperty.call(map, k) && Array.isArray(map[k])) n += map[k].length;
-          }
-          return n;
-        }
-
-        function escapeHtml(s) {
-          if (s == null) return "";
-          var d = document.createElement("div");
-          d.textContent = s;
-          return d.innerHTML;
-        }
-
-        function render() {
-          var users = loadUsers();
+        function updateCartBadge() {
           var cart = loadCart();
-          var orders = loadOrders();
-          var favs = loadFavorites();
-          var bidRec = countAuctionBidRecords();
-
-          document.getElementById("stat-users").textContent = String(users.length);
-          document.getElementById("dash-users-pill").textContent = users.length + " accounts";
-
-          var grand = cartGrandTotal(cart);
-          var qty = getTotalQty(cart);
           var lines = cart.items ? cart.items.length : 0;
-          document.getElementById("stat-cart").textContent = formatNaira(grand);
-          document.getElementById("stat-cart-detail").textContent = lines + " line" + (lines === 1 ? "" : "s") + " · " + qty + " qty";
-          document.getElementById("admin-cart-badge").textContent = String(lines);
+          var el = document.getElementById("admin-cart-badge");
+          if (el) el.textContent = String(lines);
+        }
 
-          var rev = 0;
-          for (var i = 0; i < orders.length; i++) {
-            var t = Number(orders[i].total);
-            if (!isNaN(t)) rev += t;
-          }
-          document.getElementById("stat-orders").textContent = String(orders.length);
-          document.getElementById("stat-revenue").textContent = formatNaira(rev);
-
-          document.getElementById("stat-engage").textContent = String(favs.length + bidRec);
-
-          var ob = document.getElementById("dash-orders-body");
-          ob.innerHTML = "";
-          var slice = orders.slice(0, 8);
-          if (!slice.length) {
-            var tr = document.createElement("tr");
-            tr.innerHTML =
-              '<td colspan="3" class="dash-muted">No orders yet. Use <a href="admin-checkout.html" class="text-white">Admin checkout</a> after adding to the cart.</td>';
-            ob.appendChild(tr);
-          } else {
-            for (var j = 0; j < slice.length; j++) {
-              var o = slice[j];
-              var row = document.createElement("tr");
-              var when = o.createdAt ? new Date(o.createdAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "—";
-              row.innerHTML =
-                "<td><strong>" +
-                escapeHtml(o.id || "—") +
-                "</strong></td><td>" +
-                escapeHtml(when) +
-                '</td><td class="text-end">' +
-                escapeHtml(formatNaira(o.total)) +
-                "</td>";
-              ob.appendChild(row);
-            }
-          }
-
-          var ub = document.getElementById("dash-users-body");
-          ub.innerHTML = "";
-          var uslice = users.slice(-10).reverse();
-          if (!uslice.length) {
-            var ur = document.createElement("tr");
-            ur.innerHTML =
-              '<td colspan="2" class="dash-muted">No accounts yet. Add users in Users & profiles.</td>';
-            ub.appendChild(ur);
-          } else {
-            for (var u = 0; u < uslice.length; u++) {
-              var usr = uslice[u];
-              var r = document.createElement("tr");
-              r.innerHTML = "<td>" + escapeHtml(usr.email || "—") + "</td><td>" + escapeHtml(usr.name || "—") + "</td>";
-              ub.appendChild(r);
-            }
+        function reloadPreview() {
+          var frame = document.getElementById("live-site-frame");
+          if (!frame) return;
+          try {
+            frame.src = frame.src;
+          } catch (e) {
+            frame.src = "index.html";
           }
         }
 
@@ -1072,75 +876,15 @@
           window.location.href = "admin-cart.html";
         });
 
-        document.getElementById("dash-refresh").addEventListener("click", render);
-
-        document.getElementById("dash-export").addEventListener("click", function () {
-          var users = loadUsers().map(function (u) {
-            return { email: u.email, name: u.name || "" };
-          });
-          var snap = {
-            exportedAt: new Date().toISOString(),
-            keys: {
-              cart: CART_KEY,
-              orders: ORDERS_KEY,
-              users: USERS_KEY,
-              favorites: FAVORITES_KEY,
-              auctionUserBids: AUCTION_BIDS_KEY,
-              authSession: AUTH_KEY,
-              adminSession: ADMIN_KEY
-            },
-            cart: loadCart(),
-            orders: loadOrders(),
-            users: users,
-            favorites: loadFavorites(),
-            auctionUserBids: safeParse(localStorage.getItem(AUCTION_BIDS_KEY)) || {},
-            authSession: safeParse(localStorage.getItem(AUTH_KEY)),
-            adminSession: safeParse(localStorage.getItem(ADMIN_KEY))
-          };
-          var blob = new Blob([JSON.stringify(snap, null, 2)], { type: "application/json" });
-          var a = document.createElement("a");
-          a.href = URL.createObjectURL(blob);
-          a.download = "coscharis-site-snapshot-" + Date.now() + ".json";
-          a.click();
-          setTimeout(function () {
-            URL.revokeObjectURL(a.href);
-          }, 400);
-        });
-
-        document.getElementById("dash-clear-cart").addEventListener("click", function () {
-          if (!confirm("Clear the shared shopping cart for this browser?")) return;
-          try {
-            localStorage.setItem(CART_KEY, JSON.stringify({ items: [] }));
-            window.dispatchEvent(new CustomEvent("coscharis-cart-updated", { detail: { items: [] } }));
-          } catch (e) {}
-          render();
-        });
-
-        document.getElementById("dash-clear-orders").addEventListener("click", function () {
-          if (!confirm("Delete ALL stored orders on this device? This cannot be undone.")) return;
-          try {
-            localStorage.setItem(ORDERS_KEY, JSON.stringify([]));
-          } catch (e) {}
-          render();
-        });
+        document.getElementById("live-reload-preview").addEventListener("click", reloadPreview);
+        document.getElementById("live-reload-preview-2").addEventListener("click", reloadPreview);
 
         window.addEventListener("storage", function (ev) {
-          if (!ev) return;
-          if (
-            ev.key === CART_KEY ||
-            ev.key === ORDERS_KEY ||
-            ev.key === USERS_KEY ||
-            ev.key === FAVORITES_KEY ||
-            ev.key === AUCTION_BIDS_KEY
-          )
-            render();
+          if (ev && ev.key === CART_KEY) updateCartBadge();
         });
-        window.addEventListener("coscharis-cart-updated", render);
-        try {
-          window.addEventListener("coscharis-user-bids-updated", render);
-        } catch (e) {}
+        window.addEventListener("coscharis-cart-updated", updateCartBadge);
 
-        render();
+        updateCartBadge();
       })();
     </script>
   </body>

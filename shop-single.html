@@ -87,9 +87,7 @@
 </li>
 <li class="nav-item dropdown">
 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Pages</a>
-<ul class="dropdown-menu fade-down">
-<li><a class="dropdown-item" href="about.html">About Us</a></li>
-<li class="dropdown-submenu">
+<ul class="dropdown-menu fade-down"><li class="dropdown-submenu">
 <a class="dropdown-item dropdown-toggle" href="#">Car Listing</a>
 <ul class="dropdown-menu">
 <li><a class="dropdown-item" href="listing-grid.html">Listing Grid</a></li>
@@ -124,8 +122,6 @@
 <a class="dropdown-item dropdown-toggle" href="#">Services</a>
 <ul class="dropdown-menu">
 <li><a class="dropdown-item" href="service.html">Services</a></li>
-<li><a class="dropdown-item" href="service-single.html">Service Single</a>
-</li>
 </ul>
 </li>
 <li class="dropdown-submenu">
@@ -247,26 +243,11 @@ some form by injected humour or randomised words which don't look even slightly 
 <div class="row">
 <div class="col-lg-5">
 <div class="item-gallery mb-5">
-<div class="flexslider-thumbnails">
-<ul class="slides">
-<li data-thumb="coscharis/assets/img/shop/01.jpg" rel="adjustX:10, adjustY:">
-<img src="coscharis/assets/img/shop/01.jpg" alt="#">
-</li>
-<li data-thumb="coscharis/assets/img/shop/02.jpg">
-<img src="coscharis/assets/img/shop/02.jpg" alt="#">
-</li>
-<li data-thumb="coscharis/assets/img/shop/03.jpg">
-<img src="coscharis/assets/img/shop/03.jpg" alt="#">
-</li>
-<li data-thumb="coscharis/assets/img/shop/04.jpg">
-<img src="coscharis/assets/img/shop/04.jpg" alt="#">
-</li>
-</ul>
-</div>
+<img id="coscharis-single-main-img" src="coscharis/assets/img/shop/01.jpg" alt="" class="img-fluid rounded w-100" style="max-height: 480px; object-fit: cover" />
 </div>
 </div>
 <div class="col-lg-6">
-<div class="single-item-info">
+<div class="single-item-info" data-cart-id="">
 <h4 class="single-item-title">Car Engine Parts</h4>
 <div class="single-item-rating">
 <i class="fas fa-star"></i>
@@ -279,14 +260,14 @@ some form by injected humour or randomised words which don't look even slightly 
 <div class="single-item-price">
 <h4><del>₦1,104,000</del><span>₦1,040,000</span></h4>
 </div>
-<p class="mb-4">
+<p class="mb-4" id="coscharis-single-desc">
 There are many variations of passages of Lorem Ipsum available, but the majority have
 suffered alteration in some form, by injected humour, or randomised words which don't
 look even slightly believable.
 </p>
 <div class="single-item-content">
 <h5>Stock: <span>Available</span></h5>
-<h5>SKU: <span>676TYWV</span></h5>
+<h5>SKU: <span id="coscharis-single-sku">676TYWV</span></h5>
 </div>
 <div class="single-item-action">
 <h5 class="title">Quantity:</h5>
@@ -303,7 +284,7 @@ cart</button>
 </div>
 </div>
 <div class="single-item-content">
-<h5>Category: <span>Car Parts</span></h5>
+<h5>Category: <span id="coscharis-single-category">Car Parts</span></h5>
 <h5>Tags: <span>Car, Shop, Tire</span></h5>
 </div>
 <hr>
@@ -451,110 +432,7 @@ qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.
 </div>
 </div>
 <div class="shop-item-wrapper">
-<div class="row align-items-center">
-<div class="col-md-6 col-lg-3">
-<div class="shop-item">
-<div class="shop-item-img">
-<span class="shop-item-sale">Sale</span>
-<img src="coscharis/assets/img/shop/01.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price"><del>₦896,000</del> ₦816,000</div>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-3">
-<div class="shop-item">
-<div class="shop-item-img">
-<img src="coscharis/assets/img/shop/03.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price">₦1,088,000</div>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-3">
-<div class="shop-item">
-<div class="shop-item-img">
-<img src="coscharis/assets/img/shop/04.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price">₦1,136,000</div>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-3">
-<div class="shop-item">
-<div class="shop-item-img">
-<span class="shop-item-sale">Sale</span>
-<img src="coscharis/assets/img/shop/02.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price"><del>₦1,472,000</del> ₦1,440,000</div>
-</div>
-</div>
-</div>
-</div>
+<div class="row align-items-center" id="coscharis-shop-related"></div>
 </div>
 </div>
 </div>
@@ -666,12 +544,29 @@ Subscribe Now <i class="far fa-paper-plane"></i>
 <script src="coscharis/assets/js/jquery-ui.min.js"></script>
 <script src="coscharis/assets/js/jquery.nice-select.min.js"></script>
 <script src="coscharis/assets/js/wow.min.js"></script>
-<script src="coscharis/assets/js/flex-slider.js"></script>
+<script src="coscharis/assets/js/shop-catalog.js"></script>
 <script src="coscharis/assets/js/main.js"></script>
 <script>
   if (typeof WOW !== "undefined") {
     new WOW().init();
   }
+  (function () {
+    function go() {
+      if (!window.CoscharisShopCatalog) return;
+      CoscharisShopCatalog.applySinglePage();
+      var p = new URLSearchParams(window.location.search || "");
+      CoscharisShopCatalog.renderRelated("coscharis-shop-related", p.get("id") || "", 4);
+      if (typeof WOW !== "undefined") {
+        new WOW().init();
+      }
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go);
+    else go();
+    window.addEventListener("storage", function (ev) {
+      if (ev && ev.key === "coscharis:shopCatalog:v1") go();
+    });
+    window.addEventListener("coscharis-shop-catalog-updated", go);
+  })();
 </script>
 </body>
 </html>

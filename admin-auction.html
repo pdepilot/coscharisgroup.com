@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f1028" />
+    <meta name="description" content="Coscharis Admin — live auction lots aligned with auction.html and auction-lot.html (local demo)" />
+    <title>Auctions — Coscharis Admin</title>
+    <link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg" />
+    <link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/admin-shell.css" />
+    <style>
+      :root {
+        --admin-bg-deep: #070814;
+        --admin-bg-mid: #12152e;
+        --admin-accent: #e63035;
+        --admin-accent-soft: rgba(230, 48, 53, 0.35);
+        --admin-glass: rgba(255, 255, 255, 0.06);
+        --admin-border: rgba(255, 255, 255, 0.1);
+        --admin-text: #e8eaf4;
+        --admin-muted: #9aa3c2;
+        --admin-secondary: #3c3e90;
+        --admin-success: #2ee59d;
+        --sidebar-w: 280px;
+        --header-h: 72px;
+        --radius: 16px;
+        --radius-sm: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body.page-admin-auction {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--admin-text);
+        background: var(--admin-bg-deep);
+        overflow-x: hidden;
+      }
+
+      .admin-dash-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          radial-gradient(ellipse 100% 80% at 15% 0%, rgba(60, 62, 144, 0.5) 0%, transparent 55%),
+          radial-gradient(ellipse 80% 60% at 90% 70%, rgba(230, 48, 53, 0.15) 0%, transparent 45%),
+          linear-gradient(168deg, var(--admin-bg-deep) 0%, var(--admin-bg-mid) 42%, #0a0c1a 100%);
+      }
+
+      .admin-dash-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+        background-size: 56px 56px;
+        opacity: 0.55;
+        mask-image: radial-gradient(ellipse 75% 55% at 50% 35%, black 15%, transparent 100%);
+      }
+
+      .admin-shell {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .admin-sidebar {
+        width: var(--sidebar-w);
+        flex-shrink: 0;
+        padding: 1.25rem 1rem 1rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border-right: 1px solid var(--admin-border);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0.75rem 1.25rem;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .admin-brand img {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1px solid var(--admin-border);
+      }
+
+      .admin-brand h1 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .admin-brand span {
+        display: block;
+        font-size: 0.72rem;
+        color: var(--admin-muted);
+        font-weight: 500;
+        margin-top: 2px;
+      }
+
+      .admin-nav-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--admin-muted);
+        padding: 0.75rem 0.75rem 0.35rem;
+        font-weight: 600;
+      }
+
+      .admin-nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: var(--radius-sm);
+        color: var(--admin-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background 0.18s ease, color 0.18s ease;
+      }
+
+      .admin-nav a i {
+        width: 1.25rem;
+        text-align: center;
+        opacity: 0.85;
+      }
+
+      .admin-nav a:hover {
+        color: var(--admin-text);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .admin-nav a.is-active {
+        color: #fff;
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.35) 0%, rgba(60, 62, 144, 0.35) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+
+      .admin-sidebar-footer {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--admin-border);
+      }
+
+      .admin-sidebar-footer .btn-logout {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .admin-sidebar-footer .btn-logout:hover {
+        background: rgba(230, 48, 53, 0.22);
+        color: #fff;
+      }
+
+      .admin-sidebar-footer .back-site {
+        display: block;
+        text-align: center;
+        margin-top: 0.75rem;
+        font-size: 0.82rem;
+        color: var(--admin-muted);
+        text-decoration: none;
+      }
+
+      .admin-sidebar-footer .back-site:hover {
+        color: var(--admin-text);
+      }
+
+      .admin-main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .admin-header {
+        min-height: var(--header-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--admin-border);
+        background: rgba(7, 8, 20, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+      }
+
+      .admin-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-width: 0;
+      }
+
+      .admin-menu-toggle {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: var(--admin-glass);
+        color: var(--admin-text);
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .admin-header-titles h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .admin-header-titles p {
+        margin: 0.15rem 0 0;
+        font-size: 0.85rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-header-search {
+        flex: 1;
+        max-width: 440px;
+        position: relative;
+      }
+
+      .admin-header-search input {
+        width: 100%;
+        padding: 0.65rem 1rem 0.65rem 2.65rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--admin-text);
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .admin-header-search input::placeholder {
+        color: rgba(154, 163, 194, 0.75);
+      }
+
+      .admin-header-search input:focus {
+        border-color: rgba(230, 48, 53, 0.5);
+        box-shadow: 0 0 0 3px rgba(230, 48, 53, 0.12);
+      }
+
+      .admin-header-search > i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--admin-muted);
+        font-size: 0.95rem;
+      }
+
+      .admin-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .admin-user-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.35rem 0.65rem 0.35rem 0.35rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        cursor: default;
+      }
+
+      .admin-user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--admin-secondary), var(--admin-accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .admin-user-meta strong {
+        display: block;
+        font-size: 0.82rem;
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .admin-user-meta small {
+        font-size: 0.7rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-content {
+        padding: 1.5rem;
+        flex: 1;
+      }
+
+      @media (max-width: 1199px) {
+        .admin-header-search {
+          display: none;
+        }
+      }
+
+      .admin-panel {
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid var(--admin-border);
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .admin-panel-hd {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--admin-border);
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .admin-panel-hd h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .admin-panel-bd {
+        padding: 1rem 1.25rem 1.25rem;
+      }
+
+      .admin-table-wrap {
+        overflow-x: auto;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86rem;
+        min-width: 880px;
+      }
+
+      .admin-table th,
+      .admin-table td {
+        padding: 0.7rem 0.85rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        vertical-align: middle;
+      }
+
+      .admin-table th {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--admin-muted);
+        font-weight: 700;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .admin-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .admin-table tbody tr:hover td {
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .admin-table tr.contact-row-unread td {
+        font-weight: 600;
+      }
+
+      .admin-table tr.contact-row-unread td:first-child {
+        box-shadow: inset 3px 0 0 var(--admin-accent);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--admin-muted);
+        font-size: 0.82rem;
+        white-space: nowrap;
+      }
+
+      .pill-accent {
+        border-color: rgba(230, 48, 53, 0.45);
+        color: #ffb4b7;
+        background: rgba(230, 48, 53, 0.1);
+      }
+
+      .btn-soft {
+        border-radius: 12px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-weight: 700;
+        padding: 0.6rem 0.85rem;
+        transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
+      }
+
+      .btn-soft:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(230, 48, 53, 0.25);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .btn-danger-soft {
+        border-radius: 12px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 800;
+        padding: 0.6rem 0.85rem;
+        transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
+      }
+
+      .btn-danger-soft:hover {
+        background: rgba(230, 48, 53, 0.22);
+        border-color: rgba(230, 48, 53, 0.65);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .btn-primary-soft {
+        border-radius: 12px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.18) 0%, rgba(60, 62, 144, 0.18) 100%);
+        color: #fff;
+        font-weight: 800;
+        padding: 0.6rem 0.85rem;
+        transition: transform 0.12s ease, filter 0.2s ease;
+      }
+
+      .btn-primary-soft:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+        color: #fff;
+      }
+
+      .btn-xs-soft {
+        padding: 0.35rem 0.55rem;
+        font-size: 0.78rem;
+        border-radius: 8px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .btn-xs-soft:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+      }
+
+      .btn-xs-danger {
+        padding: 0.35rem 0.55rem;
+        font-size: 0.78rem;
+        border-radius: 8px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 600;
+      }
+
+      .btn-xs-danger:hover {
+        background: rgba(230, 48, 53, 0.25);
+        color: #fff;
+      }
+
+      .admin-muted {
+        color: var(--admin-muted);
+      }
+
+      code {
+        color: #c5cbe8;
+      }
+
+      .auction-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 1px solid var(--admin-border);
+        vertical-align: middle;
+      }
+
+      .stat-tile .stat-value {
+        font-size: 1.65rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.2;
+      }
+
+      .stat-tile .stat-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--admin-muted);
+        margin-bottom: 0.35rem;
+      }
+    </style>
+  </head>
+  <body class="page-admin-auction admin-app-layout">
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem("coscharis:admin:v1");
+          var s = raw ? JSON.parse(raw) : null;
+          if (!s || !s.loggedIn) window.location.replace("admin-login.html");
+        } catch (e) {
+          window.location.replace("admin-login.html");
+        }
+      })();
+    </script>
+
+    <div class="admin-dash-bg" aria-hidden="true"></div>
+
+    <div class="admin-shell">
+      <aside class="admin-sidebar admin-sidebar--desktop" id="admin-sidebar-desktop" aria-label="Admin navigation">
+        <div class="admin-sidebar-scroll">
+          <a class="admin-brand" href="admin-dashboard.html">
+            <img src="coscharis/assets/img/logo/cos-logo.jpeg" alt="" width="44" height="44" />
+            <div>
+              <h1>Coscharis</h1>
+              <span>Admin Console</span>
+            </div>
+          </a>
+
+          <div class="admin-nav-label">Overview</div>
+          <nav class="admin-nav" aria-label="Primary">
+            <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <a href="admin-live-site.html"><i class="fas fa-globe"></i> Live site</a>
+          </nav>
+
+          <div class="admin-nav-label">System</div>
+          <nav class="admin-nav" aria-label="Settings">
+            <a href="admin-settings.html"><i class="fas fa-sliders"></i> Site settings</a>
+          </nav>
+
+          <div class="admin-nav-label">Commerce</div>
+          <nav class="admin-nav">
+            <a href="admin-shop.html"><i class="fas fa-store"></i> Shop (Admin)</a>
+            <a href="admin-cart.html"><i class="fas fa-shopping-basket"></i> Cart (Admin)</a>
+            <a href="admin-checkout.html"><i class="fas fa-credit-card"></i> Checkout (Admin)</a>
+          </nav>
+
+          <div class="admin-nav-label">Engagement</div>
+          <nav class="admin-nav">
+            <a class="is-active" href="admin-auction.html"><i class="fas fa-gavel"></i> Auction (Admin)</a>
+            <a href="admin-listings.html"><i class="fas fa-car-side"></i> Listings (Admin)</a>
+          </nav>
+
+          <div class="admin-nav-label">People &amp; content</div>
+          <nav class="admin-nav">
+            <a href="admin-registration.html"><i class="fas fa-users-cog"></i> Users & profiles</a>
+            <a href="admin-contact.html"><i class="fas fa-envelope"></i> Contact</a>
+          </nav>
+        </div>
+
+        <div class="admin-sidebar-footer">
+          <button type="button" class="btn-logout js-admin-logout">
+            <i class="fas fa-sign-out-alt"></i> Sign out
+          </button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-header">
+          <div class="admin-header-left">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-drawer-panel">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="admin-header-titles">
+              <h2>Live auctions</h2>
+              
+            </div>
+          </div>
+
+          <div class="admin-header-search">
+            <i class="fas fa-search"></i>
+            <input type="search" id="admin-auction-filter" placeholder="Search lot #, title, location…" autocomplete="off" />
+          </div>
+
+          <div class="admin-header-actions">
+            <button type="button" class="btn-soft" id="admin-auction-refresh" title="Reload data">
+              <i class="fas fa-rotate me-1"></i> Refresh
+            </button>
+            <button type="button" class="btn-soft" id="admin-auction-export-json" title="Download catalog JSON">
+              <i class="far fa-file-code me-2"></i> Export JSON
+            </button>
+            <button type="button" class="btn-danger-soft" id="admin-auction-reset-catalog" title="Discard browser catalog and load bundled JSON again">
+              <i class="fas fa-rotate-left me-2"></i> Reset to bundled
+            </button>
+            <button type="button" class="btn-danger-soft" id="admin-auction-clear-session" title="Clear simulated bids in this tab session">
+              <i class="fas fa-broom me-2"></i> Clear session bids
+            </button>
+            <button type="button" class="btn-danger-soft" id="admin-auction-clear-user-bids" title="Clear stored user bid history (demo)">
+              <i class="fas fa-user-slash me-2"></i> Clear user bids
+            </button>
+            <div class="admin-user-chip" title="Signed-in administrator">
+              <div class="admin-user-avatar" id="admin-admin-initials">A</div>
+              <div class="admin-user-meta">
+                <strong id="admin-admin-email">admin@coscharis.local</strong>
+                <small>Administrator</small>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="admin-content">
+          <div id="admin-auction-load-err" class="alert alert-danger py-2 px-3 d-none mb-3" role="alert" style="border-radius: 12px"></div>
+
+          <div class="row g-3 g-lg-4 mb-3">
+            <div class="col-md-4">
+              <div class="admin-panel stat-tile h-100">
+                <div class="admin-panel-bd py-3">
+                  <div class="stat-label">Live lots</div>
+                  <div class="stat-value" id="stat-auction-lots">0</div>
+                  <p class="small mb-0 admin-muted mt-2" id="stat-auction-catalog-source">—</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="admin-panel stat-tile h-100">
+                <div class="admin-panel-bd py-3">
+                  <div class="stat-label">Bid rows (session)</div>
+                  <div class="stat-value" id="stat-auction-session-bids">0</div>
+                  <p class="small mb-0 admin-muted mt-2"><code>coscharis:auction:mock:v1</code> · sessionStorage</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="admin-panel stat-tile h-100">
+                <div class="admin-panel-bd py-3">
+                  <div class="stat-label">User bid records</div>
+                  <div class="stat-value" id="stat-auction-user-bids">0</div>
+                  <p class="small mb-0 admin-muted mt-2"><code>coscharis:auction:userBids:v1</code> · localStorage</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-panel">
+            <div class="admin-panel-hd">
+              <h3><i class="fas fa-gavel me-2 text-danger"></i> Auction lots</h3>
+              <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                <span class="pill" id="admin-auction-meta">0 lots</span>
+                <span class="pill pill-accent d-none" id="admin-auction-browser-pill">Browser catalog active</span>
+                <button type="button" class="btn-primary-soft border-0" data-bs-toggle="modal" data-bs-target="#admin-auction-add-modal" id="admin-auction-add-open">
+                  <i class="fas fa-plus me-2"></i> Add lot
+                </button>
+              </div>
+            </div>
+            <div class="admin-panel-bd pt-0">
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 64px"></th>
+                      <th>Lot</th>
+                      <th>Title</th>
+                      <th>Location</th>
+                      <th class="text-end">Current bid</th>
+                      <th class="text-end">Min. next</th>
+                      <th>Ends (local)</th>
+                      <th>Status</th>
+                      <th style="min-width: 280px">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-auction-tbody">
+                    <tr>
+                      <td colspan="9" class="admin-muted py-4 text-center">Loading…</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="small mt-3 mb-0 admin-muted">
+                Add/delete updates the catalog in this browser unless you use <strong>Reset to bundled</strong>. Bid activity still merges via
+                <code>CoscharisAuction.mergeLot()</code> in <code>coscharis/assets/js/auction.js</code>. Export JSON to back up your catalog.
+              </p>
+            </div>
+          </div>
+
+          <p class="text-center mt-4 mb-0 small" style="color: var(--admin-muted)">
+            Coscharis Admin · Auctions · Local demo
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal fade" id="admin-auction-add-modal" tabindex="-1" aria-labelledby="admin-auction-add-title" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background: #12152e; border: 1px solid rgba(255, 255, 255, 0.12); color: var(--admin-text, #e8eaf4)">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title" id="admin-auction-add-title">Add auction lot</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="small admin-muted mb-3">
+              New lots are appended to the catalog. Upload a photo (stored in this browser). Use <code>live</code> status for lots that appear on the public auction grid.
+            </p>
+            <form id="admin-auction-add-form" class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="al-title">Title <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="al-title" required maxlength="120" autocomplete="off" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="al-lot-no">Lot number <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="al-lot-no" required maxlength="40" placeholder="e.g. LOT-10007" autocomplete="off" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="al-image-file">Lot image <span class="text-danger">*</span></label>
+                <div class="row g-2 align-items-start">
+                  <div class="col-lg-7">
+                    <input
+                      type="file"
+                      class="form-control"
+                      id="al-image-file"
+                      accept="image/*"
+                      style="background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.15); color: inherit"
+                    />
+                    <div class="form-text text-light opacity-75 mt-2">
+                      Upload a photo. It is stored in this browser with the lot (demo — use a reasonably small image).
+                    </div>
+                    <div class="d-flex gap-2 mt-2 flex-wrap">
+                      <button type="button" class="btn btn-outline-light btn-sm" id="al-image-remove">
+                        <i class="fas fa-trash-can me-2"></i> Remove image
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-lg-5">
+                    <div
+                      style="border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; background: rgba(255, 255, 255, 0.04); padding: 10px"
+                    >
+                      <div class="small admin-muted mb-2">Preview</div>
+                      <img
+                        id="al-image-preview"
+                        src=""
+                        alt=""
+                        style="width: 100%; height: 160px; object-fit: cover; border-radius: 10px; display: none"
+                      />
+                      <div id="al-image-preview-empty" class="small admin-muted">No image selected</div>
+                    </div>
+                  </div>
+                </div>
+                <input type="hidden" id="al-image-data" value="" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="al-location">Location</label>
+                <input type="text" class="form-control" id="al-location" maxlength="120" autocomplete="off" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="al-car-id">Inventory car ID</label>
+                <input type="text" class="form-control" id="al-car-id" maxlength="40" placeholder="e.g. car-007 (optional)" autocomplete="off" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label" for="al-current-bid">Opening / current bid (₦) <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="al-current-bid" required inputmode="decimal" placeholder="50000000" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label" for="al-min-inc">Min. increment (₦) <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="al-min-inc" required inputmode="decimal" placeholder="500000" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label" for="al-status">Status</label>
+                <select class="form-select" id="al-status" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit">
+                  <option value="live" selected>live</option>
+                  <option value="ended">ended</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="al-ends-at">Ends at (local) <span class="text-danger">*</span></label>
+                <input type="datetime-local" class="form-control" id="al-ends-at" required style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-12">
+                <p class="small text-danger mb-0 d-none" id="admin-auction-add-err"></p>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-secondary">
+            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn-primary-soft border-0" id="admin-auction-add-submit">Save lot</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+      <div class="mobile-drawer__backdrop" id="mobile-drawer-backdrop"></div>
+      <div
+        class="mobile-drawer__panel"
+        id="mobile-drawer-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Admin navigation"
+      >
+        <div class="mobile-drawer__header">
+          <span class="mobile-drawer__title">Menu</span>
+          <button type="button" class="mobile-drawer__close" id="mobile-drawer-close" aria-label="Close menu">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-drawer__scroll" id="mobile-drawer-scroll"></div>
+        <div class="mobile-drawer__foot" id="mobile-drawer-foot"></div>
+      </div>
+    </div>
+
+    <script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="coscharis/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="coscharis/assets/js/auction.js"></script>
+    <script src="coscharis/assets/js/admin-shell.js"></script>
+    <script>
+      (function () {
+        var ADMIN_KEY = "coscharis:admin:v1";
+        var MOCK_KEY = "coscharis:auction:mock:v1";
+        var USER_BIDS_KEY = "coscharis:auction:userBids:v1";
+
+        function safeParse(json) {
+          try {
+            return JSON.parse(json);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function escapeHtml(s) {
+          if (s == null) return "";
+          var d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+
+        /** Safe for use inside double-quoted src="" (paths or data URLs). */
+        function attrSrc(s) {
+          return String(s || "")
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/</g, "&lt;");
+        }
+
+        function countSessionBidRows() {
+          try {
+            var raw = sessionStorage.getItem(MOCK_KEY);
+            var st = raw ? JSON.parse(raw) : {};
+            var n = 0;
+            for (var k in st) {
+              if (Object.prototype.hasOwnProperty.call(st, k) && st[k] && Array.isArray(st[k].bids)) {
+                n += st[k].bids.length;
+              }
+            }
+            return n;
+          } catch (e) {
+            return 0;
+          }
+        }
+
+        function countUserBidRecords() {
+          try {
+            var raw = localStorage.getItem(USER_BIDS_KEY);
+            var map = raw ? JSON.parse(raw) : {};
+            var n = 0;
+            for (var k in map) {
+              if (Object.prototype.hasOwnProperty.call(map, k) && Array.isArray(map[k])) n += map[k].length;
+            }
+            return n;
+          } catch (e) {
+            return 0;
+          }
+        }
+
+        function filterLots(lots, q) {
+          if (!q) return lots;
+          q = q.toLowerCase();
+          return lots.filter(function (lot) {
+            return (
+              String(lot.lotNo || "")
+                .toLowerCase()
+                .indexOf(q) !== -1 ||
+              String(lot.title || "")
+                .toLowerCase()
+                .indexOf(q) !== -1 ||
+              String(lot.location || "")
+                .toLowerCase()
+                .indexOf(q) !== -1 ||
+              String(lot.id || "")
+                .toLowerCase()
+                .indexOf(q) !== -1
+            );
+          });
+        }
+
+        function showLoadErr(msg) {
+          var el = document.getElementById("admin-auction-load-err");
+          if (!el) return;
+          var m = msg || "";
+          el.textContent = m;
+          if (m) el.classList.remove("d-none");
+          else el.classList.add("d-none");
+        }
+
+        var __auctionLotsCache = null;
+
+        function renderTable(baseLots) {
+          if (!window.CoscharisAuction || !CoscharisAuction.mergeLot) {
+            showLoadErr("Auction script failed to load.");
+            return;
+          }
+
+          var q = (document.getElementById("admin-auction-filter").value || "").trim();
+          var liveCount = baseLots.filter(function (l) {
+            return l.status === "live";
+          }).length;
+          var rows = filterLots(baseLots.slice(), q);
+
+          document.getElementById("stat-auction-lots").textContent = String(liveCount);
+          document.getElementById("stat-auction-session-bids").textContent = String(countSessionBidRows());
+          document.getElementById("stat-auction-user-bids").textContent = String(countUserBidRecords());
+          document.getElementById("admin-auction-meta").textContent = rows.length + " shown · " + baseLots.length + " total";
+
+          var srcEl = document.getElementById("stat-auction-catalog-source");
+          if (srcEl) {
+            srcEl.textContent = CoscharisAuction.hasCatalogOverride()
+              ? "Catalog: coscharis:auction-lots:v1 (this browser)"
+              : "Catalog: bundled auction-lots.json";
+          }
+          var bp = document.getElementById("admin-auction-browser-pill");
+          if (bp) {
+            if (CoscharisAuction.hasCatalogOverride()) bp.classList.remove("d-none");
+            else bp.classList.add("d-none");
+          }
+
+          var tbody = document.getElementById("admin-auction-tbody");
+          tbody.innerHTML = "";
+
+          if (!rows.length) {
+            var tr0 = document.createElement("tr");
+            tr0.innerHTML =
+              '<td colspan="9" class="admin-muted py-4 text-center">' +
+              (baseLots.length ? "No lots match your search." : "No lots in catalog. Add a lot or reset to bundled JSON.") +
+              "</td>";
+            tbody.appendChild(tr0);
+            return;
+          }
+
+          rows.forEach(function (base) {
+            var merged = CoscharisAuction.mergeLot(base);
+            var minNext = merged.currentBid + base.minIncrement;
+            var endsAt = base.endsAt ? new Date(base.endsAt) : null;
+            var endsStr =
+              endsAt && !isNaN(endsAt.getTime()) ? endsAt.toLocaleString() : "—";
+            var endedByTime = endsAt && !isNaN(endsAt.getTime()) && Date.now() >= endsAt.getTime();
+            var lotHref = "auction-lot.html?id=" + encodeURIComponent(base.id);
+            var invHref = base.carId ? "inventory-single.html?id=" + encodeURIComponent(base.carId) : "";
+
+            var statusBadge;
+            if (base.status !== "live") {
+              statusBadge = '<span class="badge bg-secondary">Not live</span>';
+            } else if (endedByTime) {
+              statusBadge = '<span class="badge bg-secondary">Ended</span>';
+            } else {
+              statusBadge = '<span class="badge" style="background:rgba(46,229,157,.2);color:#2ee59d">Live</span>';
+            }
+
+            var tr = document.createElement("tr");
+            tr.innerHTML =
+              '<td><img class="auction-thumb" src="' +
+              attrSrc(base.image || "") +
+              '" alt="" loading="lazy"/></td><td><strong>' +
+              escapeHtml(base.lotNo || "") +
+              '</strong><br><span class="small admin-muted">' +
+              escapeHtml(base.id || "") +
+              "</span></td><td>" +
+              escapeHtml(merged.title || "") +
+              "</td><td>" +
+              escapeHtml(base.location || "—") +
+              '</td><td class="text-end">' +
+              escapeHtml(CoscharisAuction.formatNaira(merged.currentBid)) +
+              '</td><td class="text-end">' +
+              escapeHtml(CoscharisAuction.formatNaira(minNext)) +
+              "</td><td>" +
+              escapeHtml(endsStr) +
+              "</td><td>" +
+              statusBadge +
+              '</td><td class="text-nowrap"><a class="btn-xs-soft me-1 text-decoration-none" href="' +
+              lotHref +
+              '" target="_blank" rel="noopener noreferrer">View lot</a>' +
+              (invHref
+                ? '<a class="btn-xs-soft me-1 text-decoration-none" href="' +
+                  invHref +
+                  '" target="_blank" rel="noopener noreferrer">Inventory</a>'
+                : "") +
+              '<button type="button" class="btn-xs-danger js-auction-del" data-lot-id="' +
+              escapeHtml(base.id) +
+              '">Delete</button></td>';
+            tbody.appendChild(tr);
+          });
+        }
+
+        function loadAndRender() {
+          showLoadErr("");
+          if (!window.CoscharisAuction || !CoscharisAuction.fetchLots) {
+            showLoadErr("Auction helpers (CoscharisAuction) are not available.");
+            document.getElementById("admin-auction-tbody").innerHTML =
+              '<tr><td colspan="9" class="admin-muted py-4 text-center">Could not load auction.js.</td></tr>';
+            return;
+          }
+          CoscharisAuction.fetchLots()
+            .then(function (lots) {
+              __auctionLotsCache = lots;
+              renderTable(lots);
+            })
+            .catch(function () {
+              __auctionLotsCache = null;
+              showLoadErr(
+                "Could not load auction-lots.json. Serve the site over http(s) or verify coscharis/assets/data/auction-lots.json exists."
+              );
+              document.getElementById("admin-auction-tbody").innerHTML =
+                '<tr><td colspan="9" class="admin-muted py-4 text-center">Failed to load catalog.</td></tr>';
+            });
+        }
+
+        function renderFromCache() {
+          if (__auctionLotsCache) renderTable(__auctionLotsCache);
+          else loadAndRender();
+        }
+
+        document.getElementById("admin-auction-filter").addEventListener("input", function () {
+          renderFromCache();
+        });
+
+        document.getElementById("admin-auction-refresh").addEventListener("click", function () {
+          loadAndRender();
+        });
+
+        document.getElementById("admin-auction-export-json").addEventListener("click", function () {
+          if (!window.CoscharisAuction || !CoscharisAuction.fetchLots) return;
+          CoscharisAuction.fetchLots()
+            .then(function (lots) {
+              var blob = new Blob([JSON.stringify(lots, null, 2)], { type: "application/json" });
+              var a = document.createElement("a");
+              a.href = URL.createObjectURL(blob);
+              a.download = "auction-lots-export.json";
+              a.click();
+              URL.revokeObjectURL(a.href);
+            })
+            .catch(function () {
+              alert("Could not fetch catalog JSON.");
+            });
+        });
+
+        document.getElementById("admin-auction-clear-session").addEventListener("click", function () {
+          if (!confirm("Clear session bid simulation (coscharis:auction:mock:v1)? Public pages will show seed bids from JSON again.")) return;
+          try {
+            sessionStorage.removeItem(MOCK_KEY);
+          } catch (e) {}
+          loadAndRender();
+        });
+
+        document.getElementById("admin-auction-clear-user-bids").addEventListener("click", function () {
+          if (!confirm("Remove all user bid records (coscharis:auction:userBids:v1) from this browser?")) return;
+          try {
+            localStorage.removeItem(USER_BIDS_KEY);
+          } catch (e) {}
+          loadAndRender();
+        });
+
+        document.getElementById("admin-auction-reset-catalog").addEventListener("click", function () {
+          if (!CoscharisAuction || !CoscharisAuction.clearLotsOverride) return;
+          if (!confirm("Discard the browser catalog and load lots from the bundled auction-lots.json file again?")) return;
+          CoscharisAuction.clearLotsOverride();
+          __auctionLotsCache = null;
+          loadAndRender();
+        });
+
+        function parseMoney(s) {
+          var n = Number(String(s || "").replace(/,/g, "").trim());
+          return isNaN(n) ? NaN : n;
+        }
+
+        function setLotImagePreview(src) {
+          var img = document.getElementById("al-image-preview");
+          var empty = document.getElementById("al-image-preview-empty");
+          if (!img || !empty) return;
+          if (!src) {
+            img.src = "";
+            img.style.display = "none";
+            empty.style.display = "block";
+            return;
+          }
+          img.src = src;
+          img.style.display = "block";
+          empty.style.display = "none";
+        }
+
+        function resetLotImage() {
+          var f = document.getElementById("al-image-file");
+          var h = document.getElementById("al-image-data");
+          if (f) f.value = "";
+          if (h) h.value = "";
+          setLotImagePreview("");
+        }
+
+        function fileToDataUrl(file, opts) {
+          var maxW = (opts && opts.maxW) || 1200;
+          var maxH = (opts && opts.maxH) || 1200;
+          var quality = (opts && opts.quality) || 0.82;
+          return new Promise(function (resolve, reject) {
+            if (!file) return resolve("");
+            if (!/^image\//i.test(file.type || "")) return reject(new Error("Please upload an image file."));
+
+            var reader = new FileReader();
+            reader.onerror = function () {
+              reject(new Error("Could not read the selected file."));
+            };
+            reader.onload = function () {
+              var src = String(reader.result || "");
+              var image = new Image();
+              image.onload = function () {
+                try {
+                  var w = image.naturalWidth || image.width || 0;
+                  var h = image.naturalHeight || image.height || 0;
+                  if (!w || !h) return resolve(src);
+
+                  var scale = Math.min(1, maxW / w, maxH / h);
+                  var tw = Math.max(1, Math.round(w * scale));
+                  var th = Math.max(1, Math.round(h * scale));
+
+                  var canvas = document.createElement("canvas");
+                  canvas.width = tw;
+                  canvas.height = th;
+                  var ctx = canvas.getContext("2d");
+                  ctx.drawImage(image, 0, 0, tw, th);
+
+                  var out = canvas.toDataURL("image/jpeg", quality);
+                  resolve(out || src);
+                } catch (e) {
+                  resolve(src);
+                }
+              };
+              image.onerror = function () {
+                resolve(src);
+              };
+              image.src = src;
+            };
+            reader.readAsDataURL(file);
+          });
+        }
+
+        document.getElementById("admin-auction-tbody").addEventListener("click", function (ev) {
+          var btn = ev.target.closest(".js-auction-del");
+          if (!btn || !window.CoscharisAuction) return;
+          var id = btn.getAttribute("data-lot-id");
+          if (!id) return;
+          if (!confirm("Delete this lot from the catalog? Session bid mock data for this lot will be removed.")) return;
+          CoscharisAuction.fetchLots()
+            .then(function (lots) {
+              var next = lots.filter(function (l) {
+                return l.id !== id;
+              });
+              CoscharisAuction.persistLots(next);
+              CoscharisAuction.forgetLotSession(id);
+              __auctionLotsCache = null;
+              loadAndRender();
+            })
+            .catch(function () {
+              alert("Could not update catalog.");
+            });
+        });
+
+        var addModalEl = document.getElementById("admin-auction-add-modal");
+        if (addModalEl) {
+          addModalEl.addEventListener("show.bs.modal", function () {
+            var err = document.getElementById("admin-auction-add-err");
+            if (err) {
+              err.classList.add("d-none");
+              err.textContent = "";
+            }
+            var dt = new Date();
+            dt.setMinutes(dt.getMinutes() + 120);
+            function pad(n) {
+              return n < 10 ? "0" + n : String(n);
+            }
+            document.getElementById("al-ends-at").value =
+              dt.getFullYear() +
+              "-" +
+              pad(dt.getMonth() + 1) +
+              "-" +
+              pad(dt.getDate()) +
+              "T" +
+              pad(dt.getHours()) +
+              ":" +
+              pad(dt.getMinutes());
+            resetLotImage();
+          });
+        }
+
+        document.getElementById("al-image-file").addEventListener("change", function () {
+          var f = this.files && this.files[0] ? this.files[0] : null;
+          if (!f) {
+            document.getElementById("al-image-data").value = "";
+            setLotImagePreview("");
+            return;
+          }
+          fileToDataUrl(f, { maxW: 1200, maxH: 1200, quality: 0.82 })
+            .then(function (dataUrl) {
+              document.getElementById("al-image-data").value = dataUrl || "";
+              setLotImagePreview(dataUrl || "");
+            })
+            .catch(function (err) {
+              alert((err && err.message) || "Could not process the image.");
+              document.getElementById("al-image-file").value = "";
+              document.getElementById("al-image-data").value = "";
+              setLotImagePreview("");
+            });
+        });
+
+        document.getElementById("al-image-remove").addEventListener("click", function () {
+          resetLotImage();
+        });
+
+        document.getElementById("admin-auction-add-submit").addEventListener("click", function () {
+          var errEl = document.getElementById("admin-auction-add-err");
+          errEl.classList.add("d-none");
+          errEl.textContent = "";
+          if (!window.CoscharisAuction || !CoscharisAuction.fetchLots || !CoscharisAuction.persistLots) return;
+
+          var title = (document.getElementById("al-title").value || "").trim();
+          var lotNo = (document.getElementById("al-lot-no").value || "").trim();
+          var image = (document.getElementById("al-image-data").value || "").trim();
+          var location = (document.getElementById("al-location").value || "").trim();
+          var carId = (document.getElementById("al-car-id").value || "").trim();
+          var cur = parseMoney(document.getElementById("al-current-bid").value);
+          var inc = parseMoney(document.getElementById("al-min-inc").value);
+          var status = (document.getElementById("al-status").value || "live").trim();
+          var endsLocal = document.getElementById("al-ends-at").value;
+
+          if (!title || !lotNo) {
+            errEl.textContent = "Title and lot number are required.";
+            errEl.classList.remove("d-none");
+            return;
+          }
+          if (!image) {
+            errEl.textContent = "Please upload a lot image.";
+            errEl.classList.remove("d-none");
+            return;
+          }
+          if (image.length > 900000) {
+            errEl.textContent = "That image is too large to store in the browser for this demo. Use a smaller image.";
+            errEl.classList.remove("d-none");
+            return;
+          }
+          if (isNaN(cur) || cur < 0) {
+            errEl.textContent = "Enter a valid current bid amount.";
+            errEl.classList.remove("d-none");
+            return;
+          }
+          if (isNaN(inc) || inc <= 0) {
+            errEl.textContent = "Enter a valid minimum increment (greater than zero).";
+            errEl.classList.remove("d-none");
+            return;
+          }
+          if (!endsLocal) {
+            errEl.textContent = "Choose an end date and time.";
+            errEl.classList.remove("d-none");
+            return;
+          }
+          var endDate = new Date(endsLocal);
+          if (isNaN(endDate.getTime())) {
+            errEl.textContent = "Invalid end date.";
+            errEl.classList.remove("d-none");
+            return;
+          }
+
+          var newLot = {
+            id: "lot-" + Date.now(),
+            title: title,
+            image: image,
+            lotNo: lotNo,
+            location: location || "—",
+            currentBid: cur,
+            minIncrement: inc,
+            endsAt: endDate.toISOString(),
+            status: status === "ended" ? "ended" : "live",
+            seedBids: []
+          };
+          if (carId) newLot.carId = carId;
+
+          CoscharisAuction.fetchLots()
+            .then(function (lots) {
+              var list = Array.isArray(lots) ? lots.slice() : [];
+              list.push(newLot);
+              CoscharisAuction.persistLots(list);
+              __auctionLotsCache = null;
+              loadAndRender();
+              var form = document.getElementById("admin-auction-add-form");
+              if (form) form.reset();
+              resetLotImage();
+              var modal = bootstrap.Modal.getInstance(document.getElementById("admin-auction-add-modal"));
+              if (modal) modal.hide();
+            })
+            .catch(function () {
+              errEl.textContent = "Could not save lot.";
+              errEl.classList.remove("d-none");
+            });
+        });
+
+        try {
+          var adm = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
+          var em = (adm.email || "admin@coscharis.local").trim();
+          document.getElementById("admin-admin-email").textContent = em;
+          var ini = em.charAt(0).toUpperCase() || "A";
+          document.getElementById("admin-admin-initials").textContent = ini;
+        } catch (e) {}
+
+        loadAndRender();
+      })();
+    </script>
+  </body>
+</html>

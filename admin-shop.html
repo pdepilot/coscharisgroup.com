@@ -10,6 +10,7 @@
     <link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg" />
     <link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/admin-shell.css" />
     <style>
       :root {
         --admin-bg-deep: #070814;
@@ -69,18 +70,15 @@
         min-height: 100vh;
       }
 
-      /* Sidebar */
+      /* Sidebar column (scroll: .admin-sidebar-scroll in admin-shell.css) */
       .admin-sidebar {
         width: var(--sidebar-w);
         flex-shrink: 0;
-        display: flex;
-        flex-direction: column;
         padding: 1.25rem 1rem 1rem;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
         border-right: 1px solid var(--admin-border);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        transition: transform 0.28s ease, box-shadow 0.28s ease;
       }
 
       .admin-brand {
@@ -228,7 +226,6 @@
       }
 
       .admin-menu-toggle {
-        display: none;
         width: 44px;
         height: 44px;
         border-radius: var(--radius-sm);
@@ -377,39 +374,6 @@
       @media (max-width: 1199px) {
         .admin-header-search {
           display: none;
-        }
-      }
-
-      @media (max-width: 991px) {
-        .admin-menu-toggle {
-          display: flex;
-        }
-
-        .admin-sidebar {
-          position: fixed;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          z-index: 100;
-          box-shadow: 8px 0 40px rgba(0, 0, 0, 0.45);
-          transform: translateX(-102%);
-        }
-
-        .admin-sidebar.is-open {
-          transform: translateX(0);
-        }
-
-        .admin-sidebar-overlay {
-          display: none;
-          position: fixed;
-          inset: 0;
-          z-index: 99;
-          background: rgba(0, 0, 0, 0.55);
-          backdrop-filter: blur(2px);
-        }
-
-        .admin-sidebar-overlay.is-visible {
-          display: block;
         }
       }
 
@@ -613,7 +577,7 @@
       }
     </style>
   </head>
-  <body class="page-admin-shop">
+  <body class="page-admin-shop admin-app-layout">
     <script>
       (function () {
         try {
@@ -627,10 +591,10 @@
     </script>
 
     <div class="admin-dash-bg" aria-hidden="true"></div>
-    <div class="admin-sidebar-overlay" id="admin-sidebar-overlay" aria-hidden="true"></div>
 
     <div class="admin-shell">
-      <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
+      <aside class="admin-sidebar admin-sidebar--desktop" id="admin-sidebar-desktop" aria-label="Admin navigation">
+        <div class="admin-sidebar-scroll">
         <a class="admin-brand" href="admin-dashboard.html">
           <img src="coscharis/assets/img/logo/cos-logo.jpeg" alt="" width="44" height="44" />
           <div>
@@ -642,48 +606,50 @@
         <div class="admin-nav-label">Overview</div>
         <nav class="admin-nav" aria-label="Primary">
           <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
-          <a href="index.html"><i class="fas fa-globe"></i> Live site</a>
+          <a href="admin-live-site.html"><i class="fas fa-globe"></i> Live site</a>
+        </nav>
+
+        <div class="admin-nav-label">System</div>
+        <nav class="admin-nav" aria-label="Settings">
+          <a href="admin-settings.html"><i class="fas fa-sliders"></i> Site settings</a>
         </nav>
 
         <div class="admin-nav-label">Commerce</div>
         <nav class="admin-nav">
           <a class="is-active" href="admin-shop.html"><i class="fas fa-store"></i> Shop (Admin)</a>
           <a href="admin-cart.html"><i class="fas fa-shopping-basket"></i> Cart (Admin)</a>
-          <a href="shop.html"><i class="fas fa-tags"></i> Shop (Public)</a>
-          <a href="shop-cart.html"><i class="fas fa-cart-plus"></i> Cart (Public)</a>
-          <a href="shop-checkout.html"><i class="fas fa-credit-card"></i> Checkout</a>
+          <a href="admin-checkout.html"><i class="fas fa-credit-card"></i> Checkout (Admin)</a>
         </nav>
 
         <div class="admin-nav-label">Engagement</div>
         <nav class="admin-nav">
-          <a href="auction.html"><i class="fas fa-gavel"></i> Auctions</a>
-          <a href="listing-grid.html"><i class="fas fa-th-large"></i> Listings</a>
-          <a href="blog-single.html"><i class="fas fa-newspaper"></i> Blog</a>
+          <a href="admin-auction.html"><i class="fas fa-gavel"></i> Auction (Admin)</a>
+          <a href="admin-listings.html"><i class="fas fa-car-side"></i> Listings (Admin)</a>
         </nav>
 
         <div class="admin-nav-label">People</div>
         <nav class="admin-nav">
-          <a href="register.html"><i class="fas fa-user-plus"></i> Registration</a>
-          <a href="contact.html"><i class="fas fa-envelope"></i> Contact leads</a>
+          <a href="admin-registration.html"><i class="fas fa-users-cog"></i> Users & profiles</a>
+          <a href="admin-contact.html"><i class="fas fa-envelope"></i> Contact</a>
         </nav>
+        </div>
 
         <div class="admin-sidebar-footer">
-          <button type="button" class="btn-logout" id="admin-logout-btn">
+          <button type="button" class="btn-logout js-admin-logout">
             <i class="fas fa-sign-out-alt"></i> Sign out
           </button>
-          <a class="back-site" href="index.html"><i class="fas fa-external-link-alt"></i> View public website</a>
         </div>
       </aside>
 
       <main class="admin-main">
         <header class="admin-header">
           <div class="admin-header-left">
-            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Open menu">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-drawer-panel">
               <i class="fas fa-bars"></i>
             </button>
             <div class="admin-header-titles">
-              <h2>Shop catalog</h2>
-              <p>Search items and add them to the shared cart storage</p>
+              <h2>Frontend shop catalog</h2>
+              <p>Add or edit products — they appear on the public shop for customers</p>
             </div>
           </div>
 
@@ -715,6 +681,12 @@
                   <h3><i class="fas fa-store me-2 text-danger"></i> Products</h3>
                   <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
                     <span class="pill" id="admin-shop-meta">0 products</span>
+                    <button type="button" class="btn-primary-soft" id="admin-add-product" data-bs-toggle="modal" data-bs-target="#admin-product-modal">
+                      <i class="fas fa-plus me-2"></i> Add product
+                    </button>
+                    <button type="button" class="btn-soft" id="admin-reset-catalog" title="Restore the default 9 demo products">
+                      <i class="fas fa-rotate-left me-2"></i> Reset catalog
+                    </button>
                     <select
                       id="admin-shop-sort"
                       class="form-select form-select-sm"
@@ -722,6 +694,7 @@
                       aria-label="Sort products"
                     >
                       <option value="default" selected>Sort: Default</option>
+                      <option value="latest">Sort: Newest</option>
                       <option value="priceAsc">Sort: Low → High</option>
                       <option value="priceDesc">Sort: High → Low</option>
                       <option value="titleAsc">Sort: A → Z</option>
@@ -741,7 +714,7 @@
                     No products match your search.
                   </div>
                   <p class="small mt-3 mb-0 admin-muted">
-                    This page uses the same cart store as the public shop:
+                    Catalog is saved in <code>coscharis:shopCatalog:v1</code> and drives the public shop. Cart lines use
                     <code>coscharis:cart:v1</code>.
                   </p>
                 </div>
@@ -756,12 +729,123 @@
       </main>
     </div>
 
+    <div class="modal fade" id="admin-product-modal" tabindex="-1" aria-labelledby="admin-product-modal-title" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background: #12152e; border: 1px solid rgba(255, 255, 255, 0.12); color: var(--admin-text, #e8eaf4)">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title" id="admin-product-modal-title">Add product</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="admin-product-form" class="row g-3">
+              <input type="hidden" id="pf-id" value="" />
+              <div class="col-md-6">
+                <label class="form-label" for="pf-title">Title <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="pf-title" required placeholder="e.g. Brake pad set" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="pf-price">Price <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="pf-price" required placeholder="e.g. ₦450,000" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="pf-old">Compare-at price</label>
+                <input type="text" class="form-control" id="pf-old" placeholder="Optional, e.g. ₦520,000" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="pf-tag">Badge</label>
+                <input type="text" class="form-control" id="pf-tag" placeholder="e.g. Sale (optional)" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="pf-image-file">Product image <span class="text-danger">*</span></label>
+                <div class="row g-2 align-items-start">
+                  <div class="col-lg-7">
+                    <input
+                      type="file"
+                      class="form-control"
+                      id="pf-image-file"
+                      accept="image/*"
+                      style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit"
+                    />
+                    <div class="form-text text-light opacity-75 mt-2">
+                      Upload an image. It will be stored on this device and shown on the public shop.
+                    </div>
+                    <div class="d-flex gap-2 mt-2 flex-wrap">
+                      <button type="button" class="btn btn-outline-light btn-sm" id="pf-image-remove">
+                        <i class="fas fa-trash-can me-2"></i> Remove image
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-lg-5">
+                    <div
+                      style="border:1px solid rgba(255,255,255,0.12);border-radius:12px;background:rgba(255,255,255,0.04);padding:10px"
+                    >
+                      <div class="small admin-muted mb-2">Preview</div>
+                      <img
+                        id="pf-image-preview"
+                        src=""
+                        alt=""
+                        style="width:100%;height:180px;object-fit:cover;border-radius:10px;display:none"
+                      />
+                      <div id="pf-image-preview-empty" class="small admin-muted">No image selected</div>
+                    </div>
+                  </div>
+                </div>
+                <input type="hidden" id="pf-image" value="" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="pf-category">Category</label>
+                <input type="text" class="form-control" id="pf-category" placeholder="e.g. Car Parts" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="pf-sku">SKU</label>
+                <input type="text" class="form-control" id="pf-sku" placeholder="Optional custom SKU" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="pf-desc">Short description</label>
+                <textarea class="form-control" id="pf-desc" rows="3" placeholder="Shown on the product page" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-secondary">
+            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" id="admin-product-save">
+              <i class="fas fa-check me-2"></i> Save product
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+      <div class="mobile-drawer__backdrop" id="mobile-drawer-backdrop"></div>
+      <div
+        class="mobile-drawer__panel"
+        id="mobile-drawer-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Admin navigation"
+      >
+        <div class="mobile-drawer__header">
+          <span class="mobile-drawer__title">Menu</span>
+          <button type="button" class="mobile-drawer__close" id="mobile-drawer-close" aria-label="Close menu">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-drawer__scroll" id="mobile-drawer-scroll"></div>
+        <div class="mobile-drawer__foot" id="mobile-drawer-foot"></div>
+      </div>
+    </div>
+
     <script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
     <script src="coscharis/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="coscharis/assets/js/admin-shell.js"></script>
+    <script src="coscharis/assets/js/shop-catalog.js"></script>
     <script>
       (function () {
         var ADMIN_KEY = "coscharis:admin:v1";
         var CART_KEY = "coscharis:cart:v1";
+        var SC = window.CoscharisShopCatalog;
+        if (!SC) return;
 
         function safeParse(json) {
           try {
@@ -787,15 +871,8 @@
             .replace(/>/g, "&gt;");
         }
 
-        function buildLineId(parts) {
-          return parts.filter(Boolean).join("|").toLowerCase();
-        }
-
         function parsePrice(s) {
-          if (!s) return 0;
-          var cleaned = String(s).replace(/[^\d]/g, "");
-          if (!cleaned) return 0;
-          return parseInt(cleaned, 10) || 0;
+          return SC.parsePrice(s);
         }
 
         function formatNaira(n) {
@@ -867,81 +944,114 @@
           document.getElementById("admin-cart-badge").textContent = total > 99 ? "99+" : String(total);
         }
 
-        // Session chip
-        var session = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
-        var email = (session.email || "admin@coscharis.local").trim();
-        document.getElementById("admin-user-email").textContent = email;
-        document.getElementById("admin-user-initials").textContent = email.charAt(0).toUpperCase() || "A";
-
-        // Menu toggle (mobile)
-        var sidebar = document.getElementById("admin-sidebar");
-        var overlay = document.getElementById("admin-sidebar-overlay");
-        function closeMenu() {
-          sidebar.classList.remove("is-open");
-          overlay.classList.remove("is-visible");
+        function resetProductForm() {
+          document.getElementById("pf-id").value = "";
+          document.getElementById("pf-title").value = "";
+          document.getElementById("pf-price").value = "";
+          document.getElementById("pf-old").value = "";
+          document.getElementById("pf-tag").value = "";
+          document.getElementById("pf-image").value = "";
+          document.getElementById("pf-image-file").value = "";
+          document.getElementById("pf-image-preview").src = "";
+          document.getElementById("pf-image-preview").style.display = "none";
+          document.getElementById("pf-image-preview-empty").style.display = "block";
+          document.getElementById("pf-category").value = "";
+          document.getElementById("pf-sku").value = "";
+          document.getElementById("pf-desc").value = "";
         }
-        function openMenu() {
-          sidebar.classList.add("is-open");
-          overlay.classList.add("is-visible");
+
+        function setPreview(src) {
+          var img = document.getElementById("pf-image-preview");
+          var empty = document.getElementById("pf-image-preview-empty");
+          if (!src) {
+            img.src = "";
+            img.style.display = "none";
+            empty.style.display = "block";
+            return;
+          }
+          img.src = src;
+          img.style.display = "block";
+          empty.style.display = "none";
         }
-        document.getElementById("admin-menu-toggle").addEventListener("click", function () {
-          if (sidebar.classList.contains("is-open")) closeMenu();
-          else openMenu();
-        });
-        overlay.addEventListener("click", closeMenu);
 
-        document.getElementById("admin-logout-btn").addEventListener("click", function () {
-          try {
-            localStorage.removeItem(ADMIN_KEY);
-          } catch (e) {}
-          window.location.href = "admin-login.html";
-        });
+        function fileToDataUrl(file, opts) {
+          var maxW = (opts && opts.maxW) || 1200;
+          var maxH = (opts && opts.maxH) || 1200;
+          var quality = (opts && opts.quality) || 0.82;
+          return new Promise(function (resolve, reject) {
+            if (!file) return resolve("");
+            if (!/^image\\//i.test(file.type || "")) return reject(new Error("Please upload an image file."));
 
-        document.getElementById("admin-open-cart").addEventListener("click", function () {
-          window.location.href = "admin-cart.html";
-        });
+            var reader = new FileReader();
+            reader.onerror = function () {
+              reject(new Error("Could not read the selected file."));
+            };
+            reader.onload = function () {
+              var src = String(reader.result || "");
+              var img = new Image();
+              img.onload = function () {
+                try {
+                  var w = img.naturalWidth || img.width || 0;
+                  var h = img.naturalHeight || img.height || 0;
+                  if (!w || !h) return resolve(src);
 
-        // Catalog data (based on the existing public shop imagery)
-        var products = [
-          { title: "Car Engine Parts", price: "₦624,000", oldPrice: "₦720,000", tag: "Sale", image: "coscharis/assets/img/shop/01.jpg" },
-          { title: "Car Engine Parts", price: "₦1,024,000", image: "coscharis/assets/img/shop/02.jpg" },
-          { title: "Car Engine Parts", price: "₦1,136,000", image: "coscharis/assets/img/shop/03.jpg" },
-          { title: "Car Engine Parts", price: "₦464,000", oldPrice: "₦512,000", tag: "Sale", image: "coscharis/assets/img/shop/04.jpg" },
-          { title: "Car Engine Parts", price: "₦1,072,000", image: "coscharis/assets/img/shop/05.jpg" },
-          { title: "Car Engine Parts", price: "₦400,000", image: "coscharis/assets/img/shop/06.jpg" },
-          { title: "Car Engine Parts", price: "₦672,000", image: "coscharis/assets/img/shop/07.jpg" },
-          { title: "Car Engine Parts", price: "₦880,000", image: "coscharis/assets/img/shop/08.jpg" },
-          { title: "Car Engine Parts", price: "₦1,112,000", image: "coscharis/assets/img/shop/09.jpg" }
-        ];
+                  var scale = Math.min(1, maxW / w, maxH / h);
+                  var tw = Math.max(1, Math.round(w * scale));
+                  var th = Math.max(1, Math.round(h * scale));
 
-        function getIdForProduct(p) {
-          return buildLineId(["adminShop", p.title, p.price, p.image]);
+                  var canvas = document.createElement("canvas");
+                  canvas.width = tw;
+                  canvas.height = th;
+                  var ctx = canvas.getContext("2d");
+                  ctx.drawImage(img, 0, 0, tw, th);
+
+                  var out = canvas.toDataURL("image/jpeg", quality);
+                  resolve(out || src);
+                } catch (e) {
+                  resolve(src);
+                }
+              };
+              img.onerror = function () {
+                resolve(src);
+              };
+              img.src = src;
+            };
+            reader.readAsDataURL(file);
+          });
+        }
+
+        function openEditProduct(id) {
+          var p = SC.getById(id);
+          if (!p) return;
+          document.getElementById("admin-product-modal-title").textContent = "Edit product";
+          document.getElementById("pf-id").value = p.id;
+          document.getElementById("pf-title").value = p.title || "";
+          document.getElementById("pf-price").value = p.price || "";
+          document.getElementById("pf-old").value = p.oldPrice || "";
+          document.getElementById("pf-tag").value = p.tag || "";
+          document.getElementById("pf-image").value = p.image || "";
+          document.getElementById("pf-image-file").value = "";
+          setPreview(p.image || "");
+          document.getElementById("pf-category").value = p.category || "";
+          document.getElementById("pf-sku").value = p.sku || "";
+          document.getElementById("pf-desc").value = p.description || "";
+          var modalEl = document.getElementById("admin-product-modal");
+          var modal = bootstrap.Modal.getInstance(modalEl);
+          if (!modal) modal = new bootstrap.Modal(modalEl);
+          modal.show();
         }
 
         function render() {
           var q = (document.getElementById("admin-shop-filter").value || "").trim().toLowerCase();
           var sort = document.getElementById("admin-shop-sort").value;
 
-          var list = products.slice();
+          var all = SC.loadCatalog().items.slice();
+          var list = SC.sortItems(all, sort);
           if (q) {
             list = list.filter(function (p) {
               var t = String(p.title || "").toLowerCase();
-              var id = String(getIdForProduct(p) || "").toLowerCase();
+              var id = String(p.id || "").toLowerCase();
               return t.indexOf(q) !== -1 || id.indexOf(q) !== -1;
-            });
-          }
-
-          if (sort === "priceAsc") {
-            list.sort(function (a, b) {
-              return parsePrice(a.price) - parsePrice(b.price);
-            });
-          } else if (sort === "priceDesc") {
-            list.sort(function (a, b) {
-              return parsePrice(b.price) - parsePrice(a.price);
-            });
-          } else if (sort === "titleAsc") {
-            list.sort(function (a, b) {
-              return String(a.title || "").localeCompare(String(b.title || ""));
             });
           }
 
@@ -960,7 +1070,7 @@
           for (var i = 0; i < list.length; i++) {
             var p = list[i];
             var unit = parsePrice(p.price);
-            var id = getIdForProduct(p);
+            var id = p.id;
             var card = document.createElement("div");
             card.className = "prod-card";
             card.setAttribute("data-id", encodeURIComponent(id));
@@ -983,11 +1093,12 @@
               escapeHtml(p.price && String(p.price).trim() ? p.price : formatNaira(unit)) +
               "</span>" +
               "</div>" +
-              "<span class='pill'><i class='fas fa-tag'></i> Parts</span>" +
               "</div>" +
-              "<div class='prod-actions'>" +
-              "<button type='button' class='btn-primary-soft admin-add' data-qty='1'><i class='fas fa-cart-plus me-2'></i>Add</button>" +
-              "<button type='button' class='btn-soft admin-add' data-qty='3'><i class='fas fa-plus me-2'></i>Add x3</button>" +
+              "<div class='prod-actions flex-wrap'>" +
+              "<button type='button' class='btn-soft admin-edit py-2'><i class='fas fa-pen me-1'></i>Edit</button>" +
+              "<button type='button' class='btn-soft admin-del py-2' style='border-color:rgba(230,48,53,0.45);color:#ffb4b7'><i class='fas fa-trash me-1'></i>Delete</button>" +
+              "<button type='button' class='btn-primary-soft admin-add py-2' data-qty='1'><i class='fas fa-cart-plus me-2'></i>Add</button>" +
+              "<button type='button' class='btn-soft admin-add py-2' data-qty='3'><i class='fas fa-plus me-2'></i>x3</button>" +
               "</div>" +
               "<div class='small admin-muted' style='margin-top: 0.35rem'>ID: <code>" +
               escapeHtml(id) +
@@ -998,10 +1109,135 @@
           }
         }
 
+        var session = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
+        var email = (session.email || "admin@coscharis.local").trim();
+        document.getElementById("admin-user-email").textContent = email;
+        document.getElementById("admin-user-initials").textContent = email.charAt(0).toUpperCase() || "A";
+
+        document.getElementById("admin-open-cart").addEventListener("click", function () {
+          window.location.href = "admin-cart.html";
+        });
+
+        document.getElementById("pf-image-file").addEventListener("change", function () {
+          var f = this.files && this.files[0] ? this.files[0] : null;
+          if (!f) {
+            document.getElementById("pf-image").value = "";
+            setPreview("");
+            return;
+          }
+          fileToDataUrl(f, { maxW: 1200, maxH: 1200, quality: 0.82 })
+            .then(function (dataUrl) {
+              document.getElementById("pf-image").value = dataUrl || "";
+              setPreview(dataUrl || "");
+            })
+            .catch(function (err) {
+              alert((err && err.message) || "Could not process the image.");
+              document.getElementById("pf-image-file").value = "";
+              document.getElementById("pf-image").value = "";
+              setPreview("");
+            });
+        });
+
+        document.getElementById("pf-image-remove").addEventListener("click", function () {
+          document.getElementById("pf-image-file").value = "";
+          document.getElementById("pf-image").value = "";
+          setPreview("");
+        });
+
+        document.getElementById("admin-product-modal").addEventListener("show.bs.modal", function (ev) {
+          var t = ev.relatedTarget;
+          if (t && t.id === "admin-add-product") {
+            resetProductForm();
+            document.getElementById("admin-product-modal-title").textContent = "Add product";
+          }
+        });
+
+        document.getElementById("admin-product-save").addEventListener("click", function () {
+          var title = document.getElementById("pf-title").value.trim();
+          var price = document.getElementById("pf-price").value.trim();
+          var image = document.getElementById("pf-image").value.trim();
+          if (!title || !price || !image) {
+            alert("Please enter title and price, then upload a product image.");
+            return;
+          }
+          if (image.length > 900000) {
+            alert("That image is too large to store in the browser for this demo. Please upload a smaller image.");
+            return;
+          }
+          var cat = SC.loadCatalog();
+          var existingId = document.getElementById("pf-id").value.trim();
+          var payload = {
+            id: existingId || SC.newProductId(),
+            title: title,
+            price: price,
+            image: image
+          };
+          var oldP = document.getElementById("pf-old").value.trim();
+          var tag = document.getElementById("pf-tag").value.trim();
+          var catg = document.getElementById("pf-category").value.trim();
+          var sku = document.getElementById("pf-sku").value.trim();
+          var desc = document.getElementById("pf-desc").value.trim();
+          if (oldP) payload.oldPrice = oldP;
+          if (tag) payload.tag = tag;
+          if (catg) payload.category = catg;
+          if (sku) payload.sku = sku;
+          if (desc) payload.description = desc;
+
+          if (existingId) {
+            for (var i = 0; i < cat.items.length; i++) {
+              if (cat.items[i].id === existingId) {
+                cat.items[i] = payload;
+                break;
+              }
+            }
+          } else {
+            cat.items.push(payload);
+          }
+          SC.saveCatalog(cat);
+          bootstrap.Modal.getInstance(document.getElementById("admin-product-modal")).hide();
+          render();
+        });
+
+        document.getElementById("admin-reset-catalog").addEventListener("click", function () {
+          if (!confirm("Replace the entire catalog with the 9 default demo products? Custom products will be removed.")) return;
+          SC.saveCatalog({ items: SC.buildSeedItems() });
+          render();
+        });
+
         document.getElementById("admin-shop-filter").addEventListener("input", render);
         document.getElementById("admin-shop-sort").addEventListener("change", render);
 
         document.getElementById("admin-catalog-grid").addEventListener("click", function (e) {
+          var delBtn = e.target && e.target.closest ? e.target.closest(".admin-del") : null;
+          if (delBtn) {
+            var c = delBtn.closest("[data-id]");
+            if (!c) return;
+            var pid;
+            try {
+              pid = decodeURIComponent(c.getAttribute("data-id"));
+            } catch (err) {
+              return;
+            }
+            if (!confirm("Remove this product from the storefront?")) return;
+            var cat = SC.loadCatalog();
+            cat.items = cat.items.filter(function (x) {
+              return x.id !== pid;
+            });
+            SC.saveCatalog(cat);
+            render();
+            return;
+          }
+
+          var editBtn = e.target && e.target.closest ? e.target.closest(".admin-edit") : null;
+          if (editBtn) {
+            var c2 = editBtn.closest("[data-id]");
+            if (!c2) return;
+            try {
+              openEditProduct(decodeURIComponent(c2.getAttribute("data-id")));
+            } catch (err) {}
+            return;
+          }
+
           var btn = e.target && e.target.closest ? e.target.closest("button") : null;
           if (!btn || !btn.classList.contains("admin-add")) return;
           var card = btn.closest("[data-id]");
@@ -1011,18 +1247,12 @@
           var id;
           try {
             id = decodeURIComponent(raw);
-          } catch (err) {
+          } catch (err2) {
             return;
           }
 
           var qty = parseInt(btn.getAttribute("data-qty"), 10) || 1;
-          var p = null;
-          for (var i = 0; i < products.length; i++) {
-            if (getIdForProduct(products[i]) === id) {
-              p = products[i];
-              break;
-            }
-          }
+          var p = SC.getById(id);
           if (!p) return;
 
           addLine({
@@ -1035,28 +1265,36 @@
           updateCartBadge();
 
           btn.blur();
+          var origAdd = "<i class='fas fa-cart-plus me-2'></i>Add";
+          var origX3 = "<i class='fas fa-plus me-2'></i>x3";
           btn.textContent = "Added";
           setTimeout(function () {
-            btn.innerHTML = "<i class='fas fa-cart-plus me-2'></i>Add" + (qty === 3 ? " x3" : "");
+            btn.innerHTML = qty === 3 ? origX3 : origAdd;
           }, 650);
         });
 
         document.getElementById("admin-seed-cart").addEventListener("click", function () {
-          // seed cart with 3 items
+          var items = SC.loadCatalog().items;
+          if (items.length < 1) {
+            alert("Add products to the catalog first.");
+            return;
+          }
           var demo = { items: [] };
-          demo.items.push({ id: getIdForProduct(products[0]), title: products[0].title, price: products[0].price, image: products[0].image, qty: 2 });
-          demo.items.push({ id: getIdForProduct(products[4]), title: products[4].title, price: products[4].price, image: products[4].image, qty: 1 });
-          demo.items.push({ id: getIdForProduct(products[8]), title: products[8].title, price: products[8].price, image: products[8].image, qty: 3 });
+          var a = items[0];
+          demo.items.push({ id: a.id, title: a.title, price: a.price, image: a.image, qty: 2 });
+          if (items.length > 1) demo.items.push({ id: items[1].id, title: items[1].title, price: items[1].price, image: items[1].image, qty: 1 });
+          if (items.length > 2) demo.items.push({ id: items[2].id, title: items[2].title, price: items[2].price, image: items[2].image, qty: 3 });
           saveCart(demo);
           updateCartBadge();
-          alert("Demo cart created. Open Admin Cart to review.");
+          alert("Demo cart created from the first catalog products. Open Admin Cart to review.");
         });
 
-        // Keep in sync
         window.addEventListener("storage", function (ev) {
           if (ev && ev.key === CART_KEY) updateCartBadge();
+          if (ev && ev.key === SC.CATALOG_KEY) render();
         });
         window.addEventListener("coscharis-cart-updated", updateCartBadge);
+        window.addEventListener("coscharis-shop-catalog-updated", render);
 
         updateCartBadge();
         render();

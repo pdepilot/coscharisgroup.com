@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f1028" />
+    <meta name="description" content="Coscharis Admin — messages from the public contact form (local demo)" />
+    <title>Contact inbox — Coscharis Admin</title>
+    <link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg" />
+    <link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/admin-shell.css" />
+    <style>
+      :root {
+        --admin-bg-deep: #070814;
+        --admin-bg-mid: #12152e;
+        --admin-accent: #e63035;
+        --admin-accent-soft: rgba(230, 48, 53, 0.35);
+        --admin-glass: rgba(255, 255, 255, 0.06);
+        --admin-border: rgba(255, 255, 255, 0.1);
+        --admin-text: #e8eaf4;
+        --admin-muted: #9aa3c2;
+        --admin-secondary: #3c3e90;
+        --admin-success: #2ee59d;
+        --sidebar-w: 280px;
+        --header-h: 72px;
+        --radius: 16px;
+        --radius-sm: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body.page-admin-contact {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--admin-text);
+        background: var(--admin-bg-deep);
+        overflow-x: hidden;
+      }
+
+      .admin-dash-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          radial-gradient(ellipse 100% 80% at 15% 0%, rgba(60, 62, 144, 0.5) 0%, transparent 55%),
+          radial-gradient(ellipse 80% 60% at 90% 70%, rgba(230, 48, 53, 0.15) 0%, transparent 45%),
+          linear-gradient(168deg, var(--admin-bg-deep) 0%, var(--admin-bg-mid) 42%, #0a0c1a 100%);
+      }
+
+      .admin-dash-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+        background-size: 56px 56px;
+        opacity: 0.55;
+        mask-image: radial-gradient(ellipse 75% 55% at 50% 35%, black 15%, transparent 100%);
+      }
+
+      .admin-shell {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .admin-sidebar {
+        width: var(--sidebar-w);
+        flex-shrink: 0;
+        padding: 1.25rem 1rem 1rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border-right: 1px solid var(--admin-border);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0.75rem 1.25rem;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .admin-brand img {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1px solid var(--admin-border);
+      }
+
+      .admin-brand h1 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .admin-brand span {
+        display: block;
+        font-size: 0.72rem;
+        color: var(--admin-muted);
+        font-weight: 500;
+        margin-top: 2px;
+      }
+
+      .admin-nav-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--admin-muted);
+        padding: 0.75rem 0.75rem 0.35rem;
+        font-weight: 600;
+      }
+
+      .admin-nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: var(--radius-sm);
+        color: var(--admin-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background 0.18s ease, color 0.18s ease;
+      }
+
+      .admin-nav a i {
+        width: 1.25rem;
+        text-align: center;
+        opacity: 0.85;
+      }
+
+      .admin-nav a:hover {
+        color: var(--admin-text);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .admin-nav a.is-active {
+        color: #fff;
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.35) 0%, rgba(60, 62, 144, 0.35) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+
+      .admin-sidebar-footer {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--admin-border);
+      }
+
+      .admin-sidebar-footer .btn-logout {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .admin-sidebar-footer .btn-logout:hover {
+        background: rgba(230, 48, 53, 0.22);
+        color: #fff;
+      }
+
+      .admin-sidebar-footer .back-site {
+        display: block;
+        text-align: center;
+        margin-top: 0.75rem;
+        font-size: 0.82rem;
+        color: var(--admin-muted);
+        text-decoration: none;
+      }
+
+      .admin-sidebar-footer .back-site:hover {
+        color: var(--admin-text);
+      }
+
+      .admin-main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .admin-header {
+        min-height: var(--header-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--admin-border);
+        background: rgba(7, 8, 20, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+      }
+
+      .admin-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-width: 0;
+      }
+
+      .admin-menu-toggle {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: var(--admin-glass);
+        color: var(--admin-text);
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .admin-header-titles h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .admin-header-titles p {
+        margin: 0.15rem 0 0;
+        font-size: 0.85rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-header-search {
+        flex: 1;
+        max-width: 440px;
+        position: relative;
+      }
+
+      .admin-header-search input {
+        width: 100%;
+        padding: 0.65rem 1rem 0.65rem 2.65rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--admin-text);
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .admin-header-search input::placeholder {
+        color: rgba(154, 163, 194, 0.75);
+      }
+
+      .admin-header-search input:focus {
+        border-color: rgba(230, 48, 53, 0.5);
+        box-shadow: 0 0 0 3px rgba(230, 48, 53, 0.12);
+      }
+
+      .admin-header-search > i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--admin-muted);
+        font-size: 0.95rem;
+      }
+
+      .admin-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .admin-user-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.35rem 0.65rem 0.35rem 0.35rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        cursor: default;
+      }
+
+      .admin-user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--admin-secondary), var(--admin-accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .admin-user-meta strong {
+        display: block;
+        font-size: 0.82rem;
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .admin-user-meta small {
+        font-size: 0.7rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-content {
+        padding: 1.5rem;
+        flex: 1;
+      }
+
+      @media (max-width: 1199px) {
+        .admin-header-search {
+          display: none;
+        }
+      }
+
+      .admin-panel {
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid var(--admin-border);
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .admin-panel-hd {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--admin-border);
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .admin-panel-hd h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .admin-panel-bd {
+        padding: 1rem 1.25rem 1.25rem;
+      }
+
+      .admin-table-wrap {
+        overflow-x: auto;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86rem;
+        min-width: 880px;
+      }
+
+      .admin-table th,
+      .admin-table td {
+        padding: 0.7rem 0.85rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        vertical-align: middle;
+      }
+
+      .admin-table th {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--admin-muted);
+        font-weight: 700;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .admin-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .admin-table tbody tr:hover td {
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .admin-table tr.contact-row-unread td {
+        font-weight: 600;
+      }
+
+      .admin-table tr.contact-row-unread td:first-child {
+        box-shadow: inset 3px 0 0 var(--admin-accent);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--admin-muted);
+        font-size: 0.82rem;
+        white-space: nowrap;
+      }
+
+      .pill-accent {
+        border-color: rgba(230, 48, 53, 0.45);
+        color: #ffb4b7;
+        background: rgba(230, 48, 53, 0.1);
+      }
+
+      .btn-soft {
+        border-radius: 12px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-weight: 700;
+        padding: 0.6rem 0.85rem;
+        transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
+      }
+
+      .btn-soft:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(230, 48, 53, 0.25);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .btn-danger-soft {
+        border-radius: 12px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 800;
+        padding: 0.6rem 0.85rem;
+        transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
+      }
+
+      .btn-danger-soft:hover {
+        background: rgba(230, 48, 53, 0.22);
+        border-color: rgba(230, 48, 53, 0.65);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .btn-primary-soft {
+        border-radius: 12px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.18) 0%, rgba(60, 62, 144, 0.18) 100%);
+        color: #fff;
+        font-weight: 800;
+        padding: 0.6rem 0.85rem;
+        transition: transform 0.12s ease, filter 0.2s ease;
+      }
+
+      .btn-primary-soft:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+        color: #fff;
+      }
+
+      .btn-xs-soft {
+        padding: 0.35rem 0.55rem;
+        font-size: 0.78rem;
+        border-radius: 8px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .btn-xs-soft:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+      }
+
+      .btn-xs-danger {
+        padding: 0.35rem 0.55rem;
+        font-size: 0.78rem;
+        border-radius: 8px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 600;
+      }
+
+      .btn-xs-danger:hover {
+        background: rgba(230, 48, 53, 0.25);
+        color: #fff;
+      }
+
+      .admin-muted {
+        color: var(--admin-muted);
+      }
+
+      code {
+        color: #c5cbe8;
+      }
+
+      .contact-msg-box {
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 0.9rem;
+        line-height: 1.55;
+        color: var(--admin-text);
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: var(--radius-sm);
+        padding: 1rem;
+        border: 1px solid var(--admin-border);
+        max-height: 320px;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body class="page-admin-contact admin-app-layout">
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem("coscharis:admin:v1");
+          var s = raw ? JSON.parse(raw) : null;
+          if (!s || !s.loggedIn) window.location.replace("admin-login.html");
+        } catch (e) {
+          window.location.replace("admin-login.html");
+        }
+      })();
+    </script>
+
+    <div class="admin-dash-bg" aria-hidden="true"></div>
+
+    <div class="admin-shell">
+      <aside class="admin-sidebar admin-sidebar--desktop" id="admin-sidebar-desktop" aria-label="Admin navigation">
+        <div class="admin-sidebar-scroll">
+          <a class="admin-brand" href="admin-dashboard.html">
+            <img src="coscharis/assets/img/logo/cos-logo.jpeg" alt="" width="44" height="44" />
+            <div>
+              <h1>Coscharis</h1>
+              <span>Admin Console</span>
+            </div>
+          </a>
+
+          <div class="admin-nav-label">Overview</div>
+          <nav class="admin-nav" aria-label="Primary">
+            <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <a href="admin-live-site.html"><i class="fas fa-globe"></i> Live site</a>
+          </nav>
+
+          <div class="admin-nav-label">System</div>
+          <nav class="admin-nav" aria-label="Settings">
+            <a href="admin-settings.html"><i class="fas fa-sliders"></i> Site settings</a>
+          </nav>
+
+          <div class="admin-nav-label">Commerce</div>
+          <nav class="admin-nav">
+            <a href="admin-shop.html"><i class="fas fa-store"></i> Shop (Admin)</a>
+            <a href="admin-cart.html"><i class="fas fa-shopping-basket"></i> Cart (Admin)</a>
+            <a href="admin-checkout.html"><i class="fas fa-credit-card"></i> Checkout (Admin)</a>
+          </nav>
+
+          <div class="admin-nav-label">Engagement</div>
+          <nav class="admin-nav">
+            <a href="admin-auction.html"><i class="fas fa-gavel"></i> Auction (Admin)</a>
+            <a href="admin-listings.html"><i class="fas fa-car-side"></i> Listings (Admin)</a>
+          </nav>
+
+          <div class="admin-nav-label">People &amp; content</div>
+          <nav class="admin-nav">
+            <a href="admin-registration.html"><i class="fas fa-users-cog"></i> Users & profiles</a>
+            <a class="is-active" href="admin-contact.html"><i class="fas fa-envelope"></i> Contact</a>
+          </nav>
+        </div>
+
+        <div class="admin-sidebar-footer">
+          <button type="button" class="btn-logout js-admin-logout">
+            <i class="fas fa-sign-out-alt"></i> Sign out
+          </button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-header">
+          <div class="admin-header-left">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-drawer-panel">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="admin-header-titles">
+              <h2>Contact inbox</h2>
+              <p>Messages submitted from <code>contact.html</code> (stored in this browser)</p>
+            </div>
+          </div>
+
+          <div class="admin-header-search">
+            <i class="fas fa-search"></i>
+            <input type="search" id="admin-contact-filter" placeholder="Search name, email, subject…" autocomplete="off" />
+          </div>
+
+          <div class="admin-header-actions">
+            <button type="button" class="btn-soft" id="admin-contact-export" title="Export JSON">
+              <i class="far fa-file-code me-2"></i> Export
+            </button>
+            <button type="button" class="btn-danger-soft" id="admin-contact-clear" title="Remove all messages">
+              <i class="fas fa-trash-alt me-2"></i> Clear all
+            </button>
+            <div class="admin-user-chip" title="Signed-in administrator">
+              <div class="admin-user-avatar" id="admin-admin-initials">A</div>
+              <div class="admin-user-meta">
+                <strong id="admin-admin-email">admin@coscharis.local</strong>
+                <small>Administrator</small>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="admin-content">
+          <div class="admin-panel">
+            <div class="admin-panel-hd">
+              <h3><i class="fas fa-inbox me-2 text-danger"></i> Messages</h3>
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <span class="pill" id="admin-contact-meta">0 messages</span>
+                <span class="pill pill-accent d-none" id="admin-contact-unread-pill"><i class="fas fa-circle"></i> <span id="admin-contact-unread-count">0</span> unread</span>
+              </div>
+            </div>
+            <div class="admin-panel-bd pt-0">
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Received</th>
+                      <th>From</th>
+                      <th>Email</th>
+                      <th>Subject</th>
+                      <th>Status</th>
+                      <th style="width: 200px">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-contact-tbody">
+                    <tr>
+                      <td colspan="6" class="admin-muted py-4 text-center">Loading…</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="small mt-3 mb-0 admin-muted">
+                Storage key <code>coscharis:contact-leads:v1</code>. Same device as the visitor who submitted the form (demo).
+              </p>
+            </div>
+          </div>
+
+          <p class="text-center mt-4 mb-0 small" style="color: var(--admin-muted)">
+            Coscharis Admin · Contact inbox · Local demo
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal fade" id="admin-contact-modal" tabindex="-1" aria-labelledby="admin-contact-modal-title" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background: #12152e; border: 1px solid rgba(255, 255, 255, 0.12); color: var(--admin-text, #e8eaf4)">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title" id="admin-contact-modal-title">Message</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="small admin-muted mb-2" id="admin-contact-modal-when"></p>
+            <p class="mb-1"><strong id="admin-contact-modal-name"></strong> · <span id="admin-contact-modal-email"></span></p>
+            <p class="fw-bold mt-3 mb-2" id="admin-contact-modal-subject"></p>
+            <div class="contact-msg-box" id="admin-contact-modal-body"></div>
+          </div>
+          <div class="modal-footer border-secondary">
+            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+      <div class="mobile-drawer__backdrop" id="mobile-drawer-backdrop"></div>
+      <div
+        class="mobile-drawer__panel"
+        id="mobile-drawer-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Admin navigation"
+      >
+        <div class="mobile-drawer__header">
+          <span class="mobile-drawer__title">Menu</span>
+          <button type="button" class="mobile-drawer__close" id="mobile-drawer-close" aria-label="Close menu">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-drawer__scroll" id="mobile-drawer-scroll"></div>
+        <div class="mobile-drawer__foot" id="mobile-drawer-foot"></div>
+      </div>
+    </div>
+
+    <script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="coscharis/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="coscharis/assets/js/admin-shell.js"></script>
+    <script>
+      (function () {
+        var CONTACT_KEY = "coscharis:contact-leads:v1";
+        var ADMIN_KEY = "coscharis:admin:v1";
+
+        function safeParse(json) {
+          try {
+            return JSON.parse(json);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function escapeHtml(s) {
+          if (s == null) return "";
+          var d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+
+        function loadLeads() {
+          var u = safeParse(localStorage.getItem(CONTACT_KEY));
+          return Array.isArray(u) ? u : [];
+        }
+
+        function saveLeads(leads) {
+          localStorage.setItem(CONTACT_KEY, JSON.stringify(leads));
+        }
+
+        function formatWhen(iso) {
+          if (!iso) return "—";
+          try {
+            var d = new Date(iso);
+            if (isNaN(d.getTime())) return escapeHtml(String(iso));
+            return escapeHtml(d.toLocaleString());
+          } catch (e) {
+            return escapeHtml(String(iso));
+          }
+        }
+
+        function filterLeads(leads, q) {
+          if (!q) return leads;
+          q = q.toLowerCase();
+          return leads.filter(function (row) {
+            return (
+              String(row.name || "")
+                .toLowerCase()
+                .indexOf(q) !== -1 ||
+              String(row.email || "")
+                .toLowerCase()
+                .indexOf(q) !== -1 ||
+              String(row.subject || "")
+                .toLowerCase()
+                .indexOf(q) !== -1 ||
+              String(row.message || "")
+                .toLowerCase()
+                .indexOf(q) !== -1
+            );
+          });
+        }
+
+        function render() {
+          var leads = loadLeads();
+          var q = (document.getElementById("admin-contact-filter").value || "").trim();
+          var rows = filterLeads(leads, q);
+          var unread = 0;
+          for (var u = 0; u < leads.length; u++) {
+            if (!leads[u].read) unread++;
+          }
+
+          document.getElementById("admin-contact-meta").textContent = rows.length + " shown · " + leads.length + " total";
+          var up = document.getElementById("admin-contact-unread-pill");
+          var uc = document.getElementById("admin-contact-unread-count");
+          if (unread > 0) {
+            up.classList.remove("d-none");
+            uc.textContent = String(unread);
+          } else {
+            up.classList.add("d-none");
+          }
+
+          var tbody = document.getElementById("admin-contact-tbody");
+          tbody.innerHTML = "";
+
+          if (!rows.length) {
+            var tr = document.createElement("tr");
+            tr.innerHTML =
+              '<td colspan="6" class="admin-muted py-4 text-center">' +
+              (leads.length ? "No messages match your search." : "No messages yet. Submit the form on contact.html.") +
+              "</td>";
+            tbody.appendChild(tr);
+            return;
+          }
+
+          for (var i = 0; i < rows.length; i++) {
+            (function (row) {
+              var tr = document.createElement("tr");
+              if (!row.read) tr.className = "contact-row-unread";
+              tr.innerHTML =
+                "<td>" +
+                formatWhen(row.createdAt) +
+                "</td><td>" +
+                escapeHtml(row.name || "—") +
+                '</td><td><a class="text-light" href="mailto:' +
+                escapeHtml(row.email || "") +
+                '">' +
+                escapeHtml(row.email || "—") +
+                "</a></td><td>" +
+                escapeHtml(row.subject || "—") +
+                "</td><td>" +
+                (row.read ? '<span class="admin-muted">Read</span>' : '<span class="text-warning">New</span>') +
+                '</td><td><button type="button" class="btn-xs-soft js-contact-view me-1">View</button><button type="button" class="btn-xs-danger js-contact-del">Delete</button></td>';
+              tr.querySelector(".js-contact-view").addEventListener("click", function () {
+                openModal(row);
+              });
+              tr.querySelector(".js-contact-del").addEventListener("click", function () {
+                if (!confirm("Delete this message?")) return;
+                var all = loadLeads();
+                var next = [];
+                for (var j = 0; j < all.length; j++) {
+                  if (all[j].id !== row.id) next.push(all[j]);
+                }
+                saveLeads(next);
+                render();
+              });
+              tbody.appendChild(tr);
+            })(rows[i]);
+          }
+        }
+
+        function openModal(row) {
+          var all = loadLeads();
+          var changed = false;
+          for (var i = 0; i < all.length; i++) {
+            if (all[i].id === row.id && !all[i].read) {
+              all[i].read = true;
+              changed = true;
+            }
+          }
+          if (changed) saveLeads(all);
+
+          document.getElementById("admin-contact-modal-title").textContent = row.subject ? row.subject : "Message";
+          document.getElementById("admin-contact-modal-when").textContent = row.createdAt
+            ? "Received " + new Date(row.createdAt).toLocaleString()
+            : "";
+          document.getElementById("admin-contact-modal-name").textContent = row.name || "—";
+          document.getElementById("admin-contact-modal-email").textContent = row.email || "—";
+          document.getElementById("admin-contact-modal-subject").textContent = row.subject || "(No subject)";
+          document.getElementById("admin-contact-modal-body").textContent = row.message || "(No message body)";
+
+          var el = document.getElementById("admin-contact-modal");
+          var modal = bootstrap.Modal.getInstance(el);
+          if (!modal) modal = new bootstrap.Modal(el);
+          modal.show();
+          render();
+        }
+
+        document.getElementById("admin-contact-filter").addEventListener("input", render);
+
+        document.getElementById("admin-contact-export").addEventListener("click", function () {
+          var blob = new Blob([JSON.stringify(loadLeads(), null, 2)], { type: "application/json" });
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "coscharis-contact-leads.json";
+          a.click();
+          URL.revokeObjectURL(a.href);
+        });
+
+        document.getElementById("admin-contact-clear").addEventListener("click", function () {
+          if (!loadLeads().length) return;
+          if (!confirm("Remove all contact messages from this browser?")) return;
+          localStorage.removeItem(CONTACT_KEY);
+          render();
+        });
+
+        try {
+          var adm = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
+          var em = (adm.email || "admin@coscharis.local").trim();
+          document.getElementById("admin-admin-email").textContent = em;
+          var ini = em.charAt(0).toUpperCase() || "A";
+          document.getElementById("admin-admin-initials").textContent = ini;
+        } catch (e) {}
+
+        render();
+      })();
+    </script>
+  </body>
+</html>

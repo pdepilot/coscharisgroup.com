@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f1028" />
+    <meta name="description" content="Coscharis Admin — checkout and order creation (demo)" />
+    <title>Admin Checkout — Coscharis</title>
+    <link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg" />
+    <link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/admin-shell.css" />
+    <style>
+      :root {
+        --admin-bg-deep: #070814;
+        --admin-bg-mid: #12152e;
+        --admin-accent: #e63035;
+        --admin-accent-soft: rgba(230, 48, 53, 0.35);
+        --admin-glass: rgba(255, 255, 255, 0.06);
+        --admin-border: rgba(255, 255, 255, 0.1);
+        --admin-text: #e8eaf4;
+        --admin-muted: #9aa3c2;
+        --admin-secondary: #3c3e90;
+        --admin-success: #2ee59d;
+        --sidebar-w: 280px;
+        --header-h: 72px;
+        --radius: 16px;
+        --radius-sm: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body.page-admin-checkout {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--admin-text);
+        background: var(--admin-bg-deep);
+        overflow-x: hidden;
+      }
+
+      .admin-dash-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          radial-gradient(ellipse 100% 80% at 15% 0%, rgba(60, 62, 144, 0.5) 0%, transparent 55%),
+          radial-gradient(ellipse 80% 60% at 90% 70%, rgba(230, 48, 53, 0.15) 0%, transparent 45%),
+          linear-gradient(168deg, var(--admin-bg-deep) 0%, var(--admin-bg-mid) 42%, #0a0c1a 100%);
+      }
+
+      .admin-dash-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+        background-size: 56px 56px;
+        opacity: 0.55;
+        mask-image: radial-gradient(ellipse 75% 55% at 50% 35%, black 15%, transparent 100%);
+      }
+
+      .admin-shell {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar column (scroll: .admin-sidebar-scroll in admin-shell.css) */
+      .admin-sidebar {
+        width: var(--sidebar-w);
+        flex-shrink: 0;
+        padding: 1.25rem 1rem 1rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border-right: 1px solid var(--admin-border);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0.75rem 1.25rem;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .admin-brand img {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1px solid var(--admin-border);
+      }
+
+      .admin-brand h1 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .admin-brand span {
+        display: block;
+        font-size: 0.72rem;
+        color: var(--admin-muted);
+        font-weight: 500;
+        margin-top: 2px;
+      }
+
+      .admin-nav-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--admin-muted);
+        padding: 0.75rem 0.75rem 0.35rem;
+        font-weight: 600;
+      }
+
+      .admin-nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: var(--radius-sm);
+        color: var(--admin-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background 0.18s ease, color 0.18s ease;
+      }
+
+      .admin-nav a i {
+        width: 1.25rem;
+        text-align: center;
+        opacity: 0.85;
+      }
+
+      .admin-nav a:hover {
+        color: var(--admin-text);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .admin-nav a.is-active {
+        color: #fff;
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.35) 0%, rgba(60, 62, 144, 0.35) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+
+      .admin-sidebar-footer {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--admin-border);
+      }
+
+      .admin-sidebar-footer .btn-logout {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .admin-sidebar-footer .btn-logout:hover {
+        background: rgba(230, 48, 53, 0.22);
+        color: #fff;
+      }
+
+      .admin-sidebar-footer .back-site {
+        display: block;
+        text-align: center;
+        margin-top: 0.75rem;
+        font-size: 0.82rem;
+        color: var(--admin-muted);
+        text-decoration: none;
+      }
+
+      .admin-sidebar-footer .back-site:hover {
+        color: var(--admin-text);
+      }
+
+      /* Main */
+      .admin-main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .admin-header {
+        min-height: var(--header-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--admin-border);
+        background: rgba(7, 8, 20, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+      }
+
+      .admin-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-width: 0;
+      }
+
+      .admin-menu-toggle {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: var(--admin-glass);
+        color: var(--admin-text);
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .admin-header-titles h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .admin-header-titles p {
+        margin: 0.15rem 0 0;
+        font-size: 0.85rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .admin-icon-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: var(--admin-glass);
+        color: var(--admin-text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.18s ease;
+      }
+
+      .admin-icon-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .admin-user-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.35rem 0.65rem 0.35rem 0.35rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        cursor: default;
+      }
+
+      .admin-user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--admin-secondary), var(--admin-accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .admin-user-meta strong {
+        display: block;
+        font-size: 0.82rem;
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .admin-user-meta small {
+        font-size: 0.7rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-content {
+        padding: 1.5rem;
+        flex: 1;
+      }
+
+      .admin-panel {
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid var(--admin-border);
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .admin-panel-hd {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--admin-border);
+        gap: 0.75rem;
+      }
+
+      .admin-panel-hd h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .admin-panel-bd {
+        padding: 1rem 1.25rem 1.25rem;
+      }
+
+      .admin-form-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--admin-muted);
+        margin-bottom: 0.35rem;
+      }
+
+      .admin-input {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        padding: 0.7rem 0.85rem;
+        outline: none;
+      }
+
+      .admin-input:focus {
+        border-color: rgba(230, 48, 53, 0.5);
+        box-shadow: 0 0 0 3px rgba(230, 48, 53, 0.12);
+      }
+
+      .admin-muted {
+        color: var(--admin-muted);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--admin-muted);
+        font-size: 0.82rem;
+        white-space: nowrap;
+      }
+
+      .btn-primary-soft {
+        border-radius: 12px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.18) 0%, rgba(60, 62, 144, 0.18) 100%);
+        color: #fff;
+        font-weight: 900;
+        padding: 0.75rem 0.95rem;
+        transition: transform 0.12s ease, filter 0.2s ease;
+      }
+
+      .btn-primary-soft:hover {
+        filter: brightness(1.06);
+        transform: translateY(-1px);
+        color: #fff;
+      }
+
+      .btn-soft {
+        border-radius: 12px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-weight: 700;
+        padding: 0.75rem 0.95rem;
+        transition: background 0.18s ease, transform 0.12s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .btn-soft:hover {
+        background: rgba(255, 255, 255, 0.09);
+        transform: translateY(-1px);
+        color: #fff;
+      }
+
+      .summary-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .summary-list li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.55rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        color: var(--admin-muted);
+        font-size: 0.9rem;
+      }
+
+      .summary-list li:last-child {
+        border-bottom: none;
+      }
+
+      .summary-list strong {
+        color: #fff;
+      }
+
+      .mini-lines {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .mini-lines li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.55rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        font-size: 0.88rem;
+      }
+
+      .mini-lines li:last-child {
+        border-bottom: none;
+      }
+
+      .mini-lines .left {
+        min-width: 0;
+      }
+
+      .mini-lines .left strong {
+        display: block;
+        color: #fff;
+        font-size: 0.88rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 220px;
+      }
+
+      .mini-lines .left small {
+        color: var(--admin-muted);
+        display: block;
+        margin-top: 0.15rem;
+      }
+
+      .admin-alert {
+        border-radius: 14px;
+        border: 1px solid rgba(230, 48, 53, 0.35);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        padding: 0.85rem 0.95rem;
+        font-size: 0.9rem;
+      }
+
+      .success-card {
+        border-radius: 18px;
+        border: 1px solid rgba(46, 229, 157, 0.35);
+        background: rgba(46, 229, 157, 0.08);
+        padding: 1.25rem;
+      }
+    </style>
+  </head>
+  <body class="page-admin-checkout admin-app-layout">
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem("coscharis:admin:v1");
+          var s = raw ? JSON.parse(raw) : null;
+          if (!s || !s.loggedIn) window.location.replace("admin-login.html");
+        } catch (e) {
+          window.location.replace("admin-login.html");
+        }
+      })();
+    </script>
+
+    <div class="admin-dash-bg" aria-hidden="true"></div>
+
+    <div class="admin-shell">
+      <aside class="admin-sidebar admin-sidebar--desktop" id="admin-sidebar-desktop" aria-label="Admin navigation">
+        <div class="admin-sidebar-scroll">
+        <a class="admin-brand" href="admin-dashboard.html">
+          <img src="coscharis/assets/img/logo/cos-logo.jpeg" alt="" width="44" height="44" />
+          <div>
+            <h1>Coscharis</h1>
+            <span>Admin Console</span>
+          </div>
+        </a>
+
+        <div class="admin-nav-label">Overview</div>
+        <nav class="admin-nav" aria-label="Primary">
+          <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+          <a href="admin-live-site.html"><i class="fas fa-globe"></i> Live site</a>
+        </nav>
+
+        <div class="admin-nav-label">System</div>
+        <nav class="admin-nav" aria-label="Settings">
+          <a href="admin-settings.html"><i class="fas fa-sliders"></i> Site settings</a>
+        </nav>
+
+        <div class="admin-nav-label">Commerce</div>
+        <nav class="admin-nav">
+          <a href="admin-shop.html"><i class="fas fa-store"></i> Shop (Admin)</a>
+          <a href="admin-cart.html"><i class="fas fa-shopping-basket"></i> Cart (Admin)</a>
+          <a class="is-active" href="admin-checkout.html"><i class="fas fa-credit-card"></i> Checkout (Admin)</a>
+        </nav>
+
+        <div class="admin-nav-label">Engagement</div>
+        <nav class="admin-nav">
+          <a href="admin-auction.html"><i class="fas fa-gavel"></i> Auction (Admin)</a>
+          <a href="admin-listings.html"><i class="fas fa-car-side"></i> Listings (Admin)</a>
+        </nav>
+
+        <div class="admin-nav-label">People</div>
+        <nav class="admin-nav">
+          <a href="admin-registration.html"><i class="fas fa-users-cog"></i> Users & profiles</a>
+          <a href="admin-contact.html"><i class="fas fa-envelope"></i> Contact</a>
+        </nav>
+        </div>
+
+        <div class="admin-sidebar-footer">
+          <button type="button" class="btn-logout js-admin-logout">
+            <i class="fas fa-sign-out-alt"></i> Sign out
+          </button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-header">
+          <div class="admin-header-left">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-drawer-panel">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="admin-header-titles">
+              <h2>Checkout</h2>
+              <p>Create an order from the current cart (demo)</p>
+            </div>
+          </div>
+
+          <div class="admin-header-actions">
+            <button type="button" class="admin-icon-btn" id="admin-jump-cart" title="Open admin cart">
+              <i class="far fa-shopping-basket"></i>
+            </button>
+            <div class="admin-user-chip" title="Signed-in administrator">
+              <div class="admin-user-avatar" id="admin-user-initials">A</div>
+              <div class="admin-user-meta">
+                <strong id="admin-user-email">admin@coscharis.local</strong>
+                <small>Administrator</small>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="admin-content">
+          <div id="admin-checkout-success" class="d-none">
+            <div class="success-card mb-3">
+              <div class="d-flex align-items-start gap-3">
+                <div style="font-size: 2.25rem; color: var(--admin-success)">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div>
+                  <h3 style="margin: 0; font-size: 1.2rem; font-weight: 900; color: #fff">Payment confirmed</h3>
+                  <p class="mb-2 admin-muted">Order created successfully and saved to <code>coscharis:orders:v1</code>.</p>
+                  <p class="mb-2">
+                    Order: <strong id="admin-order-id"></strong> · Amount: <strong id="admin-order-total"></strong>
+                  </p>
+                  <p class="small admin-muted mb-3" id="admin-order-time"></p>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <a class="btn-soft" href="admin-shop.html"><i class="fas fa-store"></i> Back to admin shop</a>
+                    <a class="btn-soft" href="admin-cart.html"><i class="fas fa-shopping-basket"></i> View admin cart</a>
+                    <a class="btn-soft" href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="admin-checkout-active">
+            <div class="row g-3 g-lg-4">
+              <div class="col-lg-8">
+                <div class="admin-panel mb-3">
+                  <div class="admin-panel-hd">
+                    <h3><i class="fas fa-file-invoice me-2 text-danger"></i> Billing address</h3>
+                    <span class="pill">Stored locally</span>
+                  </div>
+                  <div class="admin-panel-bd">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <div class="admin-form-label">First name</div>
+                        <input id="chk-bill-first" class="admin-input" type="text" autocomplete="given-name" />
+                      </div>
+                      <div class="col-md-6">
+                        <div class="admin-form-label">Last name</div>
+                        <input id="chk-bill-last" class="admin-input" type="text" autocomplete="family-name" />
+                      </div>
+                      <div class="col-md-6">
+                        <div class="admin-form-label">Email</div>
+                        <input id="chk-bill-email" class="admin-input" type="email" autocomplete="email" />
+                      </div>
+                      <div class="col-md-6">
+                        <div class="admin-form-label">Phone</div>
+                        <input id="chk-bill-phone" class="admin-input" type="text" autocomplete="tel" />
+                      </div>
+                      <div class="col-12">
+                        <div class="admin-form-label">Address</div>
+                        <input id="chk-bill-address" class="admin-input" type="text" autocomplete="street-address" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="admin-panel mb-3">
+                  <div class="admin-panel-hd">
+                    <h3><i class="fas fa-credit-card me-2 text-danger"></i> Payment info</h3>
+                    <span class="pill">Demo validation only</span>
+                  </div>
+                  <div class="admin-panel-bd">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <div class="admin-form-label">Card holder name</div>
+                        <input id="chk-pay-name" class="admin-input" type="text" autocomplete="cc-name" />
+                      </div>
+                      <div class="col-md-6">
+                        <div class="admin-form-label">Card number</div>
+                        <input id="chk-pay-card" class="admin-input" type="text" inputmode="numeric" autocomplete="cc-number" />
+                      </div>
+                      <div class="col-md-6">
+                        <div class="admin-form-label">Expire date</div>
+                        <input id="chk-pay-exp" class="admin-input" type="text" placeholder="MM/YY" autocomplete="cc-exp" />
+                      </div>
+                      <div class="col-md-6">
+                        <div class="admin-form-label">CVV</div>
+                        <input id="chk-pay-cvv" class="admin-input" type="text" inputmode="numeric" autocomplete="cc-csc" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="admin-panel">
+                  <div class="admin-panel-hd">
+                    <h3><i class="fas fa-truck me-2 text-danger"></i> Shipping address</h3>
+                    <span class="pill">Required</span>
+                  </div>
+                  <div class="admin-panel-bd">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <div class="admin-form-label">First name</div>
+                        <input id="chk-ship-first" class="admin-input" type="text" autocomplete="shipping given-name" />
+                      </div>
+                      <div class="col-md-6">
+                        <div class="admin-form-label">Last name</div>
+                        <input id="chk-ship-last" class="admin-input" type="text" autocomplete="shipping family-name" />
+                      </div>
+                      <div class="col-md-6">
+                        <div class="admin-form-label">Email</div>
+                        <input id="chk-ship-email" class="admin-input" type="email" autocomplete="shipping email" />
+                      </div>
+                      <div class="col-md-6">
+                        <div class="admin-form-label">Phone</div>
+                        <input id="chk-ship-phone" class="admin-input" type="text" autocomplete="shipping tel" />
+                      </div>
+                      <div class="col-md-6">
+                        <div class="admin-form-label">Address 1</div>
+                        <input id="chk-ship-addr1" class="admin-input" type="text" autocomplete="shipping address-line1" />
+                      </div>
+                      <div class="col-md-6">
+                        <div class="admin-form-label">Address 2</div>
+                        <input id="chk-ship-addr2" class="admin-input" type="text" autocomplete="shipping address-line2" />
+                      </div>
+                      <div class="col-12">
+                        <div class="admin-form-label">Additional info</div>
+                        <textarea id="chk-ship-note" class="admin-input" rows="4" placeholder="Additional info"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4">
+                <div class="admin-panel">
+                  <div class="admin-panel-hd">
+                    <h3><i class="fas fa-list me-2 text-danger"></i> Cart summary</h3>
+                    <span class="pill" id="admin-cart-badge">0 items</span>
+                  </div>
+                  <div class="admin-panel-bd">
+                    <div id="admin-checkout-empty" class="admin-muted d-none"></div>
+                    <div id="admin-checkout-body">
+                      <ul id="admin-checkout-items" class="mini-lines mb-3"></ul>
+                      <ul class="summary-list">
+                        <li><span>Product qty</span> <strong id="admin-checkout-qty">0</strong></li>
+                        <li><span>Sub total</span> <strong id="admin-checkout-subtotal">₦0</strong></li>
+                        <li><span>Total pay</span> <strong id="admin-checkout-total">₦0</strong></li>
+                      </ul>
+                    </div>
+
+                    <div id="admin-checkout-errors" class="admin-alert d-none mt-3" role="alert"></div>
+
+                    <div class="d-grid gap-2 mt-3">
+                      <button type="button" id="admin-checkout-confirm" class="btn-primary-soft">
+                        Confirm Payment <i class="fas fa-arrow-right-long ms-2"></i>
+                      </button>
+                      <a class="btn-soft" href="admin-cart.html"><i class="fas fa-shopping-basket"></i> Review cart</a>
+                    </div>
+
+                    <p class="small mt-3 mb-0 admin-muted">
+                      Orders are saved to <code>coscharis:orders:v1</code> and cart is cleared from <code>coscharis:cart:v1</code>.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-center mt-4 mb-0 small" style="color: var(--admin-muted)">
+            Coscharis Admin · Checkout tools · Stored locally on this device
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+      <div class="mobile-drawer__backdrop" id="mobile-drawer-backdrop"></div>
+      <div
+        class="mobile-drawer__panel"
+        id="mobile-drawer-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Admin navigation"
+      >
+        <div class="mobile-drawer__header">
+          <span class="mobile-drawer__title">Menu</span>
+          <button type="button" class="mobile-drawer__close" id="mobile-drawer-close" aria-label="Close menu">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-drawer__scroll" id="mobile-drawer-scroll"></div>
+        <div class="mobile-drawer__foot" id="mobile-drawer-foot"></div>
+      </div>
+    </div>
+
+    <script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="coscharis/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="coscharis/assets/js/admin-shell.js"></script>
+    <script>
+      (function () {
+        var ADMIN_KEY = "coscharis:admin:v1";
+        var CART_KEY = "coscharis:cart:v1";
+        var ORDERS_KEY = "coscharis:orders:v1";
+        var PLACEHOLDER_IMG = "coscharis/assets/img/shop/01.jpg";
+
+        function safeParse(json) {
+          try {
+            return JSON.parse(json);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function escapeHtml(s) {
+          if (s == null) return "";
+          var d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+
+        function parsePrice(s) {
+          if (!s) return 0;
+          var cleaned = String(s).replace(/[^\d]/g, "");
+          if (!cleaned) return 0;
+          return parseInt(cleaned, 10) || 0;
+        }
+
+        function formatNaira(n) {
+          var num = Number(n);
+          if (isNaN(num)) return "—";
+          try {
+            return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(
+              num
+            );
+          } catch (e) {
+            return "₦" + (Number(n) || 0).toLocaleString("en-NG");
+          }
+        }
+
+        function loadCart() {
+          var raw = localStorage.getItem(CART_KEY);
+          var parsed = safeParse(raw);
+          if (!parsed || !Array.isArray(parsed.items)) return { items: [] };
+          return parsed;
+        }
+
+        function saveCart(cart) {
+          localStorage.setItem(CART_KEY, JSON.stringify(cart));
+          try {
+            window.dispatchEvent(new CustomEvent("coscharis-cart-updated", { detail: cart }));
+          } catch (e) {}
+        }
+
+        function loadOrders() {
+          var raw = localStorage.getItem(ORDERS_KEY);
+          var parsed = safeParse(raw);
+          if (!parsed || !Array.isArray(parsed)) return [];
+          return parsed;
+        }
+
+        function saveOrders(orders) {
+          localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+        }
+
+        function getTotalQty(cart) {
+          var c = cart || loadCart();
+          var n = 0;
+          if (!c.items || !c.items.length) return 0;
+          for (var i = 0; i < c.items.length; i++) {
+            var q = parseInt(c.items[i].qty, 10);
+            n += isNaN(q) || q < 1 ? 0 : q;
+          }
+          return n;
+        }
+
+        function cartLineTotal(line) {
+          var unit = parsePrice(line.price);
+          var q = parseInt(line.qty, 10) || 1;
+          return unit * q;
+        }
+
+        function cartGrandTotal(cart) {
+          var c = cart || loadCart();
+          var sum = 0;
+          if (!c.items) return 0;
+          for (var i = 0; i < c.items.length; i++) sum += cartLineTotal(c.items[i]);
+          return sum;
+        }
+
+        function renderCheckoutSummary() {
+          var itemsEl = document.getElementById("admin-checkout-items");
+          var emptyEl = document.getElementById("admin-checkout-empty");
+          var bodyEl = document.getElementById("admin-checkout-body");
+          if (!itemsEl) return;
+
+          var cart = loadCart();
+          var qtyTotal = getTotalQty(cart);
+          var grand = cartGrandTotal(cart);
+
+          document.getElementById("admin-cart-badge").textContent = (cart.items && cart.items.length ? cart.items.length : 0) + " items";
+
+          if (!cart.items.length) {
+            if (emptyEl) {
+              emptyEl.classList.remove("d-none");
+              emptyEl.innerHTML =
+                "<p class='mb-2'>Your cart is empty.</p><a class='btn-soft mt-2' href='admin-shop.html'><i class='fas fa-store'></i> Add products</a>";
+            }
+            if (bodyEl) bodyEl.classList.add("d-none");
+            document.getElementById("admin-checkout-qty").textContent = "0";
+            document.getElementById("admin-checkout-subtotal").textContent = formatNaira(0);
+            document.getElementById("admin-checkout-total").textContent = formatNaira(0);
+            itemsEl.innerHTML = "";
+            return;
+          }
+
+          if (emptyEl) emptyEl.classList.add("d-none");
+          if (bodyEl) bodyEl.classList.remove("d-none");
+
+          itemsEl.innerHTML = "";
+          for (var i = 0; i < cart.items.length; i++) {
+            var it = cart.items[i];
+            var unit = parsePrice(it.price);
+            var qty = parseInt(it.qty, 10) || 1;
+            var lineSub = unit * qty;
+            var imgSrc = (it.image || "").trim() || PLACEHOLDER_IMG;
+            var priceDisplay = it.price && String(it.price).trim() ? it.price : formatNaira(unit);
+            var li = document.createElement("li");
+            li.innerHTML =
+              "<div class='left'>" +
+              "<strong>" +
+              escapeHtml(it.title || "Product") +
+              "</strong>" +
+              "<small>" +
+              escapeHtml(String(qty)) +
+              " × " +
+              escapeHtml(priceDisplay) +
+              "</small>" +
+              "</div>" +
+              "<div class='text-end' style='white-space:nowrap'>" +
+              "<div style='font-weight:900;color:#fff'>" +
+              escapeHtml(formatNaira(lineSub)) +
+              "</div>" +
+              "<small class='admin-muted' style='display:block;margin-top:2px'>" +
+              "<i class='far fa-image'></i> " +
+              escapeHtml(imgSrc.split("/").slice(-1)[0]) +
+              "</small>" +
+              "</div>";
+            itemsEl.appendChild(li);
+          }
+
+          document.getElementById("admin-checkout-qty").textContent = String(qtyTotal);
+          document.getElementById("admin-checkout-subtotal").textContent = formatNaira(grand);
+          document.getElementById("admin-checkout-total").textContent = formatNaira(grand);
+        }
+
+        function validateCheckoutFields() {
+          var errs = [];
+          function need(id, msg) {
+            var v = (document.getElementById(id).value || "").trim();
+            if (!v) errs.push(msg);
+            return v;
+          }
+
+          need("chk-bill-first", "Billing first name is required.");
+          need("chk-bill-last", "Billing last name is required.");
+          var billEmail = (document.getElementById("chk-bill-email").value || "").trim();
+          if (!billEmail) errs.push("Billing email is required.");
+          else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billEmail)) errs.push("Enter a valid billing email.");
+          need("chk-bill-phone", "Billing phone is required.");
+          need("chk-bill-address", "Billing address is required.");
+
+          need("chk-pay-name", "Card holder name is required.");
+          var cardRaw = (document.getElementById("chk-pay-card").value || "").replace(/\s/g, "");
+          if (!cardRaw || !/^\d{13,19}$/.test(cardRaw)) errs.push("Enter a valid card number (13–19 digits).");
+          var exp = (document.getElementById("chk-pay-exp").value || "").trim();
+          if (!exp) errs.push("Card expiry is required.");
+          else if (!/^\d{1,2}\s*\/\s*\d{2,4}$/.test(exp) && !/^\d{4}$/.test(exp.replace(/\//g, "")))
+            errs.push("Use expiry format MM/YY.");
+          var cvv = (document.getElementById("chk-pay-cvv").value || "").replace(/\s/g, "");
+          if (!cvv || !/^\d{3,4}$/.test(cvv)) errs.push("Enter a valid CVV (3 or 4 digits).");
+
+          need("chk-ship-first", "Shipping first name is required.");
+          need("chk-ship-last", "Shipping last name is required.");
+          var shipEmail = (document.getElementById("chk-ship-email").value || "").trim();
+          if (!shipEmail) errs.push("Shipping email is required.");
+          else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(shipEmail)) errs.push("Enter a valid shipping email.");
+          need("chk-ship-phone", "Shipping phone is required.");
+          need("chk-ship-addr1", "Shipping address line 1 is required.");
+
+          return errs;
+        }
+
+        function showErrors(errs) {
+          var box = document.getElementById("admin-checkout-errors");
+          if (!box) return;
+          if (!errs || !errs.length) {
+            box.classList.add("d-none");
+            box.innerHTML = "";
+            return;
+          }
+          box.classList.remove("d-none");
+          box.innerHTML = errs.map(function (x) {
+            return "<div>" + escapeHtml(x) + "</div>";
+          }).join("");
+        }
+
+        function confirmCheckout() {
+          showErrors([]);
+          var btn = document.getElementById("admin-checkout-confirm");
+          if (btn) btn.disabled = true;
+
+          if (!getTotalQty()) {
+            showErrors(["Your cart is empty. Add items before confirming payment."]);
+            if (btn) btn.disabled = false;
+            return;
+          }
+
+          var errs = validateCheckoutFields();
+          if (errs.length) {
+            showErrors(errs);
+            if (btn) btn.disabled = false;
+            return;
+          }
+
+          var cart = loadCart();
+          var grand = cartGrandTotal(cart);
+          var orderId =
+            "ORD-" +
+            Date.now().toString(36).toUpperCase() +
+            "-" +
+            Math.random().toString(36).substring(2, 7).toUpperCase();
+
+          var cardDigits = (document.getElementById("chk-pay-card").value || "").replace(/\s/g, "");
+          var order = {
+            id: orderId,
+            createdAt: new Date().toISOString(),
+            total: grand,
+            items: JSON.parse(JSON.stringify(cart.items || [])),
+            billing: {
+              first: (document.getElementById("chk-bill-first").value || "").trim(),
+              last: (document.getElementById("chk-bill-last").value || "").trim(),
+              email: (document.getElementById("chk-bill-email").value || "").trim(),
+              phone: (document.getElementById("chk-bill-phone").value || "").trim(),
+              address: (document.getElementById("chk-bill-address").value || "").trim()
+            },
+            payment: { cardLast4: cardDigits.slice(-4) },
+            shipping: {
+              first: (document.getElementById("chk-ship-first").value || "").trim(),
+              last: (document.getElementById("chk-ship-last").value || "").trim(),
+              email: (document.getElementById("chk-ship-email").value || "").trim(),
+              phone: (document.getElementById("chk-ship-phone").value || "").trim(),
+              address1: (document.getElementById("chk-ship-addr1").value || "").trim(),
+              address2: (document.getElementById("chk-ship-addr2").value || "").trim(),
+              note: (document.getElementById("chk-ship-note").value || "").trim()
+            }
+          };
+
+          var originalText = btn ? btn.innerHTML : "";
+          if (btn) btn.innerHTML = "Processing... <i class='fas fa-spinner fa-spin ms-2'></i>";
+
+          window.setTimeout(function () {
+            var orders = loadOrders();
+            orders.unshift(order);
+            saveOrders(orders);
+
+            saveCart({ items: [] });
+
+            document.getElementById("admin-order-id").textContent = orderId;
+            document.getElementById("admin-order-total").textContent = formatNaira(grand);
+            document.getElementById("admin-order-time").textContent = new Date(order.createdAt).toLocaleString(undefined, {
+              dateStyle: "medium",
+              timeStyle: "short"
+            });
+
+            document.getElementById("admin-checkout-active").classList.add("d-none");
+            document.getElementById("admin-checkout-success").classList.remove("d-none");
+
+            renderCheckoutSummary();
+
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = originalText;
+            }
+
+            try {
+              document.getElementById("admin-checkout-success").scrollIntoView({ behavior: "smooth", block: "start" });
+            } catch (e) {}
+          }, 280);
+        }
+
+        // Session chip
+        var session = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
+        var email = (session.email || "admin@coscharis.local").trim();
+        document.getElementById("admin-user-email").textContent = email;
+        document.getElementById("admin-user-initials").textContent = email.charAt(0).toUpperCase() || "A";
+
+        document.getElementById("admin-jump-cart").addEventListener("click", function () {
+          window.location.href = "admin-cart.html";
+        });
+
+        document.getElementById("admin-checkout-confirm").addEventListener("click", confirmCheckout);
+
+        function sync() {
+          renderCheckoutSummary();
+        }
+        window.addEventListener("storage", function (ev) {
+          if (ev && ev.key === CART_KEY) sync();
+        });
+        window.addEventListener("coscharis-cart-updated", sync);
+
+        renderCheckoutSummary();
+      })();
+    </script>
+  </body>
+</html>

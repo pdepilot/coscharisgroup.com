@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f1028" />
+    <meta name="description" content="Coscharis Admin — site settings for the public website (local demo)" />
+    <title>Site settings — Coscharis Admin</title>
+    <link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg" />
+    <link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/admin-shell.css" />
+    <style>
+      :root {
+        --admin-bg-deep: #070814;
+        --admin-bg-mid: #12152e;
+        --admin-accent: #e63035;
+        --admin-accent-soft: rgba(230, 48, 53, 0.35);
+        --admin-glass: rgba(255, 255, 255, 0.06);
+        --admin-border: rgba(255, 255, 255, 0.1);
+        --admin-text: #e8eaf4;
+        --admin-muted: #9aa3c2;
+        --admin-secondary: #3c3e90;
+        --admin-success: #2ee59d;
+        --sidebar-w: 280px;
+        --header-h: 72px;
+        --radius: 16px;
+        --radius-sm: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body.page-admin-settings {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--admin-text);
+        background: var(--admin-bg-deep);
+        overflow-x: hidden;
+      }
+
+      .admin-dash-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          radial-gradient(ellipse 100% 80% at 15% 0%, rgba(60, 62, 144, 0.5) 0%, transparent 55%),
+          radial-gradient(ellipse 80% 60% at 90% 70%, rgba(230, 48, 53, 0.15) 0%, transparent 45%),
+          linear-gradient(168deg, var(--admin-bg-deep) 0%, var(--admin-bg-mid) 42%, #0a0c1a 100%);
+      }
+
+      .admin-dash-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+        background-size: 56px 56px;
+        opacity: 0.55;
+        mask-image: radial-gradient(ellipse 75% 55% at 50% 35%, black 15%, transparent 100%);
+      }
+
+      .admin-shell {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .admin-sidebar {
+        width: var(--sidebar-w);
+        flex-shrink: 0;
+        padding: 1.25rem 1rem 1rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border-right: 1px solid var(--admin-border);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0.75rem 1.25rem;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .admin-brand img {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1px solid var(--admin-border);
+      }
+
+      .admin-brand h1 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .admin-brand span {
+        display: block;
+        font-size: 0.72rem;
+        color: var(--admin-muted);
+        font-weight: 500;
+        margin-top: 2px;
+      }
+
+      .admin-nav-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--admin-muted);
+        padding: 0.75rem 0.75rem 0.35rem;
+        font-weight: 600;
+      }
+
+      .admin-nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: var(--radius-sm);
+        color: var(--admin-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background 0.18s ease, color 0.18s ease;
+      }
+
+      .admin-nav a i {
+        width: 1.25rem;
+        text-align: center;
+        opacity: 0.85;
+      }
+
+      .admin-nav a:hover {
+        color: var(--admin-text);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .admin-nav a.is-active {
+        color: #fff;
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.35) 0%, rgba(60, 62, 144, 0.35) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+
+      .admin-sidebar-footer {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--admin-border);
+      }
+
+      .admin-sidebar-footer .btn-logout {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .admin-sidebar-footer .btn-logout:hover {
+        background: rgba(230, 48, 53, 0.22);
+        color: #fff;
+      }
+
+      .admin-sidebar-footer .back-site {
+        display: block;
+        text-align: center;
+        margin-top: 0.75rem;
+        font-size: 0.82rem;
+        color: var(--admin-muted);
+        text-decoration: none;
+      }
+
+      .admin-sidebar-footer .back-site:hover {
+        color: var(--admin-text);
+      }
+
+      .admin-main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .admin-header {
+        min-height: var(--header-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--admin-border);
+        background: rgba(7, 8, 20, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+      }
+
+      .admin-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-width: 0;
+      }
+
+      .admin-menu-toggle {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: var(--admin-glass);
+        color: var(--admin-text);
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .admin-header-titles h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .admin-header-titles p {
+        margin: 0.15rem 0 0;
+        font-size: 0.85rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-header-search {
+        flex: 1;
+        max-width: 440px;
+        position: relative;
+      }
+
+      .admin-header-search input {
+        width: 100%;
+        padding: 0.65rem 1rem 0.65rem 2.65rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--admin-text);
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .admin-header-search input::placeholder {
+        color: rgba(154, 163, 194, 0.75);
+      }
+
+      .admin-header-search input:focus {
+        border-color: rgba(230, 48, 53, 0.5);
+        box-shadow: 0 0 0 3px rgba(230, 48, 53, 0.12);
+      }
+
+      .admin-header-search > i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--admin-muted);
+        font-size: 0.95rem;
+      }
+
+      .admin-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .admin-user-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.35rem 0.65rem 0.35rem 0.35rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        cursor: default;
+      }
+
+      .admin-user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--admin-secondary), var(--admin-accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .admin-user-meta strong {
+        display: block;
+        font-size: 0.82rem;
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .admin-user-meta small {
+        font-size: 0.7rem;
+        color: var(--admin-muted);
+      }
+
+      .admin-content {
+        padding: 1.5rem;
+        flex: 1;
+      }
+
+      @media (max-width: 1199px) {
+        .admin-header-search {
+          display: none;
+        }
+      }
+
+      .admin-panel {
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid var(--admin-border);
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .admin-panel-hd {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--admin-border);
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .admin-panel-hd h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .admin-panel-bd {
+        padding: 1rem 1.25rem 1.25rem;
+      }
+
+      .admin-table-wrap {
+        overflow-x: auto;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86rem;
+        min-width: 880px;
+      }
+
+      .admin-table th,
+      .admin-table td {
+        padding: 0.7rem 0.85rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        vertical-align: middle;
+      }
+
+      .admin-table th {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--admin-muted);
+        font-weight: 700;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .admin-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .admin-table tbody tr:hover td {
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .admin-table tr.contact-row-unread td {
+        font-weight: 600;
+      }
+
+      .admin-table tr.contact-row-unread td:first-child {
+        box-shadow: inset 3px 0 0 var(--admin-accent);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--admin-muted);
+        font-size: 0.82rem;
+        white-space: nowrap;
+      }
+
+      .pill-accent {
+        border-color: rgba(230, 48, 53, 0.45);
+        color: #ffb4b7;
+        background: rgba(230, 48, 53, 0.1);
+      }
+
+      .btn-soft {
+        border-radius: 12px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-weight: 700;
+        padding: 0.6rem 0.85rem;
+        transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
+      }
+
+      .btn-soft:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(230, 48, 53, 0.25);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .btn-danger-soft {
+        border-radius: 12px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 800;
+        padding: 0.6rem 0.85rem;
+        transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
+      }
+
+      .btn-danger-soft:hover {
+        background: rgba(230, 48, 53, 0.22);
+        border-color: rgba(230, 48, 53, 0.65);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .btn-primary-soft {
+        border-radius: 12px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.18) 0%, rgba(60, 62, 144, 0.18) 100%);
+        color: #fff;
+        font-weight: 800;
+        padding: 0.6rem 0.85rem;
+        transition: transform 0.12s ease, filter 0.2s ease;
+      }
+
+      .btn-primary-soft:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+        color: #fff;
+      }
+
+      .btn-xs-soft {
+        padding: 0.35rem 0.55rem;
+        font-size: 0.78rem;
+        border-radius: 8px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .btn-xs-soft:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+      }
+
+      .btn-xs-danger {
+        padding: 0.35rem 0.55rem;
+        font-size: 0.78rem;
+        border-radius: 8px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 600;
+      }
+
+      .btn-xs-danger:hover {
+        background: rgba(230, 48, 53, 0.25);
+        color: #fff;
+      }
+
+      .admin-muted {
+        color: var(--admin-muted);
+      }
+
+      code {
+        color: #c5cbe8;
+      }
+
+      .contact-msg-box {
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 0.9rem;
+        line-height: 1.55;
+        color: var(--admin-text);
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: var(--radius-sm);
+        padding: 1rem;
+        border: 1px solid var(--admin-border);
+        max-height: 320px;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body class="page-admin-settings admin-app-layout">
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem("coscharis:admin:v1");
+          var s = raw ? JSON.parse(raw) : null;
+          if (!s || !s.loggedIn) window.location.replace("admin-login.html");
+        } catch (e) {
+          window.location.replace("admin-login.html");
+        }
+      })();
+    </script>
+
+    <div class="admin-dash-bg" aria-hidden="true"></div>
+
+    <div class="admin-shell">
+      <aside class="admin-sidebar admin-sidebar--desktop" id="admin-sidebar-desktop" aria-label="Admin navigation">
+        <div class="admin-sidebar-scroll">
+          <a class="admin-brand" href="admin-dashboard.html">
+            <img src="coscharis/assets/img/logo/cos-logo.jpeg" alt="" width="44" height="44" />
+            <div>
+              <h1>Coscharis</h1>
+              <span>Admin Console</span>
+            </div>
+          </a>
+
+          <div class="admin-nav-label">Overview</div>
+          <nav class="admin-nav" aria-label="Primary">
+            <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <a href="admin-live-site.html"><i class="fas fa-globe"></i> Live site</a>
+          </nav>
+
+          <div class="admin-nav-label">System</div>
+          <nav class="admin-nav" aria-label="Settings">
+            <a class="is-active" href="admin-settings.html"><i class="fas fa-sliders"></i> Site settings</a>
+          </nav>
+
+          <div class="admin-nav-label">Commerce</div>
+          <nav class="admin-nav">
+            <a href="admin-shop.html"><i class="fas fa-store"></i> Shop (Admin)</a>
+            <a href="admin-cart.html"><i class="fas fa-shopping-basket"></i> Cart (Admin)</a>
+            <a href="admin-checkout.html"><i class="fas fa-credit-card"></i> Checkout (Admin)</a>
+          </nav>
+
+          <div class="admin-nav-label">Engagement</div>
+          <nav class="admin-nav">
+            <a href="admin-auction.html"><i class="fas fa-gavel"></i> Auction (Admin)</a>
+            <a href="admin-listings.html"><i class="fas fa-car-side"></i> Listings (Admin)</a>
+          </nav>
+
+          <div class="admin-nav-label">People &amp; content</div>
+          <nav class="admin-nav">
+            <a href="admin-registration.html"><i class="fas fa-users-cog"></i> Users & profiles</a>
+            <a href="admin-contact.html"><i class="fas fa-envelope"></i> Contact</a>
+          </nav>
+        </div>
+
+        <div class="admin-sidebar-footer">
+          <button type="button" class="btn-logout js-admin-logout">
+            <i class="fas fa-sign-out-alt"></i> Sign out
+          </button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-header">
+          <div class="admin-header-left">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-drawer-panel">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="admin-header-titles">
+              <h2>Site settings</h2>
+              <p>Brand, contact, and display options for the public site (stored in this browser)</p>
+            </div>
+          </div>
+
+          <div class="admin-header-actions">
+            <button type="button" class="btn-soft" id="admin-settings-export" title="Export JSON">
+              <i class="far fa-file-code me-2"></i> Export
+            </button>
+            <button type="button" class="btn-danger-soft" id="admin-settings-reset" title="Restore defaults">
+              <i class="fas fa-rotate-left me-2"></i> Reset defaults
+            </button>
+            <div class="admin-user-chip" title="Signed-in administrator">
+              <div class="admin-user-avatar" id="admin-admin-initials">A</div>
+              <div class="admin-user-meta">
+                <strong id="admin-admin-email">admin@coscharis.local</strong>
+                <small>Administrator</small>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="admin-content">
+          <div id="admin-settings-saved" class="alert alert-success py-2 px-3 d-none mb-3" role="status" style="border-radius: 12px">
+            Settings saved. Refresh open public pages to see all changes.
+          </div>
+          <div id="admin-cred-saved" class="alert alert-success py-2 px-3 d-none mb-3" role="status" style="border-radius: 12px">
+            Administrator login updated. Use the new credentials on the next sign-in.
+          </div>
+          <div id="admin-cred-err" class="alert alert-danger py-2 px-3 d-none mb-3" role="alert" style="border-radius: 12px"></div>
+
+          <div class="mb-4">
+            <div class="admin-panel">
+              <div class="admin-panel-hd">
+                <h3><i class="fas fa-key me-2 text-danger"></i> Administrator login</h3>
+                <span class="pill"><i class="fas fa-right-to-bracket"></i> admin-login.html</span>
+              </div>
+              <div class="admin-panel-bd">
+                <p class="small admin-muted mb-3 mb-md-4">
+                  Change the email and password used on the admin sign-in page. Leave both password fields empty to keep the current password.
+                  Storage key <code>coscharis:admin-credentials:v1</code> (this browser only).
+                </p>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label small admin-muted mb-1" for="set-admin-email">Admin email</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="set-admin-email"
+                      maxlength="120"
+                      autocomplete="username"
+                      style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label small admin-muted mb-1" for="set-admin-password">New password</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="set-admin-password"
+                      maxlength="128"
+                      autocomplete="new-password"
+                      placeholder="Leave blank to keep"
+                      style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label small admin-muted mb-1" for="set-admin-password2">Confirm new password</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="set-admin-password2"
+                      maxlength="128"
+                      autocomplete="new-password"
+                      style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit"
+                    />
+                  </div>
+                  <div class="col-12">
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                      <button type="button" class="btn-primary-soft border-0" id="admin-cred-save">
+                        <i class="fas fa-floppy-disk me-2"></i> Save admin login
+                      </button>
+                      <button type="button" class="btn btn-outline-light btn-sm border-secondary" id="admin-cred-reset-demo">
+                        <i class="fas fa-rotate-left me-1"></i> Reset to demo login
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <form id="admin-settings-form" class="row g-3 g-lg-4">
+            <div class="col-lg-6">
+              <div class="admin-panel h-100">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-signature me-2 text-danger"></i> Brand &amp; title</h3>
+                  <span class="pill"><i class="fas fa-window-maximize"></i> Browser tab</span>
+                </div>
+                <div class="admin-panel-bd">
+                  <div class="mb-3">
+                    <label class="form-label small admin-muted mb-1" for="set-site-name">Site name</label>
+                    <input type="text" class="form-control" id="set-site-name" maxlength="80" autocomplete="off" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small admin-muted mb-1" for="set-title-suffix">Title suffix</label>
+                    <input type="text" class="form-control" id="set-title-suffix" maxlength="120" autocomplete="off" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+                    <div class="form-text small admin-muted">Shown in the page title after the site name.</div>
+                  </div>
+                  <div class="mb-0">
+                    <label class="form-label small admin-muted mb-1" for="set-theme-color">Theme color (mobile UI)</label>
+                    <input type="color" class="form-control form-control-color w-100" id="set-theme-color" title="Theme color" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="admin-panel h-100">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-address-book me-2 text-danger"></i> Public contact</h3>
+                  <span class="pill"><i class="fas fa-globe"></i> Header / footer</span>
+                </div>
+                <div class="admin-panel-bd">
+                  <div class="mb-3">
+                    <label class="form-label small admin-muted mb-1" for="set-support-email">Support email</label>
+                    <input type="email" class="form-control" id="set-support-email" maxlength="120" autocomplete="off" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small admin-muted mb-1" for="set-public-phone">Public phone</label>
+                    <input type="text" class="form-control" id="set-public-phone" maxlength="40" autocomplete="off" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+                  </div>
+                  <div class="mb-0">
+                    <label class="form-label small admin-muted mb-1" for="set-address">Address line</label>
+                    <input type="text" class="form-control" id="set-address" maxlength="200" autocomplete="off" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="admin-panel h-100">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-coins me-2 text-danger"></i> Commerce display</h3>
+                  <span class="pill"><i class="fas fa-shopping-cart"></i> Cart / checkout</span>
+                </div>
+                <div class="admin-panel-bd">
+                  <div class="mb-3">
+                    <label class="form-label small admin-muted mb-1" for="set-currency">Currency symbol</label>
+                    <input type="text" class="form-control" id="set-currency" maxlength="6" autocomplete="off" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+                    <div class="form-text small admin-muted">Used when formatting cart and order totals (demo).</div>
+                  </div>
+                  <div class="mb-0">
+                    <label class="form-label small admin-muted mb-1" for="set-hours">Business hours</label>
+                    <input type="text" class="form-control" id="set-hours" maxlength="120" autocomplete="off" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+                    <div class="form-text small admin-muted">Optional; shown where <code>data-coscharis-hours</code> exists.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="admin-panel h-100">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-screwdriver-wrench me-2 text-danger"></i> Maintenance</h3>
+                  <span class="pill"><i class="fas fa-exclamation-triangle"></i> Banner</span>
+                </div>
+                <div class="admin-panel-bd">
+                  <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="set-maintenance" />
+                    <label class="form-check-label" for="set-maintenance">Show maintenance notice on public pages</label>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small admin-muted mb-1" for="set-maintenance-msg">Maintenance message</label>
+                    <textarea class="form-control" id="set-maintenance-msg" rows="3" maxlength="500" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit"></textarea>
+                  </div>
+                  <div class="mb-0">
+                    <label class="form-label small admin-muted mb-1" for="admin-settings-import-file">Import settings JSON</label>
+                    <input type="file" class="form-control form-control-sm" id="admin-settings-import-file" accept="application/json,.json" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="d-flex flex-wrap gap-2 align-items-center">
+                <button type="submit" class="btn-primary-soft border-0">
+                  <i class="fas fa-floppy-disk me-2"></i> Save settings
+                </button>
+                <span class="small admin-muted mb-0">Storage key <code>coscharis:site-settings:v1</code></span>
+              </div>
+            </div>
+          </form>
+
+          <p class="text-center mt-4 mb-0 small" style="color: var(--admin-muted)">
+            Coscharis Admin · Site settings · Local demo
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+      <div class="mobile-drawer__backdrop" id="mobile-drawer-backdrop"></div>
+      <div
+        class="mobile-drawer__panel"
+        id="mobile-drawer-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Admin navigation"
+      >
+        <div class="mobile-drawer__header">
+          <span class="mobile-drawer__title">Menu</span>
+          <button type="button" class="mobile-drawer__close" id="mobile-drawer-close" aria-label="Close menu">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-drawer__scroll" id="mobile-drawer-scroll"></div>
+        <div class="mobile-drawer__foot" id="mobile-drawer-foot"></div>
+      </div>
+    </div>
+
+    <script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="coscharis/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="coscharis/assets/js/admin-shell.js"></script>
+    <script>
+      (function () {
+        var SETTINGS_KEY = "coscharis:site-settings:v1";
+        var ADMIN_KEY = "coscharis:admin:v1";
+        var CRED_KEY = "coscharis:admin-credentials:v1";
+        var DEFAULT_ADMIN_EMAIL = "admin@coscharis.local";
+        var DEFAULT_ADMIN_PASS = "Echefu10@321@";
+
+        function safeParse(json) {
+          try {
+            return JSON.parse(json);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function defaults() {
+          return {
+            siteName: "Coscharis",
+            siteTitleSuffix: "Car Dealer And Automotive",
+            supportEmail: "info@example.com",
+            publicPhone: "+2 123 654 7898",
+            addressLine: "25/B Milford Road, New York",
+            themeColor: "#e63035",
+            currencySymbol: "₦",
+            businessHours: "Mon–Sat 9:00–18:00",
+            maintenanceMode: false,
+            maintenanceMessage: "We're performing brief maintenance. Please try again shortly.",
+            updatedAt: null
+          };
+        }
+
+        function loadSettings() {
+          var raw = localStorage.getItem(SETTINGS_KEY);
+          var o = safeParse(raw);
+          if (!o || typeof o !== "object") return defaults();
+          var d = defaults();
+          for (var k in d) {
+            if (Object.prototype.hasOwnProperty.call(d, k) && o[k] === undefined) o[k] = d[k];
+          }
+          return o;
+        }
+
+        function saveSettings(obj) {
+          obj.updatedAt = new Date().toISOString();
+          localStorage.setItem(SETTINGS_KEY, JSON.stringify(obj));
+        }
+
+        function loadAdminCredentials() {
+          var raw = localStorage.getItem(CRED_KEY);
+          var o = safeParse(raw);
+          var email = DEFAULT_ADMIN_EMAIL;
+          var password = DEFAULT_ADMIN_PASS;
+          if (o && typeof o === "object") {
+            if (typeof o.email === "string" && o.email.trim()) email = o.email.trim();
+            if (typeof o.password === "string" && o.password.length) password = o.password;
+          }
+          return { email: email, password: password };
+        }
+
+        function saveAdminCredentials(email, password) {
+          localStorage.setItem(
+            CRED_KEY,
+            JSON.stringify({
+              email: email,
+              password: password,
+              updatedAt: new Date().toISOString()
+            })
+          );
+        }
+
+        function fillAdminCredForm() {
+          var c = loadAdminCredentials();
+          document.getElementById("set-admin-email").value = c.email || "";
+          document.getElementById("set-admin-password").value = "";
+          document.getElementById("set-admin-password2").value = "";
+        }
+
+        function showCredErr(msg) {
+          var el = document.getElementById("admin-cred-err");
+          el.textContent = msg || "";
+          if (msg) el.classList.remove("d-none");
+          else el.classList.add("d-none");
+        }
+
+        function showCredSaved() {
+          var note = document.getElementById("admin-cred-saved");
+          note.classList.remove("d-none");
+          window.setTimeout(function () {
+            note.classList.add("d-none");
+          }, 5000);
+        }
+
+        document.getElementById("admin-cred-save").addEventListener("click", function () {
+          showCredErr("");
+          var email = (document.getElementById("set-admin-email").value || "").trim();
+          if (!email) {
+            showCredErr("Enter an admin email.");
+            return;
+          }
+          var p1 = document.getElementById("set-admin-password").value;
+          var p2 = document.getElementById("set-admin-password2").value;
+          var current = loadAdminCredentials();
+          var newPass = current.password;
+          if (p1 || p2) {
+            if (p1 !== p2) {
+              showCredErr("New password and confirmation do not match.");
+              return;
+            }
+            if (p1.length < 8) {
+              showCredErr("Password must be at least 8 characters.");
+              return;
+            }
+            newPass = p1;
+          }
+          saveAdminCredentials(email, newPass);
+          fillAdminCredForm();
+          showCredSaved();
+          try {
+            var adm = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
+            var em = email;
+            document.getElementById("admin-admin-email").textContent = em;
+            document.getElementById("admin-admin-initials").textContent = (em.charAt(0) || "A").toUpperCase();
+          } catch (e) {}
+        });
+
+        document.getElementById("admin-cred-reset-demo").addEventListener("click", function () {
+          if (!confirm("Reset admin login to the built-in demo email and password on this browser?")) return;
+          localStorage.removeItem(CRED_KEY);
+          showCredErr("");
+          fillAdminCredForm();
+          try {
+            document.getElementById("admin-admin-email").textContent = DEFAULT_ADMIN_EMAIL;
+            document.getElementById("admin-admin-initials").textContent = "A";
+          } catch (e) {}
+          var note = document.getElementById("admin-cred-saved");
+          note.textContent = "Admin login reset to demo credentials.";
+          note.classList.remove("d-none");
+          window.setTimeout(function () {
+            note.classList.add("d-none");
+            note.textContent = "Administrator login updated. Use the new credentials on the next sign-in.";
+          }, 5000);
+        });
+
+        function formToObject() {
+          var s = loadSettings();
+          s.siteName = (document.getElementById("set-site-name").value || "").trim() || defaults().siteName;
+          s.siteTitleSuffix = (document.getElementById("set-title-suffix").value || "").trim() || defaults().siteTitleSuffix;
+          s.supportEmail = (document.getElementById("set-support-email").value || "").trim() || defaults().supportEmail;
+          s.publicPhone = (document.getElementById("set-public-phone").value || "").trim() || defaults().publicPhone;
+          s.addressLine = (document.getElementById("set-address").value || "").trim();
+          s.themeColor = (document.getElementById("set-theme-color").value || "").trim() || defaults().themeColor;
+          s.currencySymbol = (document.getElementById("set-currency").value || "").trim() || defaults().currencySymbol;
+          s.businessHours = (document.getElementById("set-hours").value || "").trim();
+          s.maintenanceMode = !!document.getElementById("set-maintenance").checked;
+          s.maintenanceMessage = (document.getElementById("set-maintenance-msg").value || "").trim() || defaults().maintenanceMessage;
+          return s;
+        }
+
+        function fillForm(s) {
+          document.getElementById("set-site-name").value = s.siteName || "";
+          document.getElementById("set-title-suffix").value = s.siteTitleSuffix || "";
+          document.getElementById("set-support-email").value = s.supportEmail || "";
+          document.getElementById("set-public-phone").value = s.publicPhone || "";
+          document.getElementById("set-address").value = s.addressLine || "";
+          document.getElementById("set-theme-color").value = /^#[0-9A-Fa-f]{6}$/.test(s.themeColor || "") ? s.themeColor : "#e63035";
+          document.getElementById("set-currency").value = s.currencySymbol || "₦";
+          document.getElementById("set-hours").value = s.businessHours || "";
+          document.getElementById("set-maintenance").checked = !!s.maintenanceMode;
+          document.getElementById("set-maintenance-msg").value = s.maintenanceMessage || "";
+        }
+
+        document.getElementById("admin-settings-form").addEventListener("submit", function (e) {
+          e.preventDefault();
+          saveSettings(formToObject());
+          var note = document.getElementById("admin-settings-saved");
+          note.classList.remove("d-none");
+          window.setTimeout(function () {
+            note.classList.add("d-none");
+          }, 4000);
+        });
+
+        document.getElementById("admin-settings-export").addEventListener("click", function () {
+          var blob = new Blob([JSON.stringify(loadSettings(), null, 2)], { type: "application/json" });
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "coscharis-site-settings.json";
+          a.click();
+          URL.revokeObjectURL(a.href);
+        });
+
+        document.getElementById("admin-settings-reset").addEventListener("click", function () {
+          if (!confirm("Reset all site settings to defaults on this browser?")) return;
+          localStorage.removeItem(SETTINGS_KEY);
+          fillForm(defaults());
+        });
+
+        document.getElementById("admin-settings-import-file").addEventListener("change", function (ev) {
+          var f = ev.target.files && ev.target.files[0];
+          ev.target.value = "";
+          if (!f) return;
+          var reader = new FileReader();
+          reader.onload = function () {
+            try {
+              var o = JSON.parse(reader.result);
+              if (!o || typeof o !== "object") throw new Error("Invalid");
+              var base = defaults();
+              for (var key in o) {
+                if (Object.prototype.hasOwnProperty.call(o, key)) base[key] = o[key];
+              }
+              saveSettings(base);
+              fillForm(loadSettings());
+              alert("Settings imported.");
+            } catch (err) {
+              alert("Could not import JSON.");
+            }
+          };
+          reader.readAsText(f);
+        });
+
+        try {
+          var adm = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
+          var em = (adm.email || "admin@coscharis.local").trim();
+          document.getElementById("admin-admin-email").textContent = em;
+          var ini = em.charAt(0).toUpperCase() || "A";
+          document.getElementById("admin-admin-initials").textContent = ini;
+        } catch (e) {}
+
+        fillForm(loadSettings());
+        fillAdminCredForm();
+      })();
+    </script>
+  </body>
+</html>

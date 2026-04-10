@@ -1,0 +1,193 @@
+/**
+ * Shared admin app shell: mobile drawer (outside flex) + desktop viewport scroll lock.
+ * Use with body.admin-app-layout and #admin-sidebar-desktop + #mobile-drawer markup.
+ */
+
+body.admin-app-layout .admin-sidebar.admin-sidebar--desktop {
+  display: flex;
+  flex-direction: column;
+}
+
+body.admin-app-layout .admin-sidebar-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+body.admin-app-layout .admin-sidebar-footer {
+  flex-shrink: 0;
+}
+
+.mobile-drawer {
+  display: none;
+}
+
+/* Hamburger: page inline styles often set display:none without a breakpoint and load after this file — use !important */
+@media (max-width: 991px) {
+  .admin-menu-toggle,
+  .dash-burger {
+    display: flex !important;
+  }
+
+  .admin-sidebar.admin-sidebar--desktop,
+  .dash-sidebar.dash-sidebar--desktop {
+    display: none !important;
+  }
+
+  .mobile-drawer {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .mobile-drawer.is-open {
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .mobile-drawer__backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: rgba(3, 5, 12, 0.72);
+    opacity: 0;
+    transition: opacity 0.28s ease;
+  }
+
+  .mobile-drawer.is-open .mobile-drawer__backdrop {
+    opacity: 1;
+  }
+
+  .mobile-drawer__panel {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    width: min(300px, 88vw);
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #12152a 0%, #0a0c18 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 16px 0 48px rgba(0, 0, 0, 0.55);
+    transform: translate3d(-100%, 0, 0);
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-drawer.is-open .mobile-drawer__panel {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .mobile-drawer__header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .mobile-drawer__title {
+    font-weight: 900;
+    font-size: 1rem;
+    letter-spacing: -0.02em;
+    color: #e8eaf4;
+  }
+
+  .mobile-drawer__close {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .mobile-drawer__close:active {
+    transform: scale(0.96);
+  }
+
+  .mobile-drawer__scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 0.5rem 0.85rem 1rem;
+  }
+
+  .mobile-drawer__scroll .admin-sidebar-scroll,
+  .mobile-drawer__scroll .dash-sidebar-scroll {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .mobile-drawer__foot {
+    flex-shrink: 0;
+    padding: 0.85rem 1rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* Desktop: shell fills viewport; only main column scrolls */
+@media (min-width: 992px) {
+  html {
+    height: 100%;
+  }
+
+  body.admin-app-layout {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body.admin-app-layout .admin-shell,
+  body.admin-app-layout .dash-shell {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .admin-sidebar.admin-sidebar--desktop,
+  .dash-sidebar.dash-sidebar--desktop {
+    height: 100%;
+    max-height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .admin-sidebar-scroll,
+  .dash-sidebar-scroll {
+    max-height: none;
+  }
+
+  .admin-main,
+  .dash-main {
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+  }
+
+  .admin-menu-toggle,
+  .dash-burger {
+    display: none !important;
+  }
+}

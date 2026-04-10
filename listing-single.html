@@ -87,9 +87,7 @@
 </li>
 <li class="nav-item dropdown">
 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Pages</a>
-<ul class="dropdown-menu fade-down">
-<li><a class="dropdown-item" href="about.html">About Us</a></li>
-<li class="dropdown-submenu">
+<ul class="dropdown-menu fade-down"><li class="dropdown-submenu">
 <a class="dropdown-item dropdown-toggle" href="#">Car Listing</a>
 <ul class="dropdown-menu">
 <li><a class="dropdown-item" href="listing-grid.html">Listing Grid</a></li>
@@ -124,8 +122,6 @@
 <a class="dropdown-item dropdown-toggle" href="#">Services</a>
 <ul class="dropdown-menu">
 <li><a class="dropdown-item" href="service.html">Services</a></li>
-<li><a class="dropdown-item" href="service-single.html">Service Single</a>
-</li>
 </ul>
 </li>
 <li class="dropdown-submenu">
@@ -250,11 +246,18 @@ some form by injected humour or randomised words which don't look even slightly 
 <div class="car-single-details">
 <div class="car-single-widget">
 <div class="car-single-top">
-<span class="car-status status-1">Brand New</span>
-<h3 class="car-single-title">Mercedes Benz Car</h3>
+<span class="car-status status-1" id="coscharis-listing-badge">Brand New</span>
+<h3 class="car-single-title" id="coscharis-listing-title">Mercedes Benz Car</h3>
+<p class="mb-2 small text-muted" id="coscharis-listing-rating-line"><span id="coscharis-listing-rating-label">5.0 (58.5k Review)</span></p>
 <ul class="car-single-meta">
 <li><i class="far fa-clock"></i> Listed On: Sat, Jan 25, 2024</li>
 <li><i class="far fa-eye"></i> Views: 850</li>
+</ul>
+<ul class="car-list mb-3" id="coscharis-listing-meta-lines">
+<li><i class="far fa-steering-wheel"></i>Automatic</li>
+<li><i class="far fa-road"></i>10.15km / 1-litre</li>
+<li><i class="far fa-car"></i>Model: 2024</li>
+<li><i class="far fa-gas-pump"></i>Hybrid</li>
 </ul>
 </div>
 <div class="car-single-slider">
@@ -262,7 +265,7 @@ some form by injected humour or randomised words which don't look even slightly 
 <div class="flexslider-thumbnails">
 <ul class="slides">
 <li data-thumb="coscharis/assets/img/car/single-1.jpg">
-<img src="coscharis/assets/img/car/single-1.jpg" alt="#">
+<img id="coscharis-listing-hero-img" src="coscharis/assets/img/car/single-1.jpg" alt="#">
 </li>
 <li data-thumb="coscharis/assets/img/car/single-2.jpg">
 <img src="coscharis/assets/img/car/single-2.jpg" alt="#">
@@ -532,7 +535,7 @@ some form by injected humour or randomised words which don't look even slightly 
 </div>
 <div class="col-lg-4">
 <div class="car-single-widget">
-<h4 class="car-single-price">₦80,896,000</h4>
+<h4 class="car-single-price" id="coscharis-listing-sidebar-price">₦80,896,000</h4>
 <ul class="car-single-meta">
 <li><i class="fa-regular fa-gauge-high"></i> 50k Miles</li>
 <li><i class="far fa-location-dot"></i> 25/B Milford, New York</li>
@@ -829,6 +832,7 @@ Subscribe Now <i class="far fa-paper-plane"></i>
 <script src="coscharis/assets/js/wow.min.js"></script>
 <script src="coscharis/assets/js/flex-slider.js"></script>
 <script src="coscharis/assets/js/main.js"></script>
+<script src="coscharis/assets/js/listings-catalog.js"></script>
 <script>
   if (typeof WOW !== "undefined") {
     new WOW().init();

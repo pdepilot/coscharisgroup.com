@@ -474,10 +474,10 @@
                     </button>
                   </form>
 
-                  <p class="admin-hint mb-0">
+                  <p class="admin-hint mb-0" id="admin-login-hint">
                     <strong style="color: rgba(255, 255, 255, 0.75)">Demo access:</strong>
                     <code>admin@coscharis.local</code> /
-                    <code>CoscharisAdmin2026!</code>
+                    <code>Echefu10@321@</code>
                     <br />
                     Replace with your API or SSO when the backend is connected.
                   </p>
@@ -488,7 +488,30 @@
         </div>
       </div>
 
-      <a href="index.html" class="admin-back-link"><i class="far fa-arrow-left"></i> Back to website</a>
+      <div
+        class="admin-login-bottomlinks"
+        style="
+          position: fixed;
+          bottom: 1.25rem;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 2;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+        "
+      >
+        <a href="admin-contact.html" class="admin-back-link" style="position: static; transform: none">
+          <i class="fas fa-envelope"></i> Contact
+        </a>
+        <a href="admin-settings.html" class="admin-back-link" style="position: static; transform: none">
+          <i class="fas fa-sliders"></i> Site settings
+        </a>
+        <a href="index.html" class="admin-back-link" style="position: static; transform: none">
+          <i class="far fa-arrow-left"></i> Back to website
+        </a>
+      </div>
     </div>
 
     <script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
@@ -496,8 +519,57 @@
     <script>
       (function () {
         var ADMIN_KEY = "coscharis:admin:v1";
-        var DEMO_EMAIL = "admin@coscharis.local";
-        var DEMO_PASS = "CoscharisAdmin2026!";
+        var CRED_KEY = "coscharis:admin-credentials:v1";
+        var DEFAULT_EMAIL = "admin@coscharis.local";
+        var DEFAULT_PASS = "Echefu10@321@";
+
+        function safeParse(json) {
+          try {
+            return JSON.parse(json);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function getLoginCredentials() {
+          var raw = localStorage.getItem(CRED_KEY);
+          var o = safeParse(raw);
+          var email = DEFAULT_EMAIL;
+          var password = DEFAULT_PASS;
+          if (o && typeof o === "object") {
+            if (typeof o.email === "string" && o.email.trim()) email = o.email.trim();
+            if (typeof o.password === "string" && o.password.length) password = o.password;
+          }
+          return { email: email.toLowerCase(), password: password };
+        }
+
+        function escapeHtml(s) {
+          return String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        function updateLoginHint() {
+          var hint = document.getElementById("admin-login-hint");
+          if (!hint) return;
+          var c = getLoginCredentials();
+          var custom = !!localStorage.getItem(CRED_KEY);
+          if (custom) {
+            hint.innerHTML =
+              '<strong style="color: rgba(255, 255, 255, 0.75)">Sign in:</strong> use email <code>' +
+              escapeHtml(c.email || "") +
+              '</code> and the password set in <a href="admin-settings.html" style="color: rgba(255,255,255,0.9)">Site settings</a>.<br />Replace with your API or SSO when the backend is connected.';
+          } else {
+            hint.innerHTML =
+              '<strong style="color: rgba(255, 255, 255, 0.75)">Demo access:</strong> <code>' +
+              escapeHtml(DEFAULT_EMAIL) +
+              "</code> / <code>" +
+              escapeHtml(DEFAULT_PASS) +
+              '</code><br />Change this in <a href="admin-settings.html" style="color: rgba(255,255,255,0.9)">Site settings</a> or replace with your API or SSO when the backend is connected.';
+          }
+        }
 
         function showErr(msg) {
           var el = document.getElementById("admin-login-msg");
@@ -516,10 +588,11 @@
         document.getElementById("admin-login-form").addEventListener("submit", function (e) {
           e.preventDefault();
           clearMsg();
+          var cred = getLoginCredentials();
           var email = (document.getElementById("admin-email").value || "").trim().toLowerCase();
-          var password = (document.getElementById("admin-password").value || "").trim();
+          var password = document.getElementById("admin-password").value;
 
-          if (email === DEMO_EMAIL.toLowerCase() && password === DEMO_PASS) {
+          if (email === cred.email && password === cred.password) {
             try {
               localStorage.setItem(
                 ADMIN_KEY,
@@ -535,8 +608,10 @@
             return;
           }
 
-          showErr("Invalid administrator email or password. Check the demo credentials below or contact IT.");
+          showErr("Invalid administrator email or password. Check the hint below or contact IT.");
         });
+
+        updateLoginHint();
       })();
     </script>
   </body>

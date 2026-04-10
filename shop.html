@@ -86,9 +86,7 @@
 </li>
 <li class="nav-item dropdown">
 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Pages</a>
-<ul class="dropdown-menu fade-down">
-<li><a class="dropdown-item" href="about.html">About Us</a></li>
-<li class="dropdown-submenu">
+<ul class="dropdown-menu fade-down"><li class="dropdown-submenu">
 <a class="dropdown-item dropdown-toggle" href="#">Car Listing</a>
 <ul class="dropdown-menu">
 <li><a class="dropdown-item" href="listing-grid.html">Listing Grid</a></li>
@@ -123,8 +121,6 @@
 <a class="dropdown-item dropdown-toggle" href="#">Services</a>
 <ul class="dropdown-menu">
 <li><a class="dropdown-item" href="service.html">Services</a></li>
-<li><a class="dropdown-item" href="service-single.html">Service Single</a>
-</li>
 </ul>
 </li>
 <li class="dropdown-submenu">
@@ -381,250 +377,21 @@ some form by injected humour or randomised words which don't look even slightly 
 <div class="col-lg-9">
 <div class="col-md-12">
 <div class="shop-sort">
-<h5>Showing 1-10 of 50 Results</h5>
+<h5 id="coscharis-shop-result-count">Loading…</h5>
 <div class="shop-sort-box">
-<select class="select">
-<option value="1">Sort By Default</option>
-<option value="5">Sort By Featured</option>
-<option value="2">Sort By Latest</option>
-<option value="3">Sort By Low Price</option>
-<option value="4">Sort By High Price</option>
+<select class="select" id="coscharis-shop-sort" aria-label="Sort products">
+<option value="default">Sort By Default</option>
+<option value="latest">Sort By Latest</option>
+<option value="priceAsc">Sort By Low Price</option>
+<option value="priceDesc">Sort By High Price</option>
+<option value="titleAsc">Sort A–Z</option>
 </select>
 </div>
 </div>
 </div>
 <div class="shop-item-wrapper">
-<div class="row align-items-center">
-<div class="col-md-6 col-lg-4">
-<div class="shop-item">
-<div class="shop-item-img">
-<span class="shop-item-sale">Sale</span>
-<img src="coscharis/assets/img/shop/01.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price"><del>₦720,000</del> ₦624,000</div>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-4">
-<div class="shop-item">
-<div class="shop-item-img">
-<img src="coscharis/assets/img/shop/02.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price">₦1,024,000</div>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-4">
-<div class="shop-item">
-<div class="shop-item-img">
-<img src="coscharis/assets/img/shop/03.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price">₦1,136,000</div>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-4">
-<div class="shop-item">
-<div class="shop-item-img">
-<span class="shop-item-sale">Sale</span>
-<img src="coscharis/assets/img/shop/04.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price"><del>₦512,000</del> ₦464,000</div>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-4">
-<div class="shop-item">
-<div class="shop-item-img">
-<img src="coscharis/assets/img/shop/05.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price">₦1,072,000</div>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-4">
-<div class="shop-item">
-<div class="shop-item-img">
-<img src="coscharis/assets/img/shop/06.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price">₦400,000</div>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-4">
-<div class="shop-item">
-<div class="shop-item-img">
-<img src="coscharis/assets/img/shop/07.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price">₦672,000</div>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-4">
-<div class="shop-item">
-<div class="shop-item-img">
-<img src="coscharis/assets/img/shop/08.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price">₦880,000</div>
-</div>
-</div>
-</div>
-<div class="col-md-6 col-lg-4">
-<div class="shop-item">
-<div class="shop-item-img">
-<img src="coscharis/assets/img/shop/09.jpg" alt>
-<div class="shop-item-meta">
-<a href="#"><i class="far fa-heart"></i></a>
-<a href="#"><i class="far fa-eye"></i></a>
-<a href="#"><i class="far fa-shopping-cart"></i></a>
-</div>
-</div>
-<div class="shop-item-info">
-<div class="shop-item-rate">
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-<i class="fas fa-star"></i>
-</div>
-<a href="#">
-<h4 class="shop-item-title">Car Engine Parts</h4>
-</a>
-<div class="shop-item-price">₦1,112,000</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="pagination-area mt-4">
+<div class="row align-items-center" id="coscharis-shop-grid"></div>
+<div class="pagination-area mt-4 d-none" aria-hidden="true">
 <div aria-label="Page navigation example">
 <ul class="pagination">
 <li class="page-item">
@@ -754,11 +521,33 @@ Subscribe Now <i class="far fa-paper-plane"></i>
 <script src="coscharis/assets/js/jquery-ui.min.js"></script>
 <script src="coscharis/assets/js/jquery.nice-select.min.js"></script>
 <script src="coscharis/assets/js/wow.min.js"></script>
+<script src="coscharis/assets/js/shop-catalog.js"></script>
 <script src="coscharis/assets/js/main.js"></script>
 <script>
   if (typeof WOW !== "undefined") {
     new WOW().init();
   }
+  (function () {
+    function refreshGrid() {
+      if (!window.CoscharisShopCatalog) return;
+      CoscharisShopCatalog.renderShopGrid("coscharis-shop-grid");
+      if (typeof WOW !== "undefined") {
+        new WOW().init();
+      }
+    }
+    if (window.jQuery) {
+      jQuery(function ($) {
+        refreshGrid();
+        $(document).on("change", "#coscharis-shop-sort", refreshGrid);
+      });
+    } else {
+      document.addEventListener("DOMContentLoaded", refreshGrid);
+    }
+    window.addEventListener("storage", function (ev) {
+      if (ev && ev.key === "coscharis:shopCatalog:v1") refreshGrid();
+    });
+    window.addEventListener("coscharis-shop-catalog-updated", refreshGrid);
+  })();
 </script>
 </body>
 </html>

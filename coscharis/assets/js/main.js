@@ -811,9 +811,21 @@
             return parseInt(cleaned, 10) || 0;
         }
 
+        function getSiteCurrencySymbol() {
+            try {
+                var raw = localStorage.getItem("coscharis:site-settings:v1");
+                var o = raw ? JSON.parse(raw) : null;
+                if (o && o.currencySymbol) {
+                    var c = String(o.currencySymbol).trim();
+                    if (c) return c;
+                }
+            } catch (e) {}
+            return "₦";
+        }
+
         function formatNaira(n) {
             var num = Number(n) || 0;
-            return "₦" + num.toLocaleString("en-NG");
+            return getSiteCurrencySymbol() + num.toLocaleString("en-NG");
         }
 
         function escapeHtml(s) {
@@ -1046,10 +1058,11 @@
         }
 
         function itemFromShopCard($shop) {
+            var explicit = ($shop.attr("data-cart-id") || "").trim();
             var title = ($shop.find(".shop-item-title").first().text() || "").trim();
             var price = ($shop.find(".shop-item-price").first().text() || "").trim();
             var img = ($shop.find(".shop-item-img img").first().attr("src") || "").trim();
-            var id = buildLineId(["shop", title, price, img]);
+            var id = explicit || buildLineId(["shop", title, price, img]);
             return {
                 id: id,
                 title: title || "Product",
@@ -1062,11 +1075,12 @@
         function itemFromShopSingle() {
             var $info = $(".single-item-info").first();
             if (!$info.length) return null;
+            var explicit = ($info.attr("data-cart-id") || "").trim();
             var title = ($info.find(".single-item-title").first().text() || "").trim();
             var price = ($info.find(".single-item-price h4 span").first().text() || "").trim();
             if (!price) price = ($info.find(".single-item-price").first().text() || "").trim();
-            var img = ($(".item-gallery img").first().attr("src") || "").trim();
-            var id = buildLineId(["single", title, price, img]);
+            var img = ($("#coscharis-single-main-img").attr("src") || $(".item-gallery img").first().attr("src") || "").trim();
+            var id = explicit || buildLineId(["single", title, price, img]);
             var q = parseInt($(".single-item-action .cart-qty .quantity").val(), 10);
             if (isNaN(q) || q < 1) q = 1;
             return {
@@ -1339,6 +1353,99 @@
             removeItem: removeItemById
         };
     })();
+
+    // Site settings (public) — managed in admin-settings.html, key coscharis:site-settings:v1
+    (function($) {
+        var KEY = "coscharis:site-settings:v1";
+
+        function safeParse(json) {
+            try {
+                return JSON.parse(json);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function defaults() {
+            return {
+                siteName: "Coscharis",
+                siteTitleSuffix: "Car Dealer And Automotive",
+                supportEmail: "info@example.com",
+                publicPhone: "+2 123 654 7898",
+                addressLine: "25/B Milford Road, New York",
+                themeColor: "#e63035",
+                currencySymbol: "₦",
+                businessHours: "Mon–Sat 9:00–18:00",
+                maintenanceMode: false,
+                maintenanceMessage: "We're performing brief maintenance. Please try again shortly."
+            };
+        }
+
+        function load() {
+            var o = safeParse(localStorage.getItem(KEY));
+            if (!o || typeof o !== "object") return defaults();
+            var d = defaults();
+            for (var k in d) {
+                if (Object.prototype.hasOwnProperty.call(d, k) && o[k] === undefined) o[k] = d[k];
+            }
+            return o;
+        }
+
+        function apply() {
+            var s = load();
+            var name = (s.siteName || "").trim() || defaults().siteName;
+            var suf = (s.siteTitleSuffix || "").trim() || defaults().siteTitleSuffix;
+            document.title = name + " - " + suf;
+
+            var tc = (s.themeColor || "").trim();
+            if (/^#[0-9A-Fa-f]{6}$/.test(tc)) {
+                $('meta[name="theme-color"]').attr("content", tc);
+            }
+
+            var em = (s.supportEmail || "").trim();
+            if (em) {
+                $(".coscharis-dynamic-email").attr("href", "mailto:" + em);
+                $(".coscharis-dynamic-email-text").text(em);
+            }
+
+            var ph = (s.publicPhone || "").trim();
+            if (ph) {
+                var digits = ph.replace(/\D/g, "");
+                if (digits.length) {
+                    $(".coscharis-dynamic-phone").attr("href", "tel:+" + digits);
+                }
+                $(".coscharis-dynamic-phone-text").text(ph);
+            }
+
+            var addr = (s.addressLine || "").trim();
+            if (addr) {
+                var $a = $("#coscharis-site-address");
+                if ($a.length) $a.text(addr);
+            }
+
+            var hrs = (s.businessHours || "").trim();
+            if (hrs) {
+                $("[data-coscharis-hours]").text(hrs);
+            }
+
+            $("#coscharis-maintenance-banner").remove();
+            if (s.maintenanceMode) {
+                var msg = (s.maintenanceMessage || defaults().maintenanceMessage).trim();
+                var $ban = $(
+                    '<div id="coscharis-maintenance-banner" style="position:relative;z-index:99998;background:linear-gradient(135deg,#3c3e90,#e63035);color:#fff;padding:10px 16px;text-align:center;font-size:0.9rem;font-weight:600"></div>'
+                );
+                $ban.text(msg);
+                $("body").prepend($ban);
+            }
+        }
+
+        $(function() {
+            apply();
+        });
+        window.addEventListener("storage", function(ev) {
+            if (ev.key === KEY) apply();
+        });
+    })(jQuery);
 
     $('.counter').countTo();
     $('.counter-box').appear(function() {

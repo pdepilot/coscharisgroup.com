@@ -7,7 +7,20 @@
 
   var STORAGE_KEY = "coscharis:auction:mock:v1";
   var USER_BIDS_KEY = "coscharis:auction:userBids:v1";
+  /** Full catalog snapshot when admin overrides bundled JSON (localStorage). */
+  var LOTS_CATALOG_KEY = "coscharis:auction-lots:v1";
   var LOTS_URL = "coscharis/assets/data/auction-lots.json";
+
+  function readLotsFromStorage() {
+    try {
+      var raw = localStorage.getItem(LOTS_CATALOG_KEY);
+      if (!raw) return null;
+      var o = JSON.parse(raw);
+      return Array.isArray(o) ? o : null;
+    } catch (e) {
+      return null;
+    }
+  }
 
   function formatNaira(n) {
     var num = Number(n);
@@ -129,10 +142,41 @@
   }
 
   function fetchLots() {
+    var stored = readLotsFromStorage();
+    if (stored) {
+      return Promise.resolve(stored);
+    }
     return fetch(LOTS_URL, { cache: "no-store" }).then(function (r) {
       if (!r.ok) throw new Error("Failed to load auction lots");
       return r.json();
     });
+  }
+
+  function persistLots(lots) {
+    if (!Array.isArray(lots)) return;
+    try {
+      localStorage.setItem(LOTS_CATALOG_KEY, JSON.stringify(lots));
+    } catch (e) {}
+  }
+
+  function clearLotsOverride() {
+    try {
+      localStorage.removeItem(LOTS_CATALOG_KEY);
+    } catch (e) {}
+  }
+
+  function hasCatalogOverride() {
+    return readLotsFromStorage() !== null;
+  }
+
+  /** Remove session bid mock state for one lot (e.g. after admin deletes the lot). */
+  function forgetLotSession(lotId) {
+    if (!lotId) return;
+    var st = loadState();
+    if (st[lotId]) {
+      delete st[lotId];
+      saveState(st);
+    }
   }
 
   function mergeLot(base) {
@@ -444,7 +488,11 @@
     renderListing: renderListing,
     renderLotPage: renderLotPage,
     renderProfileBidsTable: renderProfileBidsTable,
-    loadUserBidsMap: loadUserBidsMap
+    loadUserBidsMap: loadUserBidsMap,
+    persistLots: persistLots,
+    clearLotsOverride: clearLotsOverride,
+    hasCatalogOverride: hasCatalogOverride,
+    forgetLotSession: forgetLotSession
   };
 
   document.addEventListener("DOMContentLoaded", function () {

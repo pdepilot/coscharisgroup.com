@@ -644,7 +644,7 @@
         <div class="admin-nav-label">Commerce</div>
         <nav class="admin-nav">
           <a href="admin-shop.html"><i class="fas fa-store"></i> Shop (Admin)</a>
-          <a class="is-active" href="admin-cart.html"><i class="fas fa-shopping-basket"></i> Cart (Admin)</a>
+          <a class="is-active" href="adm-cart.html"><i class="fas fa-shopping-basket"></i> Cart (Admin)</a>
           <a href="admin-checkout.html"><i class="fas fa-credit-card"></i> Checkout (Admin)</a>
         </nav>
 
@@ -1019,13 +1019,11 @@
             (cart.items && cart.items.length ? cart.items.length : 0) + " items · " + qtySum + " qty";
         }
 
-        // Session chip
         var session = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
         var email = (session.email || "admin@coscharis.local").trim();
         document.getElementById("admin-user-email").textContent = email;
         document.getElementById("admin-user-initials").textContent = email.charAt(0).toUpperCase() || "A";
 
-        // Actions
         document.getElementById("admin-clear-cart").addEventListener("click", function () {
           if (!confirm("Clear all cart items?")) return;
           clearCart();
@@ -1108,7 +1106,6 @@
           render(document.getElementById("admin-cart-filter").value);
         });
 
-        // Sync when cart changes elsewhere
         function sync() {
           render(document.getElementById("admin-cart-filter").value);
         }

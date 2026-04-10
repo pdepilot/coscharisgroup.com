@@ -1,0 +1,110 @@
+[
+  {
+    "id": "lst-001",
+    "title": "Mercedes Benz Car",
+    "image": "coscharis/assets/img/car/01.jpg",
+    "badge": "used",
+    "priceDisplay": "₦72,992,000",
+    "priceValue": 72992000,
+    "ratingLabel": "5.0 (58.5k Review)",
+    "meta": ["Automatic", "10.15km / 1-litre", "Model: 2024", "Hybrid"],
+    "excerpt": "There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.",
+    "published": true
+  },
+  {
+    "id": "lst-002",
+    "title": "Yellow Ferrari 458",
+    "image": "coscharis/assets/img/car/02.jpg",
+    "badge": "",
+    "priceDisplay": "₦144,400,000",
+    "priceValue": 144400000,
+    "ratingLabel": "5.0 (58.5k Review)",
+    "meta": ["Automatic", "10.15km / 1-litre", "Model: 2024", "Hybrid"],
+    "excerpt": "There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.",
+    "published": true
+  },
+  {
+    "id": "lst-003",
+    "title": "Black Audi Q7",
+    "image": "coscharis/assets/img/car/03.jpg",
+    "badge": "",
+    "priceDisplay": "₦70,960,000",
+    "priceValue": 70960000,
+    "ratingLabel": "5.0 (58.5k Review)",
+    "meta": ["Automatic", "10.15km / 1-litre", "Model: 2024", "Hybrid"],
+    "excerpt": "There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.",
+    "published": true
+  },
+  {
+    "id": "lst-004",
+    "title": "BMW Sports Car",
+    "image": "coscharis/assets/img/car/04.jpg",
+    "badge": "new",
+    "priceDisplay": "₦126,016,000",
+    "priceValue": 126016000,
+    "ratingLabel": "5.0 (58.5k Review)",
+    "meta": ["Automatic", "10.15km / 1-litre", "Model: 2024", "Hybrid"],
+    "excerpt": "There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.",
+    "published": true
+  },
+  {
+    "id": "lst-005",
+    "title": "White Tesla Car",
+    "image": "coscharis/assets/img/car/05.jpg",
+    "badge": "used",
+    "priceDisplay": "₦102,768,000",
+    "priceValue": 102768000,
+    "ratingLabel": "5.0 (58.5k Review)",
+    "meta": ["Automatic", "10.15km / 1-litre", "Model: 2024", "Hybrid"],
+    "excerpt": "There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.",
+    "published": true
+  },
+  {
+    "id": "lst-006",
+    "title": "White Nissan Car",
+    "image": "coscharis/assets/img/car/06.jpg",
+    "badge": "new",
+    "priceDisplay": "₦55,264,000",
+    "priceValue": 55264000,
+    "ratingLabel": "5.0 (58.5k Review)",
+    "meta": ["Automatic", "10.15km / 1-litre", "Model: 2024", "Hybrid"],
+    "excerpt": "There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.",
+    "published": true
+  },
+  {
+    "id": "lst-007",
+    "title": "Mercedes Benz Suv",
+    "image": "coscharis/assets/img/car/07.jpg",
+    "badge": "",
+    "priceDisplay": "₦121,312,000",
+    "priceValue": 121312000,
+    "ratingLabel": "5.0 (58.5k Review)",
+    "meta": ["Automatic", "10.15km / 1-litre", "Model: 2024", "Hybrid"],
+    "excerpt": "There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.",
+    "published": true
+  },
+  {
+    "id": "lst-008",
+    "title": "Red Hyundai Car",
+    "image": "coscharis/assets/img/car/08.jpg",
+    "badge": "",
+    "priceDisplay": "₦40,992,000",
+    "priceValue": 40992000,
+    "ratingLabel": "5.0 (58.5k Review)",
+    "meta": ["Automatic", "10.15km / 1-litre", "Model: 2024", "Hybrid"],
+    "excerpt": "There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.",
+    "published": true
+  },
+  {
+    "id": "lst-009",
+    "title": "White BMW Car",
+    "image": "coscharis/assets/img/car/09.jpg",
+    "badge": "",
+    "priceDisplay": "₦36,192,000",
+    "priceValue": 36192000,
+    "ratingLabel": "5.0 (58.5k Review)",
+    "meta": ["Automatic", "10.15km / 1-litre", "Model: 2024", "Hybrid"],
+    "excerpt": "There are many variations of passages available but the majority have suffered in some injected humour words slightly believable.",
+    "published": true
+  }
+]

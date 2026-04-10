@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f1028" />
+    <meta name="description" content="Coscharis Admin — manage public car listings" />
+    <title>Admin Listings — Coscharis</title>
+    <link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg" />
+    <link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/admin-shell.css" />
+    <style>
+      :root {
+        --admin-bg-deep: #070814;
+        --admin-bg-mid: #12152e;
+        --admin-accent: #e63035;
+        --admin-glass: rgba(255, 255, 255, 0.06);
+        --admin-border: rgba(255, 255, 255, 0.1);
+        --admin-text: #e8eaf4;
+        --admin-muted: #9aa3c2;
+        --admin-secondary: #3c3e90;
+        --sidebar-w: 280px;
+        --header-h: 72px;
+        --radius: 16px;
+        --radius-sm: 12px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body.page-admin-listings {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--admin-text);
+        background: var(--admin-bg-deep);
+        overflow-x: hidden;
+      }
+      .admin-dash-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          radial-gradient(ellipse 100% 80% at 15% 0%, rgba(60, 62, 144, 0.5) 0%, transparent 55%),
+          radial-gradient(ellipse 80% 60% at 90% 70%, rgba(230, 48, 53, 0.15) 0%, transparent 45%),
+          linear-gradient(168deg, var(--admin-bg-deep) 0%, var(--admin-bg-mid) 42%, #0a0c1a 100%);
+      }
+      .admin-dash-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+        background-size: 56px 56px;
+        opacity: 0.55;
+        mask-image: radial-gradient(ellipse 75% 55% at 50% 35%, black 15%, transparent 100%);
+      }
+      .admin-shell {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        min-height: 100vh;
+      }
+      .admin-sidebar {
+        width: var(--sidebar-w);
+        flex-shrink: 0;
+        padding: 1.25rem 1rem 1rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border-right: 1px solid var(--admin-border);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0.75rem 1.25rem;
+        text-decoration: none;
+        color: inherit;
+      }
+      .admin-brand img {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1px solid var(--admin-border);
+      }
+      .admin-brand h1 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+      .admin-brand span {
+        display: block;
+        font-size: 0.72rem;
+        color: var(--admin-muted);
+        font-weight: 500;
+        margin-top: 2px;
+      }
+      .admin-nav-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--admin-muted);
+        padding: 0.75rem 0.75rem 0.35rem;
+        font-weight: 600;
+      }
+      .admin-nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: var(--radius-sm);
+        color: var(--admin-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background 0.18s ease, color 0.18s ease;
+      }
+      .admin-nav a i {
+        width: 1.25rem;
+        text-align: center;
+        opacity: 0.85;
+      }
+      .admin-nav a:hover {
+        color: var(--admin-text);
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .admin-nav a.is-active {
+        color: #fff;
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.35) 0%, rgba(60, 62, 144, 0.35) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+      .admin-sidebar-footer {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--admin-border);
+      }
+      .admin-sidebar-footer .btn-logout {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: rgba(230, 48, 53, 0.12);
+        color: #ffb4b7;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+      .admin-sidebar-footer .btn-logout:hover {
+        background: rgba(230, 48, 53, 0.22);
+        color: #fff;
+      }
+      .admin-sidebar-footer .back-site {
+        display: block;
+        text-align: center;
+        margin-top: 0.75rem;
+        font-size: 0.82rem;
+        color: var(--admin-muted);
+        text-decoration: none;
+      }
+      .admin-sidebar-footer .back-site:hover {
+        color: var(--admin-text);
+      }
+      .admin-main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .admin-header {
+        min-height: var(--header-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--admin-border);
+        background: rgba(7, 8, 20, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+      }
+      .admin-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-width: 0;
+      }
+      .admin-menu-toggle {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--admin-border);
+        background: var(--admin-glass);
+        color: var(--admin-text);
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+      }
+      .admin-header-titles h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+      .admin-header-titles p {
+        margin: 0.15rem 0 0;
+        font-size: 0.85rem;
+        color: var(--admin-muted);
+      }
+      .admin-header-search {
+        flex: 1;
+        max-width: 420px;
+        position: relative;
+      }
+      .admin-header-search input {
+        width: 100%;
+        padding: 0.65rem 1rem 0.65rem 2.65rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--admin-text);
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+      .admin-header-search input::placeholder {
+        color: rgba(154, 163, 194, 0.75);
+      }
+      .admin-header-search input:focus {
+        border-color: rgba(230, 48, 53, 0.5);
+        box-shadow: 0 0 0 3px rgba(230, 48, 53, 0.12);
+      }
+      .admin-header-search > i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--admin-muted);
+        font-size: 0.95rem;
+      }
+      .admin-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .admin-user-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.35rem 0.65rem 0.35rem 0.35rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        cursor: default;
+      }
+      .admin-user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--admin-secondary), #e63035);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+      .admin-user-meta strong {
+        display: block;
+        font-size: 0.82rem;
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .admin-user-meta small {
+        font-size: 0.7rem;
+        color: var(--admin-muted);
+      }
+      .admin-content {
+        padding: 1.5rem;
+        flex: 1;
+      }
+      @media (max-width: 1199px) {
+        .admin-header-search {
+          display: none;
+        }
+      }
+      .admin-panel {
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid var(--admin-border);
+        overflow: hidden;
+      }
+      .admin-panel-hd {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--admin-border);
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+      .admin-panel-hd h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+      .admin-panel-bd {
+        padding: 0;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--admin-muted);
+        font-size: 0.82rem;
+        white-space: nowrap;
+      }
+      .btn-soft {
+        border-radius: 12px;
+        border: 1px solid var(--admin-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-weight: 700;
+        padding: 0.6rem 0.85rem;
+        transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
+      }
+      .btn-soft:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(230, 48, 53, 0.25);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+      .btn-primary-soft {
+        border-radius: 12px;
+        border: 1px solid rgba(230, 48, 53, 0.45);
+        background: linear-gradient(135deg, rgba(230, 48, 53, 0.18) 0%, rgba(60, 62, 144, 0.18) 100%);
+        color: #fff;
+        font-weight: 800;
+        padding: 0.6rem 0.85rem;
+        transition: transform 0.12s ease, filter 0.2s ease;
+      }
+      .btn-primary-soft:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+        color: #fff;
+      }
+      .admin-muted {
+        color: var(--admin-muted);
+      }
+      .admin-empty {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--admin-muted);
+        font-size: 0.9rem;
+      }
+      .admin-empty i {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        opacity: 0.5;
+        display: block;
+      }
+      code {
+        color: #c5cbe8;
+      }
+      .admin-table-wrap {
+        overflow-x: auto;
+      }
+      .admin-table-wrap table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+      .admin-table-wrap th,
+      .admin-table-wrap td {
+        padding: 0.65rem 1rem;
+        border-bottom: 1px solid var(--admin-border);
+        vertical-align: middle;
+      }
+      .admin-table-wrap th {
+        text-align: left;
+        color: var(--admin-muted);
+        font-weight: 600;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        background: rgba(0, 0, 0, 0.15);
+      }
+      .listing-thumb-sm {
+        width: 64px;
+        height: 44px;
+        border-radius: 8px;
+        object-fit: cover;
+        background: rgba(0, 0, 0, 0.3);
+        display: block;
+      }
+      .badge-pill {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        text-transform: capitalize;
+      }
+      .badge-pill--used {
+        background: rgba(230, 48, 53, 0.2);
+        color: #ffb4b7;
+      }
+      .badge-pill--new {
+        background: rgba(46, 229, 157, 0.15);
+        color: #2ee59d;
+      }
+      .badge-pill--none {
+        color: var(--admin-muted);
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body class="page-admin-listings admin-app-layout">
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem("coscharis:admin:v1");
+          var s = raw ? JSON.parse(raw) : null;
+          if (!s || !s.loggedIn) window.location.replace("admin-login.html");
+        } catch (e) {
+          window.location.replace("admin-login.html");
+        }
+      })();
+    </script>
+
+    <div class="admin-dash-bg" aria-hidden="true"></div>
+
+    <div class="admin-shell">
+      <aside class="admin-sidebar admin-sidebar--desktop" id="admin-sidebar-desktop" aria-label="Admin navigation">
+        <div class="admin-sidebar-scroll">
+          <a class="admin-brand" href="admin-dashboard.html">
+            <img src="coscharis/assets/img/logo/cos-logo.jpeg" alt="" width="44" height="44" />
+            <div>
+              <h1>Coscharis</h1>
+              <span>Admin Console</span>
+            </div>
+          </a>
+
+          <div class="admin-nav-label">Overview</div>
+          <nav class="admin-nav" aria-label="Primary">
+            <a href="admin-dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <a href="admin-live-site.html"><i class="fas fa-globe"></i> Live site</a>
+          </nav>
+
+          <div class="admin-nav-label">System</div>
+          <nav class="admin-nav" aria-label="Settings">
+            <a href="admin-settings.html"><i class="fas fa-sliders"></i> Site settings</a>
+          </nav>
+
+          <div class="admin-nav-label">Commerce</div>
+          <nav class="admin-nav">
+            <a href="admin-shop.html"><i class="fas fa-store"></i> Shop (Admin)</a>
+            <a href="admin-cart.html"><i class="fas fa-shopping-basket"></i> Cart (Admin)</a>
+            <a href="admin-checkout.html"><i class="fas fa-credit-card"></i> Checkout (Admin)</a>
+          </nav>
+
+          <div class="admin-nav-label">Engagement</div>
+          <nav class="admin-nav">
+            <a href="admin-auction.html"><i class="fas fa-gavel"></i> Auction (Admin)</a>
+            <a class="is-active" href="admin-listings.html"><i class="fas fa-car-side"></i> Listings (Admin)</a>
+          </nav>
+
+          <div class="admin-nav-label">People</div>
+          <nav class="admin-nav">
+            <a href="admin-registration.html"><i class="fas fa-users-cog"></i> Users & profiles</a>
+            <a href="admin-contact.html"><i class="fas fa-envelope"></i> Contact</a>
+          </nav>
+        </div>
+
+        <div class="admin-sidebar-footer">
+          <button type="button" class="btn-logout js-admin-logout">
+            <i class="fas fa-sign-out-alt"></i> Sign out
+          </button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-header">
+          <div class="admin-header-left">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-drawer-panel">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="admin-header-titles">
+              <h2>Car listings</h2>
+              <p>Overrides apply to the public listing grid, list, and detail pages on the storefront.</p>
+            </div>
+          </div>
+
+          <div class="admin-header-search">
+            <i class="fas fa-search"></i>
+            <input type="search" id="admin-listings-filter" placeholder="Search title or ID…" autocomplete="off" />
+          </div>
+
+          <div class="admin-header-actions">
+            <div class="admin-user-chip" title="Signed-in administrator">
+              <div class="admin-user-avatar" id="admin-user-initials">A</div>
+              <div class="admin-user-meta">
+                <strong id="admin-user-email">admin@coscharis.local</strong>
+                <small>Administrator</small>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="admin-content">
+          <div class="admin-panel">
+            <div class="admin-panel-hd">
+              <h3><i class="fas fa-list-alt me-2 text-danger"></i> Listings</h3>
+              <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                <span class="pill" id="admin-listings-meta">0 listings</span>
+                <select
+                  id="admin-listings-filter-pub"
+                  class="form-select form-select-sm"
+                  style="max-width: 160px; background: rgba(255, 255, 255, 0.05); color: var(--admin-text); border: 1px solid var(--admin-border); border-radius: 12px"
+                  aria-label="Filter by publish state"
+                >
+                  <option value="all" selected>All</option>
+                  <option value="pub">Published</option>
+                  <option value="draft">Draft</option>
+                </select>
+                <button type="button" class="btn-primary-soft" id="admin-add-listing" data-bs-toggle="modal" data-bs-target="#admin-listing-modal">
+                  <i class="fas fa-plus me-2"></i> Add listing
+                </button>
+                <button type="button" class="btn-soft" id="admin-export-listings" title="Download JSON">
+                  <i class="fas fa-download me-2"></i> Export
+                </button>
+                <button type="button" class="btn-soft" id="admin-reset-listings" title="Clear override and reload bundled catalog from file">
+                  <i class="fas fa-rotate-left me-2"></i> Reset to bundled
+                </button>
+              </div>
+            </div>
+            <div class="admin-panel-bd">
+              <div class="admin-table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width: 88px">Image</th>
+                      <th>Title</th>
+                      <th style="width: 100px">ID</th>
+                      <th style="width: 90px">Badge</th>
+                      <th style="width: 120px">Price</th>
+                      <th style="width: 100px">Status</th>
+                      <th style="width: 220px">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-listings-tbody"></tbody>
+                </table>
+              </div>
+              <div class="admin-empty d-none" id="admin-listings-empty">
+                <i class="far fa-folder-open"></i>
+                No listings match your filters.
+              </div>
+              <p class="small mb-0 px-3 py-3 admin-muted border-top" style="border-color: var(--admin-border)">
+                Stored in <code>coscharis:listingsCatalog:v1</code>. When empty, the site reads
+                <code>coscharis/assets/data/listings-catalog.json</code>. Saving here writes the override used on the public pages.
+              </p>
+            </div>
+          </div>
+
+          <p class="text-center mt-4 mb-0 small" style="color: var(--admin-muted)">Coscharis Admin · Listings · Stored locally on this device</p>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal fade" id="admin-listing-modal" tabindex="-1" aria-labelledby="admin-listing-modal-title" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background: #12152e; border: 1px solid rgba(255, 255, 255, 0.12); color: var(--admin-text, #e8eaf4)">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title" id="admin-listing-modal-title">Add listing</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="admin-listing-form" class="row g-3">
+              <input type="hidden" id="lf-id" value="" />
+              <div class="col-md-8">
+                <label class="form-label" for="lf-title">Title <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="lf-title" required placeholder="e.g. Mercedes Benz Car" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label" for="lf-badge">Badge</label>
+                <select class="form-select" id="lf-badge" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit">
+                  <option value="">None</option>
+                  <option value="used">Used</option>
+                  <option value="new">New</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="lf-price-display">Price (display) <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="lf-price-display" required placeholder="e.g. ₦72,992,000" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="lf-price-value">Price (number, for sorting)</label>
+                <input type="number" class="form-control" id="lf-price-value" min="0" step="1" placeholder="Optional" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="lf-rating">Rating label</label>
+                <input type="text" class="form-control" id="lf-rating" placeholder="e.g. 5.0 (58.5k Review)" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+              </div>
+              <div class="col-md-6 d-flex align-items-end">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="lf-published" checked />
+                  <label class="form-check-label" for="lf-published">Published on grid / list</label>
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="lf-meta">Meta lines (one per line, up to 4)</label>
+                <textarea class="form-control" id="lf-meta" rows="4" placeholder="Automatic&#10;10.15km / 1-litre&#10;Model: 2024&#10;Hybrid" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit"></textarea>
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="lf-excerpt">List excerpt</label>
+                <textarea class="form-control" id="lf-excerpt" rows="2" placeholder="Short paragraph for list view" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit"></textarea>
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="lf-image-file">Listing image <span class="text-danger">*</span></label>
+                <div class="row g-2 align-items-start">
+                  <div class="col-lg-7">
+                    <input
+                      type="file"
+                      class="form-control"
+                      id="lf-image-file"
+                      accept="image/*"
+                      style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit"
+                    />
+                    <div class="form-text text-light opacity-75 mt-2">Upload or keep a path such as <code>coscharis/assets/img/car/01.jpg</code>.</div>
+                    <div class="d-flex gap-2 mt-2 flex-wrap">
+                      <button type="button" class="btn btn-outline-light btn-sm" id="lf-image-remove">
+                        <i class="fas fa-trash-can me-2"></i> Clear upload
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-lg-5">
+                    <div style="border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; background: rgba(255, 255, 255, 0.04); padding: 10px">
+                      <div class="small admin-muted mb-2">Preview</div>
+                      <img id="lf-image-preview" src="" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 10px; display: none" />
+                      <div id="lf-image-preview-empty" class="small admin-muted">No image</div>
+                    </div>
+                  </div>
+                </div>
+                <input type="hidden" id="lf-image" value="" />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-secondary">
+            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" id="admin-listing-save">
+              <i class="fas fa-check me-2"></i> Save listing
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+      <div class="mobile-drawer__backdrop" id="mobile-drawer-backdrop"></div>
+      <div class="mobile-drawer__panel" id="mobile-drawer-panel" role="dialog" aria-modal="true" aria-label="Admin navigation">
+        <div class="mobile-drawer__header">
+          <span class="mobile-drawer__title">Menu</span>
+          <button type="button" class="mobile-drawer__close" id="mobile-drawer-close" aria-label="Close menu">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-drawer__scroll" id="mobile-drawer-scroll"></div>
+        <div class="mobile-drawer__foot" id="mobile-drawer-foot"></div>
+      </div>
+    </div>
+
+    <script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="coscharis/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="coscharis/assets/js/admin-shell.js"></script>
+    <script src="coscharis/assets/js/listings-catalog.js"></script>
+    <script>
+      (function () {
+        var ADMIN_KEY = "coscharis:admin:v1";
+        var DATA_URL = "coscharis/assets/data/listings-catalog.json";
+        var CL = window.CoscharisListings;
+        if (!CL) return;
+
+        function safeParse(json) {
+          try {
+            return JSON.parse(json);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function escapeHtml(s) {
+          if (s == null) return "";
+          var d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+
+        function escapeAttr(s) {
+          return String(s || "")
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        function parseMetaTextarea(text) {
+          var lines = String(text || "")
+            .split(/\r?\n/)
+            .map(function (l) {
+              return l.trim();
+            })
+            .filter(Boolean);
+          return lines.slice(0, 4);
+        }
+
+        function newListingId(items) {
+          var max = 0;
+          var re = /^lst-(\d+)$/i;
+          for (var i = 0; i < items.length; i++) {
+            var m = re.exec(String((items[i] && items[i].id) || ""));
+            if (m) max = Math.max(max, parseInt(m[1], 10));
+          }
+          var n = max + 1;
+          return "lst-" + String(n).padStart(3, "0");
+        }
+
+        function loadAllListings() {
+          return CL.fetchListings().then(function (arr) {
+            return Array.isArray(arr) ? arr : [];
+          });
+        }
+
+        function saveAll(items) {
+          CL.persistListings(items);
+          try {
+            window.dispatchEvent(new CustomEvent("coscharis-listings-updated"));
+          } catch (e) {}
+        }
+
+        function setPreview(src) {
+          var img = document.getElementById("lf-image-preview");
+          var empty = document.getElementById("lf-image-preview-empty");
+          if (!src) {
+            img.src = "";
+            img.style.display = "none";
+            empty.style.display = "block";
+            return;
+          }
+          img.src = src;
+          img.style.display = "block";
+          empty.style.display = "none";
+        }
+
+        function fileToDataUrl(file, opts) {
+          var maxW = (opts && opts.maxW) || 1200;
+          var maxH = (opts && opts.maxH) || 1200;
+          var quality = (opts && opts.quality) || 0.82;
+          return new Promise(function (resolve, reject) {
+            if (!file) return resolve("");
+            if (!/^image\//i.test(file.type || "")) return reject(new Error("Please upload an image file."));
+            var reader = new FileReader();
+            reader.onerror = function () {
+              reject(new Error("Could not read the selected file."));
+            };
+            reader.onload = function () {
+              var src = String(reader.result || "");
+              var image = new Image();
+              image.onload = function () {
+                try {
+                  var w = image.naturalWidth || image.width || 0;
+                  var h = image.naturalHeight || image.height || 0;
+                  if (!w || !h) return resolve(src);
+                  var scale = Math.min(1, maxW / w, maxH / h);
+                  var tw = Math.max(1, Math.round(w * scale));
+                  var th = Math.max(1, Math.round(h * scale));
+                  var canvas = document.createElement("canvas");
+                  canvas.width = tw;
+                  canvas.height = th;
+                  var ctx = canvas.getContext("2d");
+                  ctx.drawImage(image, 0, 0, tw, th);
+                  var out = canvas.toDataURL("image/jpeg", quality);
+                  resolve(out || src);
+                } catch (e) {
+                  resolve(src);
+                }
+              };
+              image.onerror = function () {
+                resolve(src);
+              };
+              image.src = src;
+            };
+            reader.readAsDataURL(file);
+          });
+        }
+
+        function resetForm() {
+          document.getElementById("lf-id").value = "";
+          document.getElementById("lf-title").value = "";
+          document.getElementById("lf-badge").value = "";
+          document.getElementById("lf-price-display").value = "";
+          document.getElementById("lf-price-value").value = "";
+          document.getElementById("lf-rating").value = "";
+          document.getElementById("lf-meta").value = "";
+          document.getElementById("lf-excerpt").value = "";
+          document.getElementById("lf-published").checked = true;
+          document.getElementById("lf-image").value = "";
+          document.getElementById("lf-image-file").value = "";
+          setPreview("");
+        }
+
+        function openEdit(id) {
+          loadAllListings().then(function (items) {
+            var L = items.find(function (x) {
+              return x && x.id === id;
+            });
+            if (!L) return;
+            document.getElementById("admin-listing-modal-title").textContent = "Edit listing";
+            document.getElementById("lf-id").value = L.id || "";
+            document.getElementById("lf-title").value = L.title || "";
+            document.getElementById("lf-badge").value = L.badge === "used" || L.badge === "new" ? L.badge : "";
+            document.getElementById("lf-price-display").value = L.priceDisplay || "";
+            document.getElementById("lf-price-value").value = L.priceValue != null ? String(L.priceValue) : "";
+            document.getElementById("lf-rating").value = L.ratingLabel || "";
+            document.getElementById("lf-meta").value = Array.isArray(L.meta) ? L.meta.join("\n") : "";
+            document.getElementById("lf-excerpt").value = L.excerpt || "";
+            document.getElementById("lf-published").checked = L.published !== false;
+            document.getElementById("lf-image").value = L.image || "";
+            document.getElementById("lf-image-file").value = "";
+            setPreview(L.image || "");
+            var modalEl = document.getElementById("admin-listing-modal");
+            var modal = bootstrap.Modal.getInstance(modalEl);
+            if (!modal) modal = new bootstrap.Modal(modalEl);
+            modal.show();
+          });
+        }
+
+        function render() {
+          var q = (document.getElementById("admin-listings-filter").value || "").trim().toLowerCase();
+          var pub = document.getElementById("admin-listings-filter-pub").value;
+
+          loadAllListings().then(function (all) {
+            var list = all.slice();
+            if (pub === "pub") list = list.filter(function (x) {
+              return x && x.published !== false;
+            });
+            if (pub === "draft") list = list.filter(function (x) {
+              return x && x.published === false;
+            });
+            if (q) {
+              list = list.filter(function (x) {
+                var t = String(x.title || "").toLowerCase();
+                var id = String(x.id || "").toLowerCase();
+                return t.indexOf(q) !== -1 || id.indexOf(q) !== -1;
+              });
+            }
+
+            var tbody = document.getElementById("admin-listings-tbody");
+            var empty = document.getElementById("admin-listings-empty");
+            var wrap = tbody.closest(".admin-table-wrap");
+            tbody.innerHTML = "";
+            document.getElementById("admin-listings-meta").textContent = list.length + " shown · " + all.length + " total";
+
+            if (!list.length) {
+              empty.classList.remove("d-none");
+              if (wrap) wrap.classList.add("d-none");
+              return;
+            }
+            empty.classList.add("d-none");
+            if (wrap) wrap.classList.remove("d-none");
+
+            for (var i = 0; i < list.length; i++) {
+              var L = list[i];
+              var tr = document.createElement("tr");
+              tr.setAttribute("data-id", encodeURIComponent(L.id));
+
+              var badgeCell = "";
+              if (L.badge === "used") badgeCell = "<span class='badge-pill badge-pill--used'>Used</span>";
+              else if (L.badge === "new") badgeCell = "<span class='badge-pill badge-pill--new'>New</span>";
+              else badgeCell = "<span class='badge-pill badge-pill--none'>—</span>";
+
+              var st = L.published !== false ? "<span class='text-success'>Live</span>" : "<span class='admin-muted'>Draft</span>";
+
+              tr.innerHTML =
+                "<td><img class='listing-thumb-sm' src='" +
+                escapeAttr(L.image || "") +
+                "' alt=''></td>" +
+                "<td><strong>" +
+                escapeHtml(L.title || "") +
+                "</strong></td>" +
+                "<td><code>" +
+                escapeHtml(L.id || "") +
+                "</code></td>" +
+                "<td>" +
+                badgeCell +
+                "</td>" +
+                "<td>" +
+                escapeHtml(L.priceDisplay || "—") +
+                "</td>" +
+                "<td>" +
+                st +
+                "</td>" +
+                "<td>" +
+                "<div class='d-flex flex-wrap gap-1'>" +
+                "<button type='button' class='btn-soft py-1 px-2 small admin-edit-listing'><i class='fas fa-pen me-1'></i>Edit</button>" +
+                "<button type='button' class='btn-soft py-1 px-2 small admin-toggle-listing' style='border-color:rgba(230,48,53,0.35)'><i class='fas fa-eye me-1'></i>Toggle</button>" +
+                "<button type='button' class='btn-soft py-1 px-2 small admin-del-listing' style='border-color:rgba(230,48,53,0.45);color:#ffb4b7'><i class='fas fa-trash me-1'></i>Delete</button>" +
+                "</div></td>";
+
+              tbody.appendChild(tr);
+            }
+          });
+        }
+
+        var session = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
+        var email = (session.email || "admin@coscharis.local").trim();
+        document.getElementById("admin-user-email").textContent = email;
+        document.getElementById("admin-user-initials").textContent = email.charAt(0).toUpperCase() || "A";
+
+        document.getElementById("lf-image-file").addEventListener("change", function () {
+          var f = this.files && this.files[0] ? this.files[0] : null;
+          if (!f) return;
+          fileToDataUrl(f, { maxW: 1200, maxH: 1200, quality: 0.82 })
+            .then(function (dataUrl) {
+              document.getElementById("lf-image").value = dataUrl || "";
+              setPreview(dataUrl || "");
+            })
+            .catch(function (err) {
+              alert((err && err.message) || "Could not process the image.");
+              document.getElementById("lf-image-file").value = "";
+            });
+        });
+
+        document.getElementById("lf-image-remove").addEventListener("click", function () {
+          document.getElementById("lf-image-file").value = "";
+          document.getElementById("lf-image").value = "";
+          setPreview("");
+        });
+
+        document.getElementById("admin-listing-modal").addEventListener("show.bs.modal", function (ev) {
+          var t = ev.relatedTarget;
+          if (t && t.id === "admin-add-listing") {
+            resetForm();
+            document.getElementById("admin-listing-modal-title").textContent = "Add listing";
+          }
+        });
+
+        document.getElementById("admin-listing-save").addEventListener("click", function () {
+          var title = document.getElementById("lf-title").value.trim();
+          var priceDisplay = document.getElementById("lf-price-display").value.trim();
+          var image = document.getElementById("lf-image").value.trim();
+          if (!title || !priceDisplay || !image) {
+            alert("Please enter title, price, and an image (upload or existing path in the hidden field after edit).");
+            return;
+          }
+          if (image.length > 900000) {
+            alert("That image is too large for browser storage. Use a smaller file or a path under coscharis/assets/.");
+            return;
+          }
+
+          loadAllListings().then(function (items) {
+            var existingId = document.getElementById("lf-id").value.trim();
+            var badge = document.getElementById("lf-badge").value.trim();
+            var pv = document.getElementById("lf-price-value").value.trim();
+            var priceValue = pv === "" ? null : Number(pv);
+            if (pv !== "" && isNaN(priceValue)) priceValue = null;
+
+            var payload = {
+              id: existingId || newListingId(items),
+              title: title,
+              image: image,
+              badge: badge === "used" || badge === "new" ? badge : "",
+              priceDisplay: priceDisplay,
+              priceValue: priceValue,
+              ratingLabel: document.getElementById("lf-rating").value.trim(),
+              meta: parseMetaTextarea(document.getElementById("lf-meta").value),
+              excerpt: document.getElementById("lf-excerpt").value.trim(),
+              published: document.getElementById("lf-published").checked
+            };
+
+            var next = items.slice();
+            if (existingId) {
+              var ix = next.findIndex(function (x) {
+                return x && x.id === existingId;
+              });
+              if (ix !== -1) next[ix] = payload;
+              else next.push(payload);
+            } else {
+              next.push(payload);
+            }
+            saveAll(next);
+            bootstrap.Modal.getInstance(document.getElementById("admin-listing-modal")).hide();
+            render();
+          });
+        });
+
+        document.getElementById("admin-reset-listings").addEventListener("click", function () {
+          if (!confirm("Remove the local override and reload the bundled listings from listings-catalog.json? Unsaved work in other tabs may need a refresh.")) return;
+          CL.clearOverride();
+          window.location.reload();
+        });
+
+        document.getElementById("admin-export-listings").addEventListener("click", function () {
+          loadAllListings().then(function (items) {
+            var blob = new Blob([JSON.stringify(items, null, 2)], { type: "application/json" });
+            var a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "listings-catalog.json";
+            a.click();
+            setTimeout(function () {
+              URL.revokeObjectURL(a.href);
+            }, 2500);
+          });
+        });
+
+        document.getElementById("admin-listings-filter").addEventListener("input", render);
+        document.getElementById("admin-listings-filter-pub").addEventListener("change", render);
+
+        document.getElementById("admin-listings-tbody").addEventListener("click", function (e) {
+          var delBtn = e.target && e.target.closest ? e.target.closest(".admin-del-listing") : null;
+          if (delBtn) {
+            var row = delBtn.closest("tr[data-id]");
+            if (!row) return;
+            var pid = decodeURIComponent(row.getAttribute("data-id"));
+            if (!confirm("Remove this listing?")) return;
+            loadAllListings().then(function (items) {
+              var next = items.filter(function (x) {
+                return !x || x.id !== pid;
+              });
+              saveAll(next);
+              render();
+            });
+            return;
+          }
+
+          var editBtn = e.target && e.target.closest ? e.target.closest(".admin-edit-listing") : null;
+          if (editBtn) {
+            var row2 = editBtn.closest("tr[data-id]");
+            if (!row2) return;
+            openEdit(decodeURIComponent(row2.getAttribute("data-id")));
+            return;
+          }
+
+          var toggleBtn = e.target && e.target.closest ? e.target.closest(".admin-toggle-listing") : null;
+          if (toggleBtn) {
+            var row3 = toggleBtn.closest("tr[data-id]");
+            if (!row3) return;
+            var tid = decodeURIComponent(row3.getAttribute("data-id"));
+            loadAllListings().then(function (items) {
+              var next = items.map(function (x) {
+                if (!x || x.id !== tid) return x;
+                return Object.assign({}, x, { published: x.published === false ? true : false });
+              });
+              saveAll(next);
+              render();
+            });
+          }
+        });
+
+        window.addEventListener("storage", function (ev) {
+          if (ev && ev.key === "coscharis:listingsCatalog:v1") render();
+        });
+        window.addEventListener("coscharis-listings-updated", render);
+
+        render();
+      })();
+    </script>
+  </body>
+</html>
