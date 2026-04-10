@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="coscharis/assets/css/jquery-ui.min.css" />
     <link rel="stylesheet" href="coscharis/assets/css/nice-select.min.css" />
     <link rel="stylesheet" href="coscharis/assets/css/style.css" />
+    <link rel="stylesheet" href="coscharis/assets/css/cookie-consent.css" />
     <style>
       /* Brand marquee (Popular Brands) */
       .brand-marquee {
@@ -2257,9 +2258,102 @@
 
     <a href="#" id="scroll-top"><i class="far fa-arrow-up"></i></a>
 
+    <div
+      id="coscharis-cookie-banner"
+      class="coscharis-cc-banner"
+      role="region"
+      aria-label="Cookie consent"
+      aria-live="polite"
+      hidden
+      aria-hidden="true"
+    >
+      <div class="coscharis-cc-banner__inner">
+        <h2 class="coscharis-cc-banner__title">We value your privacy</h2>
+        <p class="coscharis-cc-banner__text">
+          We use cookies to run this site, remember your preferences, and (with your permission) measure performance and
+          tailor relevant offers. You can accept all, decline optional cookies, or manage categories below.
+        </p>
+        <div class="coscharis-cc-banner__actions coscharis-cc-banner__actions--row">
+          <button type="button" class="coscharis-cc-btn coscharis-cc-btn--primary" id="coscharis-cc-accept-all">
+            Accept All
+          </button>
+          <button type="button" class="coscharis-cc-btn coscharis-cc-btn--secondary" id="coscharis-cc-decline">
+            Decline
+          </button>
+          <button type="button" class="coscharis-cc-btn coscharis-cc-btn--ghost" id="coscharis-cc-manage">
+            Manage preferences
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="coscharis-cookie-modal"
+      tabindex="-1"
+      aria-labelledby="coscharis-cookie-modal-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title h5" id="coscharis-cookie-modal-title">Cookie preferences</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close preferences dialog"></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-3">
+              Choose which optional cookies we may use. Necessary cookies are always on because they keep the site secure
+              and usable.
+            </p>
+            <div class="coscharis-cc-pref-row">
+              <div class="coscharis-cc-pref-row__label">
+                <strong>Necessary</strong>
+                <span>Security, load balancing, and basic site features. Always active.</span>
+              </div>
+              <label class="coscharis-cc-switch">
+                <input type="checkbox" checked disabled aria-checked="true" />
+                <span class="coscharis-cc-switch__slider" aria-hidden="true"></span>
+              </label>
+            </div>
+            <div class="coscharis-cc-pref-row">
+              <div class="coscharis-cc-pref-row__label">
+                <strong>Analytics</strong>
+                <span>Helps us understand traffic and improve the experience (anonymous usage data).</span>
+              </div>
+              <label class="coscharis-cc-switch">
+                <input type="checkbox" id="coscharis-cc-toggle-analytics" aria-describedby="coscharis-cc-desc-analytics" />
+                <span class="coscharis-cc-switch__slider" aria-hidden="true"></span>
+              </label>
+            </div>
+            <p id="coscharis-cc-desc-analytics" class="visually-hidden">Allow analytics cookies</p>
+            <div class="coscharis-cc-pref-row">
+              <div class="coscharis-cc-pref-row__label">
+                <strong>Marketing</strong>
+                <span>Used for relevant offers and remarketing where applicable.</span>
+              </div>
+              <label class="coscharis-cc-switch">
+                <input type="checkbox" id="coscharis-cc-toggle-marketing" aria-describedby="coscharis-cc-desc-marketing" />
+                <span class="coscharis-cc-switch__slider" aria-hidden="true"></span>
+              </label>
+            </div>
+            <p id="coscharis-cc-desc-marketing" class="visually-hidden">Allow marketing cookies</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="coscharis-cc-btn coscharis-cc-btn--secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button type="button" class="coscharis-cc-btn coscharis-cc-btn--primary" id="coscharis-cc-save-prefs">
+              Save preferences
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="coscharis/assets/js/jquery-3.6.0.min.js"></script>
     <script src="coscharis/assets/js/modernizr.min.js"></script>
     <script src="coscharis/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="coscharis/assets/js/cookie-consent.js"></script>
     <script src="coscharis/assets/js/imagesloaded.pkgd.min.js"></script>
     <script src="coscharis/assets/js/jquery.magnific-popup.min.js"></script>
     <script src="coscharis/assets/js/isotope.pkgd.min.js"></script>
