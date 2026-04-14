@@ -68,6 +68,204 @@
           transform: none;
         }
       }
+
+      /* Stunning global promo popup (shows on refresh) */
+      .coscharis-promo {
+        position: fixed;
+        inset: 0;
+        z-index: 99998;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        background: rgba(9, 10, 15, 0.72);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 200ms ease, visibility 200ms ease;
+      }
+
+      .coscharis-promo.is-open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .coscharis-promo__panel {
+        width: min(980px, 100%);
+        max-height: calc(100vh - 36px);
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background:
+          radial-gradient(1000px 420px at 10% 8%, rgba(230, 48, 53, 0.35), rgba(230, 48, 53, 0) 60%),
+          radial-gradient(820px 520px at 98% 14%, rgba(60, 62, 144, 0.35), rgba(60, 62, 144, 0) 55%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92));
+        box-shadow: 0 28px 90px rgba(0, 0, 0, 0.45);
+        transform: translateY(14px) scale(0.98);
+        transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      .coscharis-promo.is-open .coscharis-promo__panel {
+        transform: translateY(0) scale(1);
+      }
+
+      .coscharis-promo__header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 14px 8px 14px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.80));
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .coscharis-promo__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(230, 48, 53, 0.12);
+        color: #b21f24;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        font-size: 13px;
+      }
+
+      .coscharis-promo__close {
+        display: inline-grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        border: 1px solid rgba(10, 12, 18, 0.12);
+        background: rgba(255, 255, 255, 0.95);
+        color: #0a0c12;
+        cursor: pointer;
+      }
+
+      .coscharis-promo__content {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 18px;
+        padding: 14px 18px 18px 18px;
+      }
+
+      .coscharis-promo__title {
+        margin: 6px 0 10px 0;
+        font-size: clamp(22px, 3.2vw, 40px);
+        line-height: 1.1;
+        color: #0a0c12;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+      }
+
+      .coscharis-promo__title span {
+        color: #e63035;
+      }
+
+      .coscharis-promo__desc {
+        margin: 0;
+        color: rgba(10, 12, 18, 0.82);
+        font-size: 15.5px;
+        line-height: 1.6;
+      }
+
+      .coscharis-promo__bullets {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 12px;
+        margin-top: 14px;
+      }
+
+      .coscharis-promo__bullet {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(10, 12, 18, 0.08);
+        color: rgba(10, 12, 18, 0.85);
+        font-weight: 700;
+        font-size: 13.5px;
+      }
+
+      .coscharis-promo__bullet i {
+        color: #3c3e90;
+      }
+
+      .coscharis-promo__side {
+        display: grid;
+        gap: 12px;
+        align-content: start;
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(10, 12, 18, 0.04);
+        border: 1px solid rgba(10, 12, 18, 0.08);
+      }
+
+      .coscharis-promo__media {
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(10, 12, 18, 0.10);
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      .coscharis-promo__media img {
+        display: block;
+        width: 100%;
+        height: auto; /* reliable on all mobile browsers */
+      }
+
+      .coscharis-promo__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .coscharis-promo__actions .theme-btn {
+        padding: 10px 14px;
+      }
+
+      .coscharis-promo__ghost {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(10, 12, 18, 0.14);
+        background: rgba(255, 255, 255, 0.95);
+        color: #0a0c12;
+        font-weight: 800;
+      }
+
+      .coscharis-promo__fine {
+        margin: 0;
+        font-size: 12.5px;
+        color: rgba(10, 12, 18, 0.62);
+      }
+
+      @media (max-width: 880px) {
+        .coscharis-promo__content {
+          grid-template-columns: 1fr;
+        }
+        .coscharis-promo__bullets {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .coscharis-promo,
+        .coscharis-promo__panel {
+          transition: none;
+        }
+      }
     </style>
   </head>
   <body>
@@ -2258,6 +2456,66 @@
 
     <a href="#" id="scroll-top"><i class="far fa-arrow-up"></i></a>
 
+    <!-- Stunning promo popup (shows on refresh) -->
+    <div
+      id="coscharis-promo"
+      class="coscharis-promo"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="coscharis-promo-title"
+      aria-describedby="coscharis-promo-desc"
+      hidden
+    >
+      <div class="coscharis-promo__panel" role="document">
+        <div class="coscharis-promo__header">
+          <div class="coscharis-promo__badge">
+            <i class="fas fa-globe"></i>
+            World Promo
+          </div>
+          <button type="button" class="coscharis-promo__close" id="coscharis-promo-close" aria-label="Close">
+            <i class="far fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="coscharis-promo__content">
+          <section>
+            <h2 class="coscharis-promo__title" id="coscharis-promo-title">
+              The <span>world’s</span> most trusted way to buy, shop &amp; bid.
+            </h2>
+            <p class="coscharis-promo__desc" id="coscharis-promo-desc">
+              Discover verified vehicles, genuine parts, and live auctions—crafted into one premium Coscharis experience.
+              Today’s world promo is live.
+            </p>
+
+            <div class="coscharis-promo__bullets" aria-label="Promotion highlights">
+              <div class="coscharis-promo__bullet"><i class="fas fa-shield-check"></i> Verified listings</div>
+              <div class="coscharis-promo__bullet"><i class="fas fa-badge-percent"></i> Limited offers</div>
+              <div class="coscharis-promo__bullet"><i class="fas fa-truck-fast"></i> Genuine parts</div>
+              <div class="coscharis-promo__bullet"><i class="fas fa-gavel"></i> Live auctions</div>
+            </div>
+          </section>
+
+          <aside class="coscharis-promo__side" aria-label="Promotion actions">
+            <a class="coscharis-promo__media" id="coscharis-promo-featured-link" href="listing-grid.html" aria-label="View featured deal">
+              <img
+                id="coscharis-promo-image"
+                src="coscharis/assets/img/car/01.jpg"
+                alt="Featured promo deal"
+                loading="eager"
+                decoding="async"
+              />
+            </a>
+            <div class="coscharis-promo__actions">
+              <a id="coscharis-promo-link-cars" href="listing-grid.html" class="theme-btn">Explore Cars <i class="fas fa-arrow-right-long"></i></a>
+              <a id="coscharis-promo-link-shop" href="shop.html" class="coscharis-promo__ghost">Shop Parts <i class="fas fa-arrow-right-long"></i></a>
+              <a id="coscharis-promo-link-auction" href="auction.html" class="coscharis-promo__ghost">View Auctions <i class="fas fa-arrow-right-long"></i></a>
+            </div>
+            <p class="coscharis-promo__fine">Tip: press <strong>Esc</strong> to close.</p>
+          </aside>
+        </div>
+      </div>
+    </div>
+
     <div
       id="coscharis-cookie-banner"
       class="coscharis-cc-banner"
@@ -2370,5 +2628,93 @@
     new WOW().init();
   }
 </script>
+    <script>
+      (function () {
+        var PROMO_KEY = "coscharis:homepage-promo:v1";
+        var promo = document.getElementById("coscharis-promo");
+        var closeBtn = document.getElementById("coscharis-promo-close");
+        if (!promo || !closeBtn) return;
+
+        function safeParse(json) {
+          try {
+            return JSON.parse(json);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function defaultPromo() {
+          return { active: true };
+        }
+
+        function loadPromoConfig() {
+          var o = safeParse(localStorage.getItem(PROMO_KEY));
+          if (!o || typeof o !== "object") return defaultPromo();
+          if (o.active === undefined) o.active = true;
+          return o;
+        }
+
+        function applyPromoContent(cfg) {
+          var titleEl = document.getElementById("coscharis-promo-title");
+          var descEl = document.getElementById("coscharis-promo-desc");
+          var imgEl = document.getElementById("coscharis-promo-image");
+          var featEl = document.getElementById("coscharis-promo-featured-link");
+          var aCars = document.getElementById("coscharis-promo-link-cars");
+          var aShop = document.getElementById("coscharis-promo-link-shop");
+          var aAuc = document.getElementById("coscharis-promo-link-auction");
+          if (titleEl && typeof cfg.titleHtml === "string" && cfg.titleHtml.trim()) titleEl.innerHTML = cfg.titleHtml.trim();
+          if (descEl && typeof cfg.description === "string" && cfg.description.trim()) descEl.textContent = cfg.description.trim();
+          if (imgEl) {
+            var src =
+              typeof cfg.imageDataUrl === "string" && cfg.imageDataUrl.trim()
+                ? cfg.imageDataUrl.trim()
+                : typeof cfg.imageUrl === "string" && cfg.imageUrl.trim()
+                  ? cfg.imageUrl.trim()
+                  : "coscharis/assets/img/car/01.jpg";
+            imgEl.src = src;
+          }
+          if (featEl && typeof cfg.featuredLink === "string" && cfg.featuredLink.trim()) featEl.href = cfg.featuredLink.trim();
+          if (aCars && typeof cfg.linkCars === "string" && cfg.linkCars.trim()) aCars.href = cfg.linkCars.trim();
+          if (aShop && typeof cfg.linkShop === "string" && cfg.linkShop.trim()) aShop.href = cfg.linkShop.trim();
+          if (aAuc && typeof cfg.linkAuction === "string" && cfg.linkAuction.trim()) aAuc.href = cfg.linkAuction.trim();
+        }
+
+        function openPromo() {
+          promo.hidden = false;
+          requestAnimationFrame(function () {
+            promo.classList.add("is-open");
+          });
+          document.body.style.overflow = "hidden";
+          closeBtn.focus({ preventScroll: true });
+        }
+
+        function closePromo() {
+          promo.classList.remove("is-open");
+          document.body.style.overflow = "";
+          window.setTimeout(function () {
+            promo.hidden = true;
+          }, 220);
+        }
+
+        closeBtn.addEventListener("click", closePromo);
+        promo.addEventListener("click", function (e) {
+          if (e.target === promo) closePromo();
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") closePromo();
+        });
+
+        window.addEventListener("load", function () {
+          var cfg = loadPromoConfig();
+          applyPromoContent(cfg);
+          if (cfg.active === false) {
+            promo.hidden = true;
+            promo.classList.remove("is-open");
+            return;
+          }
+          window.setTimeout(openPromo, 650);
+        });
+      })();
+    </script>
   </body>
 </html>

@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0f1028" />
-    <meta name="description" content="Coscharis Admin — messages from the public contact form (local demo)" />
-    <title>Contact inbox — Coscharis Admin</title>
+    <meta name="description" content="Coscharis Admin — homepage promotional popup (local demo)" />
+    <title>Promo banner — Coscharis Admin</title>
     <link rel="icon" type="image/x-icon" href="coscharis/assets/img/logo/cos-logo.jpeg" />
     <link rel="stylesheet" href="coscharis/assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="coscharis/assets/css/all-fontawesome.min.css" />
@@ -33,7 +33,7 @@
         box-sizing: border-box;
       }
 
-      body.page-admin-contact {
+      body.page-admin-settings {
         margin: 0;
         min-height: 100vh;
         font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -535,7 +535,7 @@
       }
     </style>
   </head>
-  <body class="page-admin-contact admin-app-layout">
+  <body class="page-admin-settings admin-app-layout">
     <script>
       (function () {
         try {
@@ -570,7 +570,7 @@
           <div class="admin-nav-label">System</div>
           <nav class="admin-nav" aria-label="Settings">
             <a href="admin-settings.html"><i class="fas fa-sliders"></i> Site settings</a>
-            <a href="admin-banner.html"><i class="fas fa-bullhorn"></i> Promo banner</a>
+            <a class="is-active" href="admin-banner.html"><i class="fas fa-bullhorn"></i> Promo banner</a>
           </nav>
 
           <div class="admin-nav-label">Commerce</div>
@@ -589,7 +589,7 @@
           <div class="admin-nav-label">People &amp; content</div>
           <nav class="admin-nav">
             <a href="admin-registration.html"><i class="fas fa-users-cog"></i> Users & profiles</a>
-            <a class="is-active" href="admin-contact.html"><i class="fas fa-envelope"></i> Contact</a>
+            <a href="admin-contact.html"><i class="fas fa-envelope"></i> Contact</a>
           </nav>
         </div>
 
@@ -607,23 +607,15 @@
               <i class="fas fa-bars"></i>
             </button>
             <div class="admin-header-titles">
-              <h2>Contact inbox</h2>
-              <p>Messages submitted from <code>contact.html</code> (stored in this browser)</p>
+              <h2>Promo banner</h2>
+              <p>Turn the homepage promotional popup on or off, and edit its content (stored in this browser)</p>
             </div>
           </div>
 
-          <div class="admin-header-search">
-            <i class="fas fa-search"></i>
-            <input type="search" id="admin-contact-filter" placeholder="Search name, email, subject…" autocomplete="off" />
-          </div>
-
           <div class="admin-header-actions">
-            <button type="button" class="btn-soft" id="admin-contact-export" title="Export JSON">
-              <i class="far fa-file-code me-2"></i> Export
-            </button>
-            <button type="button" class="btn-danger-soft" id="admin-contact-clear" title="Remove all messages">
-              <i class="fas fa-trash-alt me-2"></i> Clear all
-            </button>
+            <a href="index.html" class="btn-soft text-decoration-none" target="_blank" rel="noopener" title="Open public homepage">
+              <i class="fas fa-up-right-from-square me-2"></i> View site
+            </a>
             <div class="admin-user-chip" title="Signed-in administrator">
               <div class="admin-user-avatar" id="admin-admin-initials">A</div>
               <div class="admin-user-meta">
@@ -635,65 +627,151 @@
         </header>
 
         <div class="admin-content">
-          <div class="admin-panel">
-            <div class="admin-panel-hd">
-              <h3><i class="fas fa-inbox me-2 text-danger"></i> Messages</h3>
-              <div class="d-flex align-items-center gap-2 flex-wrap">
-                <span class="pill" id="admin-contact-meta">0 messages</span>
-                <span class="pill pill-accent d-none" id="admin-contact-unread-pill"><i class="fas fa-circle"></i> <span id="admin-contact-unread-count">0</span> unread</span>
-              </div>
-            </div>
-            <div class="admin-panel-bd pt-0">
-              <div class="admin-table-wrap">
-                <table class="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Received</th>
-                      <th>From</th>
-                      <th>Email</th>
-                      <th>Subject</th>
-                      <th>Status</th>
-                      <th style="width: 200px">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="admin-contact-tbody">
-                    <tr>
-                      <td colspan="6" class="admin-muted py-4 text-center">Loading…</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <p class="small mt-3 mb-0 admin-muted">
-                Storage key <code>coscharis:contact-leads:v1</code>. Same device as the visitor who submitted the form (demo).
-              </p>
-            </div>
+          <div id="admin-banner-saved" class="alert alert-success py-2 px-3 d-none mb-3" role="status" style="border-radius: 12px">
+            Promo settings saved. Refresh the public homepage to see the popup.
           </div>
 
+          <form id="admin-banner-form" class="row g-3 g-lg-4">
+            <div class="col-12">
+              <div class="admin-panel">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-power-off me-2 text-danger"></i> Status</h3>
+                  <span class="pill"><i class="fas fa-house"></i> index.html</span>
+                </div>
+                <div class="admin-panel-bd">
+                  <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" id="promo-active" checked />
+                    <label class="form-check-label" for="promo-active">Promotional popup is <strong>active</strong> on the homepage</label>
+                  </div>
+                  <p class="small admin-muted mt-3 mb-0">
+                    When inactive, visitors will not see the popup after refresh. Storage key <code>coscharis:homepage-promo:v1</code>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="admin-panel h-100">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-heading me-2 text-danger"></i> Headline &amp; copy</h3>
+                  <span class="pill"><i class="fas fa-pen"></i> Text</span>
+                </div>
+                <div class="admin-panel-bd">
+                  <div class="mb-3">
+                    <label class="form-label small admin-muted mb-1" for="promo-title">Headline</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="promo-title"
+                      maxlength="200"
+                      autocomplete="off"
+                      style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit"
+                    />
+                    <div class="form-text small admin-muted">Use <code>&lt;span&gt;</code> for accent color, e.g. <code>The &lt;span&gt;world’s&lt;/span&gt; best</code></div>
+                  </div>
+                  <div class="mb-0">
+                    <label class="form-label small admin-muted mb-1" for="promo-desc">Description</label>
+                    <textarea
+                      class="form-control"
+                      id="promo-desc"
+                      rows="4"
+                      maxlength="600"
+                      style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="admin-panel h-100">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-image me-2 text-danger"></i> Featured image</h3>
+                  <span class="pill"><i class="fas fa-upload"></i> Upload</span>
+                </div>
+                <div class="admin-panel-bd">
+                  <div class="mb-3">
+                    <label class="form-label small admin-muted mb-1" for="promo-image-file">Promo image</label>
+                    <input
+                      type="file"
+                      class="form-control form-control-sm"
+                      id="promo-image-file"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
+                    />
+                    <div class="form-text small admin-muted mt-1">
+                      JPEG, PNG, GIF, or WebP · max ~2&nbsp;MB (stored in this browser as base64)
+                    </div>
+                  </div>
+                  <div class="mb-3 rounded overflow-hidden border border-secondary" style="max-width: 320px; background: rgba(0,0,0,0.2)">
+                    <img
+                      id="promo-image-preview"
+                      src="coscharis/assets/img/car/01.jpg"
+                      alt="Promo preview"
+                      style="display: block; width: 100%; height: auto; max-height: 200px; object-fit: cover"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <button type="button" class="btn btn-outline-light btn-sm border-secondary" id="promo-image-clear">
+                      <i class="fas fa-trash-alt me-1"></i> Remove uploaded image
+                    </button>
+                  </div>
+                  <div class="mb-0">
+                    <label class="form-label small admin-muted mb-1" for="promo-featured-link">Image click link</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="promo-featured-link"
+                      maxlength="200"
+                      placeholder="listing-grid.html"
+                      style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="admin-panel">
+                <div class="admin-panel-hd">
+                  <h3><i class="fas fa-arrow-pointer me-2 text-danger"></i> Action buttons</h3>
+                  <span class="pill"><i class="fas fa-bolt"></i> CTAs</span>
+                </div>
+                <div class="admin-panel-bd">
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <label class="form-label small admin-muted mb-1" for="promo-link-cars">Explore cars</label>
+                      <input type="text" class="form-control" id="promo-link-cars" maxlength="200" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label small admin-muted mb-1" for="promo-link-shop">Shop parts</label>
+                      <input type="text" class="form-control" id="promo-link-shop" maxlength="200" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label small admin-muted mb-1" for="promo-link-auction">Auctions</label>
+                      <input type="text" class="form-control" id="promo-link-auction" maxlength="200" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: inherit" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="d-flex flex-wrap gap-2 align-items-center">
+                <button type="submit" class="btn-primary-soft border-0">
+                  <i class="fas fa-floppy-disk me-2"></i> Save promo
+                </button>
+                <button type="button" class="btn btn-outline-light btn-sm border-secondary" id="admin-banner-reset">
+                  <i class="fas fa-rotate-left me-1"></i> Reset to defaults
+                </button>
+              </div>
+            </div>
+          </form>
+
           <p class="text-center mt-4 mb-0 small" style="color: var(--admin-muted)">
-            Coscharis Admin · Contact inbox · Local demo
+            Coscharis Admin · Promo banner · Local demo
           </p>
         </div>
       </main>
-    </div>
-
-    <div class="modal fade" id="admin-contact-modal" tabindex="-1" aria-labelledby="admin-contact-modal-title" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content" style="background: #12152e; border: 1px solid rgba(255, 255, 255, 0.12); color: var(--admin-text, #e8eaf4)">
-          <div class="modal-header border-secondary">
-            <h5 class="modal-title" id="admin-contact-modal-title">Message</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p class="small admin-muted mb-2" id="admin-contact-modal-when"></p>
-            <p class="mb-1"><strong id="admin-contact-modal-name"></strong> · <span id="admin-contact-modal-email"></span></p>
-            <p class="fw-bold mt-3 mb-2" id="admin-contact-modal-subject"></p>
-            <div class="contact-msg-box" id="admin-contact-modal-body"></div>
-          </div>
-          <div class="modal-footer border-secondary">
-            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
@@ -721,7 +799,7 @@
     <script src="coscharis/assets/js/admin-shell.js"></script>
     <script>
       (function () {
-        var CONTACT_KEY = "coscharis:contact-leads:v1";
+        var PROMO_KEY = "coscharis:homepage-promo:v1";
         var ADMIN_KEY = "coscharis:admin:v1";
 
         function safeParse(json) {
@@ -732,176 +810,143 @@
           }
         }
 
-        function escapeHtml(s) {
-          if (s == null) return "";
-          var d = document.createElement("div");
-          d.textContent = s;
-          return d.innerHTML;
+        function defaults() {
+          return {
+            active: true,
+            titleHtml:
+              "The <span>world's</span> most trusted way to buy, shop & bid.",
+            description:
+              "Discover verified vehicles, genuine parts, and live auctions—crafted into one premium Coscharis experience. Today’s world promo is live.",
+            imageDataUrl: "",
+            imageUrl: "",
+            featuredLink: "listing-grid.html",
+            linkCars: "listing-grid.html",
+            linkShop: "shop.html",
+            linkAuction: "auction.html",
+            updatedAt: null
+          };
         }
 
-        function loadLeads() {
-          var u = safeParse(localStorage.getItem(CONTACT_KEY));
-          return Array.isArray(u) ? u : [];
-        }
-
-        function saveLeads(leads) {
-          localStorage.setItem(CONTACT_KEY, JSON.stringify(leads));
-        }
-
-        function formatWhen(iso) {
-          if (!iso) return "—";
-          try {
-            var d = new Date(iso);
-            if (isNaN(d.getTime())) return escapeHtml(String(iso));
-            return escapeHtml(d.toLocaleString());
-          } catch (e) {
-            return escapeHtml(String(iso));
+        function loadPromo() {
+          var raw = localStorage.getItem(PROMO_KEY);
+          var o = safeParse(raw);
+          if (!o || typeof o !== "object") return defaults();
+          var d = defaults();
+          for (var k in d) {
+            if (Object.prototype.hasOwnProperty.call(d, k) && o[k] === undefined) o[k] = d[k];
           }
+          return o;
         }
 
-        function filterLeads(leads, q) {
-          if (!q) return leads;
-          q = q.toLowerCase();
-          return leads.filter(function (row) {
-            return (
-              String(row.name || "")
-                .toLowerCase()
-                .indexOf(q) !== -1 ||
-              String(row.email || "")
-                .toLowerCase()
-                .indexOf(q) !== -1 ||
-              String(row.subject || "")
-                .toLowerCase()
-                .indexOf(q) !== -1 ||
-              String(row.message || "")
-                .toLowerCase()
-                .indexOf(q) !== -1
-            );
-          });
+        function savePromo(obj) {
+          obj.updatedAt = new Date().toISOString();
+          localStorage.setItem(PROMO_KEY, JSON.stringify(obj));
         }
 
-        function render() {
-          var leads = loadLeads();
-          var q = (document.getElementById("admin-contact-filter").value || "").trim();
-          var rows = filterLeads(leads, q);
-          var unread = 0;
-          for (var u = 0; u < leads.length; u++) {
-            if (!leads[u].read) unread++;
-          }
+        var FALLBACK_IMG = "coscharis/assets/img/car/01.jpg";
+        var MAX_IMAGE_BYTES = 2 * 1024 * 1024;
+        var imageDataUrl = "";
 
-          document.getElementById("admin-contact-meta").textContent = rows.length + " shown · " + leads.length + " total";
-          var up = document.getElementById("admin-contact-unread-pill");
-          var uc = document.getElementById("admin-contact-unread-count");
-          if (unread > 0) {
-            up.classList.remove("d-none");
-            uc.textContent = String(unread);
+        function formToObject() {
+          var prev = loadPromo();
+          return {
+            active: !!document.getElementById("promo-active").checked,
+            titleHtml: (document.getElementById("promo-title").value || "").trim() || defaults().titleHtml,
+            description: (document.getElementById("promo-desc").value || "").trim() || defaults().description,
+            imageDataUrl: imageDataUrl,
+            imageUrl: imageDataUrl ? "" : typeof prev.imageUrl === "string" ? prev.imageUrl : "",
+            featuredLink: (document.getElementById("promo-featured-link").value || "").trim() || defaults().featuredLink,
+            linkCars: (document.getElementById("promo-link-cars").value || "").trim() || defaults().linkCars,
+            linkShop: (document.getElementById("promo-link-shop").value || "").trim() || defaults().linkShop,
+            linkAuction: (document.getElementById("promo-link-auction").value || "").trim() || defaults().linkAuction
+          };
+        }
+
+        function setPreviewSrc() {
+          var prev = document.getElementById("promo-image-preview");
+          if (!prev) return;
+          if (imageDataUrl) prev.src = imageDataUrl;
+          else prev.src = FALLBACK_IMG;
+        }
+
+        function fillForm(s) {
+          document.getElementById("promo-active").checked = s.active !== false;
+          document.getElementById("promo-title").value = s.titleHtml || "";
+          document.getElementById("promo-desc").value = s.description || "";
+          imageDataUrl = typeof s.imageDataUrl === "string" ? s.imageDataUrl : "";
+          if (!imageDataUrl && typeof s.imageUrl === "string" && s.imageUrl.trim()) {
+            document.getElementById("promo-image-preview").src = s.imageUrl.trim();
           } else {
-            up.classList.add("d-none");
+            setPreviewSrc();
           }
+          var fileInput = document.getElementById("promo-image-file");
+          if (fileInput) fileInput.value = "";
+          document.getElementById("promo-featured-link").value = s.featuredLink || "";
+          document.getElementById("promo-link-cars").value = s.linkCars || "";
+          document.getElementById("promo-link-shop").value = s.linkShop || "";
+          document.getElementById("promo-link-auction").value = s.linkAuction || "";
+        }
 
-          var tbody = document.getElementById("admin-contact-tbody");
-          tbody.innerHTML = "";
-
-          if (!rows.length) {
-            var tr = document.createElement("tr");
-            tr.innerHTML =
-              '<td colspan="6" class="admin-muted py-4 text-center">' +
-              (leads.length ? "No messages match your search." : "No messages yet. Submit the form on contact.html.") +
-              "</td>";
-            tbody.appendChild(tr);
+        document.getElementById("promo-image-file").addEventListener("change", function (ev) {
+          var f = ev.target.files && ev.target.files[0];
+          if (!f) return;
+          if (!/^image\//.test(f.type)) {
+            alert("Please choose an image file.");
+            ev.target.value = "";
             return;
           }
-
-          for (var i = 0; i < rows.length; i++) {
-            (function (row) {
-              var tr = document.createElement("tr");
-              if (!row.read) tr.className = "contact-row-unread";
-              tr.innerHTML =
-                "<td>" +
-                formatWhen(row.createdAt) +
-                "</td><td>" +
-                escapeHtml(row.name || "—") +
-                '</td><td><a class="text-light" href="mailto:' +
-                escapeHtml(row.email || "") +
-                '">' +
-                escapeHtml(row.email || "—") +
-                "</a></td><td>" +
-                escapeHtml(row.subject || "—") +
-                "</td><td>" +
-                (row.read ? '<span class="admin-muted">Read</span>' : '<span class="text-warning">New</span>') +
-                '</td><td><button type="button" class="btn-xs-soft js-contact-view me-1">View</button><button type="button" class="btn-xs-danger js-contact-del">Delete</button></td>';
-              tr.querySelector(".js-contact-view").addEventListener("click", function () {
-                openModal(row);
-              });
-              tr.querySelector(".js-contact-del").addEventListener("click", function () {
-                if (!confirm("Delete this message?")) return;
-                var all = loadLeads();
-                var next = [];
-                for (var j = 0; j < all.length; j++) {
-                  if (all[j].id !== row.id) next.push(all[j]);
-                }
-                saveLeads(next);
-                render();
-              });
-              tbody.appendChild(tr);
-            })(rows[i]);
+          if (f.size > MAX_IMAGE_BYTES) {
+            alert("Image is too large. Maximum size is 2 MB.");
+            ev.target.value = "";
+            return;
           }
-        }
-
-        function openModal(row) {
-          var all = loadLeads();
-          var changed = false;
-          for (var i = 0; i < all.length; i++) {
-            if (all[i].id === row.id && !all[i].read) {
-              all[i].read = true;
-              changed = true;
+          var reader = new FileReader();
+          reader.onload = function () {
+            var result = reader.result;
+            if (typeof result === "string") {
+              imageDataUrl = result;
+              document.getElementById("promo-image-preview").src = result;
             }
-          }
-          if (changed) saveLeads(all);
-
-          document.getElementById("admin-contact-modal-title").textContent = row.subject ? row.subject : "Message";
-          document.getElementById("admin-contact-modal-when").textContent = row.createdAt
-            ? "Received " + new Date(row.createdAt).toLocaleString()
-            : "";
-          document.getElementById("admin-contact-modal-name").textContent = row.name || "—";
-          document.getElementById("admin-contact-modal-email").textContent = row.email || "—";
-          document.getElementById("admin-contact-modal-subject").textContent = row.subject || "(No subject)";
-          document.getElementById("admin-contact-modal-body").textContent = row.message || "(No message body)";
-
-          var el = document.getElementById("admin-contact-modal");
-          var modal = bootstrap.Modal.getInstance(el);
-          if (!modal) modal = new bootstrap.Modal(el);
-          modal.show();
-          render();
-        }
-
-        document.getElementById("admin-contact-filter").addEventListener("input", render);
-
-        document.getElementById("admin-contact-export").addEventListener("click", function () {
-          var blob = new Blob([JSON.stringify(loadLeads(), null, 2)], { type: "application/json" });
-          var a = document.createElement("a");
-          a.href = URL.createObjectURL(blob);
-          a.download = "coscharis-contact-leads.json";
-          a.click();
-          URL.revokeObjectURL(a.href);
+          };
+          reader.onerror = function () {
+            alert("Could not read that file.");
+            ev.target.value = "";
+          };
+          reader.readAsDataURL(f);
         });
 
-        document.getElementById("admin-contact-clear").addEventListener("click", function () {
-          if (!loadLeads().length) return;
-          if (!confirm("Remove all contact messages from this browser?")) return;
-          localStorage.removeItem(CONTACT_KEY);
-          render();
+        document.getElementById("promo-image-clear").addEventListener("click", function () {
+          imageDataUrl = "";
+          var fi = document.getElementById("promo-image-file");
+          if (fi) fi.value = "";
+          setPreviewSrc();
+        });
+
+        document.getElementById("admin-banner-form").addEventListener("submit", function (e) {
+          e.preventDefault();
+          savePromo(formToObject());
+          var note = document.getElementById("admin-banner-saved");
+          note.classList.remove("d-none");
+          window.setTimeout(function () {
+            note.classList.add("d-none");
+          }, 4500);
+        });
+
+        document.getElementById("admin-banner-reset").addEventListener("click", function () {
+          if (!confirm("Reset promo settings to defaults on this browser?")) return;
+          localStorage.removeItem(PROMO_KEY);
+          imageDataUrl = "";
+          fillForm(defaults());
         });
 
         try {
           var adm = safeParse(localStorage.getItem(ADMIN_KEY)) || {};
           var em = (adm.email || "admin@coscharis.local").trim();
           document.getElementById("admin-admin-email").textContent = em;
-          var ini = em.charAt(0).toUpperCase() || "A";
-          document.getElementById("admin-admin-initials").textContent = ini;
+          document.getElementById("admin-admin-initials").textContent = (em.charAt(0) || "A").toUpperCase();
         } catch (e) {}
 
-        render();
+        fillForm(loadPromo());
       })();
     </script>
   </body>
